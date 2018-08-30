@@ -30,15 +30,15 @@ Register the name in the DNS. Copy SSH key for the root account:
 
 To create:
 
-    ./nixops create ./network.nix -d luffy
+    ./nixops create -s state.nixops ./network.nix -d luffy
 
 To deploy:
 
-    ./nixops deploy -d luffy
+    ./nixops deploy -s state.nixops -d luffy
 
 If a reboot is needed, `--allow-reboot` as no effect. Reboot should be
 done manually or with:
 
-    ./nixops deploy -d luffy --force-reboot
+    ./nixops deploy -s state.nixops -d luffy --force-reboot
 
 See https://github.com/NixOS/nixops/issues/367.
