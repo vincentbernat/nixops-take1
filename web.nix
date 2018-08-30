@@ -13,7 +13,6 @@ let
      virtualHosts."${name}" = {
        root = "/data/webserver/${name}";
        enableACME = true;
-       forceSSL = true;
        acmeFallbackHost = nextNode;
      } // attrs;
    };
@@ -100,13 +99,119 @@ in
     '';
 
   # Virtual hosts
-  imports = [
+  imports = let
+    sts = "add_header Strict-Transport-Security \"max-age=31557600; includeSubDomains\";";
+    stsWithPreload = "add_header Strict-Transport-Security \"max-age=31557600; includeSubDomains; preload\";";
+    redirectBlogVhost = {
+      forceSSL = true;
+      globalRedirect = "vincent.bernat.im";
+      extraConfig = stsWithPreload;
+    };
+    mediaVhost = {
+      forceSSL = true;
+      extraConfig =
+        ''
+          expires 30d;
+          ${sts}
+        '';
+      locations."/js".extraConfig =
+        ''
+          expires     max;
+          add_header  Access-Control-Allow-Origin *;
+          add_header  Cache-Control immutable;
+        '';
+      locations."/css".extraConfig =
+        ''
+          expires     max;
+          add_header  Access-Control-Allow-Origin *;
+          add_header  Cache-Control immutable;
+        '';
+      locations."/fonts".extraConfig =
+        ''
+          expires     max;
+          add_header  Access-Control-Allow-Origin *;
+          add_header  Cache-Control immutable;
+          types {
+            application/font-woff         woff;
+            font/woff2                    woff2;
+            application/x-font-truetype   ttf;
+          }
+        '';
+      locations."= /favicon.ico".extraConfig = "expires 60d;";
+      locations."/files".extraConfig = "expires 1d;";
+      locations."~ .m3u8$".extraConfig =
+        ''
+          expires 1d;
+          add_header  Access-Control-Allow-Origin *;
+        '';
+    };
+  in
+  [
+
+   # HAProxy
+   (vhost "haproxy.debian.net" {
+     # Make dists and pool available without encryption
+     addSSL = true;
+     locations."~ ^/(dists|pool)".extraConfig = "";
+     locations."/".extraConfig =
+       ''
+         if ($scheme = http) {
+           # Safe usage of if-in-location
+           return 301 https://$host$request_uri;
+         }
+       '';
+   })
+
+   # Une Oasis Une École
+   (vhost "une-oasis-une-ecole.fr" {
+     forceSSL = true;
+     globalRedirect = "www.une-oasis-une-ecole.fr";
+     extraConfig = sts;
+   })
+   (vhost "www.une-oasis-une-ecole.fr" {
+     forceSSL = true;
+     extraConfig = sts;
+   })
+   (vhost "media.une-oasis-une-ecole.fr" mediaVhost)
+
+   # Old website
+   (vhost "www.luffy.cx" {
+     forceSSL = true;
+     extraConfig = sts;
+     locations."/wiremaps".extraConfig =
+       ''
+         rewrite ^ https://github.com/vincentbernat/wiremaps/archives/master permanent;
+       '';
+     locations."/udpproxy".extraConfig =
+       ''
+         rewrite ^ https://github.com/vincentbernat/udpproxy/archives/master permanent;
+       '';
+     locations."/snimpy".extraConfig =
+       ''
+         rewrite ^ https://github.com/vincentbernat/snimpy/archives/master permanent;
+       '';
+     locations."/lldpd".extraConfig =
+       ''
+         rewrite ^ https://github.com/vincentbernat/lldpd/archives/master permanent;
+       '';
+     locations."/".extraConfig =
+       ''
+         rewrite ^ https://vincent.bernat.im$uri permanent;
+       '';
+   })
+
+   # Blog
    (vhost "vincent.bernat.im" {
+     forceSSL = true;
      extraConfig =
        ''
          include /data/webserver/vincent.bernat.im/nginx*.conf;
          expires 1h;
        '';
    })
+   (vhost "bernat.im" redirectBlogVhost)
+   (vhost "bernat.ch" redirectBlogVhost)
+   (vhost "vincent.bernat.ch" redirectBlogVhost)
+   (vhost "media.luffy.cx" mediaVhost)
  ];
 }
