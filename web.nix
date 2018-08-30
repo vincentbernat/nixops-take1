@@ -14,7 +14,12 @@ let
        root = "/data/webserver/${name}";
        enableACME = true;
        acmeFallbackHost = nextNode;
-     } // attrs;
+       extraConfig =
+         ''
+           ssl_trusted_certificate ${config.security.acme.directory}/${name}/full.pem;
+           ${attrs.extraConfig or ""}
+         '';
+     } // (removeAttrs attrs ["extraConfig"]);
    };
 
    # Let's encrypt extra configuration
