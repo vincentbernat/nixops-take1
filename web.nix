@@ -214,6 +214,11 @@ in
    (vhost "media.une-oasis-une-ecole.fr" mediaVhost)
 
    # Old website
+   (vhost "luffy.cx" {
+     forceSSL = true;
+     globalRedirect = "www.luffy.cx";
+     extraConfig = sts;
+   })
    (vhost "www.luffy.cx" {
      forceSSL = true;
      extraConfig = sts;
