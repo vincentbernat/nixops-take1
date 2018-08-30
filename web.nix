@@ -29,9 +29,6 @@ in
   # Firewall
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-  # Don't use production ACME
-  security.acme.production = false;
-
   # nginx generic configuration
   services.nginx = {
     enable = true;
