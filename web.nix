@@ -16,6 +16,7 @@ let
        acmeFallbackHost = nextNode;
        extraConfig =
          ''
+           access_log ${config.services.nginx.stateDir}/logs/${name}.log;
            ssl_trusted_certificate ${config.security.acme.directory}/${name}/full.pem;
            ${attrs.extraConfig or ""}
          '';
