@@ -287,27 +287,7 @@ in
    (vhost "media.luffy.cx" mediaVhost)
    (vhost "video.luffy.cx" {
      forceSSL = true;
-     locations."/".extraConfig = let
-       commonHeaders =
-       ''
-         add_header Access-Control-Allow-Origin *;
-         add_header Access-Control-Allow-Methods 'GET, OPTIONS';
-         add_header Access-Control-Allow-Headers 'If-Modified-Since,Cache-Control,Content-Type,Range';
-       '';
-     in
-       ''
-         if ($request_method = 'OPTIONS') {
-           ${commonHeaders}
-           add_header Access-Control-Max-Age 1728000;
-           add_header Content-Length 0;
-           add_header Content-Type 'text/plain; charset=utf-8';
-           return 204;
-         }
-         if ($request_method = 'GET') {
-           ${commonHeaders}
-           add_header Access-Control-Expose-Headers 'Content-Length,Content-Range';
-         }
-       '';
+     locations."/".extraConfig = "add_header Access-Control-Allow-Origin *;";
    })
  ];
 }
