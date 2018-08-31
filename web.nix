@@ -254,9 +254,16 @@ in
          expires 1h;
        '';
    })
+   (vhost "vincent.bernat.ch" {
+     forceSSL = true;
+     extraConfig =
+       ''
+         include /data/webserver/vincent.bernat.ch/nginx*.conf;
+         expires 1h;
+       '';
+   })
    (vhost "bernat.im" redirectBlogVhost)
    (vhost "bernat.ch" redirectBlogVhost)
-   (vhost "vincent.bernat.ch" redirectBlogVhost)
    (vhost "media.luffy.cx" mediaVhost)
  ];
 }
