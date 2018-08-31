@@ -16,7 +16,7 @@ let
        acmeFallbackHost = nextNode;
        extraConfig =
          ''
-           access_log ${config.services.nginx.stateDir}/logs/${name}.log;
+           access_log /var/log/nginx/${name}.log;
            ssl_trusted_certificate ${config.security.acme.directory}/${name}/full.pem;
            ${attrs.extraConfig or ""}
          '';
@@ -36,6 +36,7 @@ in
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   # nginx generic configuration
+  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
   services.nginx = {
     enable = true;
 
@@ -91,6 +92,9 @@ in
 
     appendHttpConfig =
       ''
+        # Logs
+        access_log /var/log/nginx/access.log;
+
         # SSL
         ssl_session_tickets off;
 
