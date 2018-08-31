@@ -144,7 +144,7 @@ in
     stsWithPreload = "add_header Strict-Transport-Security \"max-age=31557600; includeSubDomains; preload\";";
     redirectBlogVhost = {
       forceSSL = true;
-      globalRedirect = "vincent.bernat.im";
+      globalRedirect = "vincent.bernat.ch";
       extraConfig = stsWithPreload;
     };
     mediaVhost = {
@@ -241,19 +241,11 @@ in
        '';
      locations."/".extraConfig =
        ''
-         rewrite ^ https://vincent.bernat.im$uri permanent;
+         rewrite ^ https://vincent.bernat.ch$uri permanent;
        '';
    })
 
    # Blog
-   (vhost "vincent.bernat.im" {
-     forceSSL = true;
-     extraConfig =
-       ''
-         include /data/webserver/vincent.bernat.im/nginx*.conf;
-         expires 1h;
-       '';
-   })
    (vhost "vincent.bernat.ch" {
      forceSSL = true;
      extraConfig =
@@ -262,6 +254,7 @@ in
          expires 1h;
        '';
    })
+   (vhost "vincent.bernat.im" redirectBlogVhost)
    (vhost "bernat.im" redirectBlogVhost)
    (vhost "bernat.ch" redirectBlogVhost)
    (vhost "media.luffy.cx" mediaVhost)
