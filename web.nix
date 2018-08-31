@@ -36,7 +36,6 @@ in
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   # nginx generic configuration
-  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
   services.nginx = {
     enable = true;
 
@@ -128,6 +127,28 @@ in
           text/vcard
           text/vtt
           text/xml;
+      '';
+  };
+
+  # Logs
+  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
+  services.logrotate = {
+    enable = true;
+    config =
+      ''
+        /var/log/nginx/*.log {
+          daily
+          missingok
+          rotate 30
+          compress
+          delaycompress
+          notifempty
+          create 0640 ${config.services.nginx.user} wheel
+          sharedscripts
+          postrotate
+            systemctl reload nginx
+          endscript
+        }
       '';
   };
 
