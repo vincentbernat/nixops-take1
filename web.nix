@@ -134,9 +134,11 @@ in
   systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
   services.logrotate = {
     enable = true;
-    config =
+    config = let
+      path = "/var/log/nginx/*.log";
+    in
       ''
-        /var/log/nginx/*.log {
+        ${path} {
           daily
           missingok
           rotate 30
