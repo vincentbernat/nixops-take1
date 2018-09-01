@@ -285,9 +285,5 @@ in
    (vhost "bernat.im" redirectBlogVhost)
    (vhost "bernat.ch" redirectBlogVhost)
    (vhost "media.luffy.cx" mediaVhost)
-   (vhost "video.luffy.cx" {
-     forceSSL = true;
-     locations."/".extraConfig = "add_header Access-Control-Allow-Origin *;";
-   })
  ];
 }
