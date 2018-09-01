@@ -206,10 +206,10 @@ in
         '';
       locations."= /favicon.ico".extraConfig = "expires 60d;";
       locations."/files".extraConfig = "expires 1d;";
-      locations."~ .m3u8$".extraConfig =
+      locations."/videos".extraConfig =
         ''
           expires 1d;
-          add_header  Access-Control-Allow-Origin *;
+          add_header Access-Control-Allow-Origin *;
         '';
     };
   in
