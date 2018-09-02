@@ -26,6 +26,7 @@ in {
     pkgs.zsh
     pkgs.htop
     pkgs.mg
+    pkgs.ncdu
   ];
   programs.zsh.enable = true;
 
