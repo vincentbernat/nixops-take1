@@ -14,4 +14,18 @@ in
   network.description = "Luffy infrastructure";
   web01 = web 1;
   web02 = web 2;
+  znc = {
+    deployment.targetHost = "znc.luffy.cx";
+    networking.hostName = "znc.luffy.cx";
+    swapDevices = [{
+      # Only 512M of RAM, add swap.
+      device = "/var/swapfile";
+      size = 2048;
+    }];
+    imports = [
+      ./exoscale.nix
+      ./common.nix
+      ./znc.nix
+    ];
+  };
 }
