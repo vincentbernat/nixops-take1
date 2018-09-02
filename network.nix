@@ -1,31 +1,33 @@
 let
   lib = import <nixpkgs/lib>;
-  web = idx: {
-    deployment.targetHost = "web${lib.fixedWidthNumber 2 idx}.luffy.cx";
-    networking.hostName = "web${lib.fixedWidthNumber 2 idx}.luffy.cx";
+  server = hardware: name: imports: {
+    deployment.targetHost = name;
+    networking.hostName = name;
     imports = [
-      ./exoscale.nix
+      (./hardware/. + "/${hardware}.nix")
       ./common.nix
-      ./web.nix
-    ];
+    ] ++ imports;
   };
+  web = hardware: idx: server hardware "web${lib.fixedWidthNumber 2 idx}.luffy.cx" [ ./web.nix ];
 in
 {
   network.description = "Luffy infrastructure";
-  web01 = web 1;
-  web02 = web 2;
-  znc = {
-    deployment.targetHost = "znc.luffy.cx";
-    networking.hostName = "znc.luffy.cx";
+  web01 = web "exoscale" 1;
+  web02 = web "exoscale" 2;
+  web03 = web "hetzner" 3 // {
+    # Static IPv6 configuration
+    networking.interfaces.ens3.ipv6.addresses = [
+      { address = "2a01:4f9:c010:1a9c::1"; prefixLength = 64; }
+    ];
+    networking.defaultGateway6 = {
+      address = "fe80::1"; interface = "ens3";
+    };
+  };
+  znc = server "exoscale" "znc.luffy.cx" [ ./znc.nix ] // {
     swapDevices = [{
       # Only 512M of RAM, add swap.
       device = "/var/swapfile";
       size = 2048;
     }];
-    imports = [
-      ./exoscale.nix
-      ./common.nix
-      ./znc.nix
-    ];
   };
 }
