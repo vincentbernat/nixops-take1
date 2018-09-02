@@ -107,7 +107,6 @@ in
           application/rss+xml
           application/xml
           text/css
-          text/html
           text/plain
           text/vcard
           text/vtt
