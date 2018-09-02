@@ -98,6 +98,21 @@ in
         # SSL
         ssl_session_tickets off;
 
+        # Default charset
+        default_type application/octet-stream;
+        charset utf-8;
+        charset_types
+          application/javascript
+          application/json
+          application/rss+xml
+          application/xml
+          text/css
+          text/html
+          text/plain
+          text/vcard
+          text/vtt
+          text/xml;
+
         # Enable gzip compression
         gzip on;
         gzip_disable "msie6";
@@ -118,7 +133,6 @@ in
           application/x-web-app-manifest+json
           application/xhtml+xml
           application/xml
-          application/xml+rss
           font/opentype
           image/svg+xml
           text/cache-manifest
