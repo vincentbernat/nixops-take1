@@ -1,7 +1,8 @@
 { config, pkgs, lib, nodes, ... }:
 let
  vhost = name: attrs: let
-   sameNodes = lib.filterAttrs (n: v: v.config.services.nginx.virtualHosts."${name}".enableACME) nodes;
+   sameNodes = lib.filterAttrs (n: v: v.config.services.nginx.virtualHosts ? "${name}" &&
+                                      v.config.services.nginx.virtualHosts."${name}".enableACME) nodes;
    sameHosts = lib.mapAttrsToList (name: node: node.config.deployment.targetHost) sameNodes;
    nextNodes = lib.foldl (acc: host: if acc != [] then acc ++ [host] else
                   if host == config.deployment.targetHost then [host] else []) [] sameHosts;
