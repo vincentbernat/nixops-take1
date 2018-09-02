@@ -293,7 +293,6 @@ in
      extraConfig =
        ''
          include /data/webserver/vincent.bernat.ch/nginx*.conf;
-         expires 1h;
        '';
    })
    (vhost "vincent.bernat.im" redirectBlogVhost)
