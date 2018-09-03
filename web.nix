@@ -2,7 +2,8 @@
 let
  vhost = name: attrs: let
    sameNodes = lib.filterAttrs (n: v: v.config.services.nginx.virtualHosts ? "${name}" &&
-                                      v.config.services.nginx.virtualHosts."${name}".enableACME) nodes;
+                                      (v.config.services.nginx.virtualHosts."${name}".enableACME ||
+                                       v.config.services.nginx.virtualHosts."${name}".useACMEHost != null)) nodes;
    sameHosts = lib.mapAttrsToList (name: node: node.config.deployment.targetHost) sameNodes;
    nextNodes = lib.foldl (acc: host: if acc != [] then acc ++ [host] else
                   if host == config.deployment.targetHost then [host] else []) [] sameHosts;
@@ -13,7 +14,6 @@ let
    services.nginx = {
      virtualHosts."${name}" = {
        root = "/data/webserver/${name}";
-       enableACME = true;
        acmeFallbackHost = nextNode;
        extraConfig =
          ''
@@ -21,13 +21,20 @@ let
            ssl_trusted_certificate ${config.security.acme.directory}/${name}/full.pem;
            ${attrs.extraConfig or ""}
          '';
-     } // (removeAttrs attrs ["extraConfig"]);
+     } // (removeAttrs attrs ["extraConfig"])
+       // (if !attrs ? useACMEHost then  {
+             enableACME = true;
+           } else {});
    };
 
    # Let's encrypt extra configuration
-   security.acme = {
+   security.acme = lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
      certs."${name}" = {
        email = lib.concatStringsSep "@" ["letsencrypt" "vincent.bernat.ch"];
+       extraDomains = let
+         otherVhosts = lib.filterAttrs(n: v: v.useACMEHost == name) config.services.nginx.virtualHosts;
+       in
+         lib.listToAttrs (lib.mapAttrsToList (name: vhost: { name = name; value = null; }) otherVhosts);
      };
    };
  };
@@ -186,6 +193,7 @@ in
     redirectBlogVhost = {
       forceSSL = true;
       globalRedirect = "vincent.bernat.ch";
+      useACMEHost = "vincent.bernat.ch";
       extraConfig = stsWithPreload;
     };
     mediaVhost = {
@@ -252,8 +260,11 @@ in
    (vhost "www.une-oasis-une-ecole.fr" {
      forceSSL = true;
      extraConfig = sts;
+     useACMEHost = "une-oasis-une-ecole.fr";
    })
-   (vhost "media.une-oasis-une-ecole.fr" mediaVhost)
+   (vhost "media.une-oasis-une-ecole.fr" (mediaVhost // {
+     useACMEHost = "une-oasis-une-ecole.fr";
+   }))
 
    # Old website
    (vhost "luffy.cx" {
@@ -264,6 +275,7 @@ in
    (vhost "www.luffy.cx" {
      forceSSL = true;
      extraConfig = sts;
+     useACMEHost = "luffy.cx";
      locations."/wiremaps".extraConfig =
        ''
          rewrite ^ https://github.com/vincentbernat/wiremaps/archives/master permanent;
@@ -297,6 +309,8 @@ in
    (vhost "vincent.bernat.im" redirectBlogVhost)
    (vhost "bernat.im" redirectBlogVhost)
    (vhost "bernat.ch" redirectBlogVhost)
-   (vhost "media.luffy.cx" mediaVhost)
+   (vhost "media.luffy.cx" (mediaVhost // {
+     useACMEHost = "luffy.cx";
+   }))
  ];
 }
