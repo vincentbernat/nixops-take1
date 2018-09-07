@@ -7,7 +7,11 @@ let
    sameHosts = lib.mapAttrsToList (name: node: node.config.deployment.targetHost) sameNodes;
    nextNodes = lib.foldl (acc: host: if acc != [] then acc ++ [host] else
                   if host == config.deployment.targetHost then [host] else []) [] sameHosts;
-   nextNode = if (builtins.length nextNodes) > 1 then builtins.elemAt nextNodes 1 else null;
+   nextNode = if (builtins.length nextNodes) > 1 then builtins.elemAt nextNodes 1
+                                                 else let
+               first = builtins.elemAt sameHosts 0;
+              in
+               if first != config.deployment.targetHost then first else null;
  in
  { ... }: {
    # Virtualhost definition
