@@ -15,6 +15,8 @@
         # To be put manually.
       '';
   };
+  systemd.services.znc.after = [ "network-online.target" ];
+  systemd.services.znc.requires = [ "network-online.target" ];
 
   # Handle certificate
   services.nginx = {
