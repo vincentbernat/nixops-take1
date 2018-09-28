@@ -44,6 +44,10 @@ let
  };
 in
 {
+  environment.systemPackages = [
+    pkgs.goaccess
+  ];
+
   # Firewall
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
