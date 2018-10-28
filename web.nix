@@ -19,10 +19,10 @@ let
      virtualHosts."${name}" = {
        root = "/data/webserver/${name}";
        acmeFallbackHost = nextNode;
+       sslTrustedCertificate = "${config.security.acme.directory}/${name}/full.pem";
        extraConfig =
          ''
            access_log /var/log/nginx/${name}.log;
-           ssl_trusted_certificate ${config.security.acme.directory}/${name}/full.pem;
            ${attrs.extraConfig or ""}
          '';
      } // (removeAttrs attrs ["extraConfig"])
