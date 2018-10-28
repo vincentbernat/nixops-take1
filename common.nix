@@ -7,7 +7,7 @@ in {
   # Nix
   nix.gc.automatic = true;
   nix.gc.dates = "03:15";
-  system.stateVersion = "18.03";
+  system.stateVersion = "18.09";
 
   # Firewall
   networking.firewall.enable = true;
