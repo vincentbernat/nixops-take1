@@ -55,7 +55,7 @@ in
   services.nginx = {
     enable = true;
 
-    recommendedGzipSettings  = false;
+    recommendedGzipSettings  = false; # we want more stuff in gzip_types
     recommendedOptimisation  = true;
     recommendedProxySettings = true;
     recommendedTlsSettings   = true;
