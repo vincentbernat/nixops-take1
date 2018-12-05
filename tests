@@ -12,6 +12,7 @@ while read url code location; do
     echo -n "Testing $url... "
     read gcode glocation <<(curl -s -w '%{http_code} %{redirect_url}\n' -o /dev/null \
                                 --fail \
+                                --max-time 2 \
                                 --resolve '${source}:443:${host}' \
                                 --resolve '${source}:80:${host}' \
                                 $url)
