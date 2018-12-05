@@ -12,7 +12,9 @@ while read url code location; do
     echo -n "Testing $url... "
     read gcode glocation <<(curl -s -w '%{http_code} %{redirect_url}\n' -o /dev/null \
                                 --fail \
-                                --resolve '${source}:443:${host}' $url)
+                                --resolve '${source}:443:${host}' \
+                                --resolve '${source}:80:${host}' \
+                                $url)
     if [[ "$gcode $glocation" != "$code $location" ]]; then
         echo "☠️"
         echo "** $url: got $gcode${glocation:+ }$glocation, expected $code${location:+ }$location"
