@@ -7,6 +7,7 @@ in {
   # Nix
   nix.gc.automatic = true;
   nix.gc.dates = "03:15";
+  nix.gc.options = "--delete-older-than 30d";
   system.stateVersion = "18.09";
 
   # Firewall
