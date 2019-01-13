@@ -117,8 +117,9 @@ in
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent"';
         access_log /var/log/nginx/access.log anonymous;
-
+        error_log stdout crit;
       '';
+
     appendHttpConfig =
       ''
         # SSL
