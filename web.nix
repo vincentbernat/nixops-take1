@@ -22,7 +22,7 @@ let
        sslTrustedCertificate = "${config.security.acme.directory}/${name}/full.pem";
        extraConfig =
          ''
-           access_log /var/log/nginx/${name}.log;
+           access_log /var/log/nginx/${name}.log anonymous;
            ${attrs.extraConfig or ""}
          '';
      } // (removeAttrs attrs ["extraConfig"])
@@ -54,6 +54,11 @@ in
   # nginx generic configuration
   services.nginx = {
     enable = true;
+
+    # Additional modules
+    package = pkgs.nginxStable.override {
+      modules = [ pkgs.nginxModules.ipscrub ];
+    };
 
     recommendedGzipSettings  = false; # we want more stuff in gzip_types
     recommendedOptimisation  = true;
@@ -105,11 +110,17 @@ in
                                            "!DSS"];
     sslProtocols = "TLSv1 TLSv1.1 TLSv1.2";
 
-    appendHttpConfig =
+    commonHttpConfig =
       ''
         # Logs
-        access_log /var/log/nginx/access.log;
+        log_format anonymous '$remote_addr_ipscrub - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent"';
+        access_log /var/log/nginx/access.log anonymous;
 
+      '';
+    appendHttpConfig =
+      ''
         # SSL
         ssl_session_tickets off;
 
