@@ -113,6 +113,7 @@ in
     commonHttpConfig =
       ''
         # Logs
+        ipscrub_period_seconds 86400;
         log_format anonymous '$remote_addr_ipscrub - $remote_user [$time_local] '
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent"';
