@@ -55,10 +55,16 @@ in
   services.nginx = {
     enable = true;
 
-    # Additional modules
-    package = pkgs.nginxStable.override {
+    package = (pkgs.nginxStable.override {
+      # Additional modules
       modules = [ pkgs.nginxModules.ipscrub ];
-    };
+    }).overrideAttrs (oldAttrs: {
+      # Use text/javascript instead of application/javascript
+      postInstall = ''
+        ${oldAttrs.postInstall}
+        sed -i "s+application/javascript+text/javascript       +" $out/conf/mime.types
+      '';
+    });
 
     recommendedGzipSettings  = false; # we want more stuff in gzip_types
     recommendedOptimisation  = true;
