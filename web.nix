@@ -134,6 +134,7 @@ in
           application/json
           application/rss+xml
           application/xml
+          image/svg+xml
           text/css
           text/plain
           text/vcard
