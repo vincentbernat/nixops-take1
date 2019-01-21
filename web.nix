@@ -269,7 +269,10 @@ in
    (vhost "haproxy.debian.net" {
      # Make dists and pool available without encryption
      addSSL = true;
-     locations."~ ^/(dists|pool)".extraConfig = "";
+     locations."~ ^/(dists|pool)".extraConfig =
+       ''
+         autoindex on;
+       '';
      locations."/".extraConfig =
        ''
          if ($scheme = http) {
