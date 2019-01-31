@@ -23,18 +23,18 @@ while read url code location; do
         echo "👌"
     fi
 done <<EOF
-https://bernat.ch/keepalive.html 301 https://vincent.bernat.ch/keepalive.html
-https://bernat.im/keepalive.html 301 https://vincent.bernat.ch/keepalive.html
-https://vincent.bernat.im/keepalive.html 301 https://vincent.bernat.ch/keepalive.html
-http://bernat.ch/keepalive.html 301 https://bernat.ch/keepalive.html
-http://bernat.im/keepalive.html 301 https://bernat.im/keepalive.html
-http://vincent.bernat.im/keepalive.html 301 https://vincent.bernat.im/keepalive.html
-http://vincent.bernat.ch/keepalive.html 301 https://vincent.bernat.ch/keepalive.html
-https://vincent.bernat.ch/keepalive.html 200
-http://www.luffy.cx/keepalive.html 301 https://www.luffy.cx/keepalive.html
-https://www.luffy.cx/keepalive.html 301 https://vincent.bernat.ch/keepalive.html
-http://luffy.cx/keepalive.html 301 https://luffy.cx/keepalive.html
-https://luffy.cx/keepalive.html 301 https://www.luffy.cx/keepalive.html
+https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+https://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
+https://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
+http://bernat.ch/keepalive 301 https://bernat.ch/keepalive
+http://bernat.im/keepalive 301 https://bernat.im/keepalive
+http://vincent.bernat.im/keepalive 301 https://vincent.bernat.im/keepalive
+http://vincent.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+https://vincent.bernat.ch/keepalive 200
+http://www.luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
+https://www.luffy.cx/keepalive 301 https://vincent.bernat.ch/keepalive
+http://luffy.cx/keepalive 301 https://luffy.cx/keepalive
+https://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 http://media.luffy.cx/css/common.css 301 https://media.luffy.cx/css/common.css
 https://media.luffy.cx/css/common.css 200
 
