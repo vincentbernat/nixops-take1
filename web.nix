@@ -127,6 +127,10 @@ in
         error_log stdout crit;
       '';
 
+    appendConfig =
+      ''
+        pcre_jit on;
+      '';
     appendHttpConfig =
       ''
         # SSL
