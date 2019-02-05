@@ -12,7 +12,6 @@ in
 {
   network.description = "Luffy infrastructure";
   defaults = import ./common.nix;
-  web02 = web "exoscale" 2;
   web03 = web "hetzner" 3 // {
     # Static IPv6 configuration
     networking.interfaces.ens3.ipv6.addresses = [
