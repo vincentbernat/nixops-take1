@@ -140,6 +140,7 @@ in
         default_type application/octet-stream;
         charset utf-8;
         charset_types
+          application/atom+xml
           application/javascript
           application/json
           application/rss+xml
