@@ -236,6 +236,7 @@ in
           expires 30d;
           ${sts}
         '';
+      # The following resources are expected to use cache busting.
       locations."/js".extraConfig =
         ''
           expires     max;
