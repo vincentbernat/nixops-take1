@@ -296,8 +296,12 @@ in
    })
    (vhost "www.une-oasis-une-ecole.fr" {
      forceSSL = true;
-     extraConfig = sts;
      useACMEHost = "une-oasis-une-ecole.fr";
+     extraConfig =
+       ''
+         include /data/webserver/www.une-oasis-une-ecole.fr/nginx*.conf;
+         ${sts}
+       '';
    })
    (vhost "media.une-oasis-une-ecole.fr" (mediaVhost // {
      useACMEHost = "une-oasis-une-ecole.fr";
