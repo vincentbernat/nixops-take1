@@ -40,7 +40,8 @@ https://media.luffy.cx/css/common.css 200
 
 http://une-oasis-une-ecole.fr/contact.html 301 https://une-oasis-une-ecole.fr/contact.html
 https://une-oasis-une-ecole.fr/contact.html 301 https://www.une-oasis-une-ecole.fr/contact.html
-https://www.une-oasis-une-ecole.fr/contact.html 200
+https://www.une-oasis-une-ecole.fr/contact.html 301 https://www.une-oasis-une-ecole.fr/contact
+https://www.une-oasis-une-ecole.fr/contact 200
 http://media.une-oasis-une-ecole.fr/css/common.css 301 https://media.une-oasis-une-ecole.fr/css/common.css
 https://media.une-oasis-une-ecole.fr/css/common.css 200
 
