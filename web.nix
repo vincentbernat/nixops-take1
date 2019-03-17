@@ -241,19 +241,19 @@ in
         ''
           expires     max;
           add_header  Access-Control-Allow-Origin *;
-          add_header  Cache-Control immutable;
+          add_header  Cache-Control max-age=31536000,immutable;
         '';
       locations."/css".extraConfig =
         ''
           expires     max;
           add_header  Access-Control-Allow-Origin *;
-          add_header  Cache-Control immutable;
+          add_header  Cache-Control max-age=31536000,immutable;
         '';
       locations."/fonts".extraConfig =
         ''
           expires     max;
           add_header  Access-Control-Allow-Origin *;
-          add_header  Cache-Control immutable;
+          add_header  Cache-Control max-age=31536000,immutable;
           types {
             application/font-woff         woff;
             font/woff2                    woff2;
