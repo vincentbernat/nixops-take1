@@ -20,6 +20,7 @@ in {
   services.openssh = {
     enable = true;
     permitRootLogin = "prohibit-password";
+    extraConfig = "AcceptEnv LANG LC_*";
   };
 
   # Packages
