@@ -1,7 +1,7 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i sh -p nixops
 
-NIXOS_VERSION=${NIXOS_VERSION:-18.09}
+NIXOS_VERSION=${NIXOS_VERSION:-19.03}
 export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-${NIXOS_VERSION}.tar.gz
 export NIXOPS_DEPLOYMENT=luffy
 export NIXOPS_STATE=state.nixops
