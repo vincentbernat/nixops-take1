@@ -10,13 +10,10 @@
     # interface. It makes little sense to provide a complete
     # configuration here.
     mutable = true;
-    zncConf =
-      ''
+    configFile = pkgs.writeText "znc.conf" ''
         # To be put manually.
-      '';
+    '';
   };
-  systemd.services.znc.after = [ "network-online.target" ];
-  systemd.services.znc.requires = [ "network-online.target" ];
 
   # Handle certificate
   services.nginx = {
