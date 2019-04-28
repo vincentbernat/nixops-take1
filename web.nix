@@ -110,7 +110,7 @@ in
                                            "AES256-SHA"
                                            "DES-CBC3-SHA"
                                            "!DSS"];
-    sslProtocols = "TLSv1 TLSv1.1 TLSv1.2";
+    sslProtocols = "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3";
 
     commonHttpConfig =
       ''
