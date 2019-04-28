@@ -10,11 +10,12 @@ while read url code location; do
     [[ -n $url ]] || continue
     source=${${${url#http://}#https://}%%/*}
     echo -n "Testing $url... "
+    ips=$(getent ahosts ${host} | awk '($2 == "STREAM") {print $1}' | paste -s -d,)
     read gcode glocation <<(curl -s -w '%{http_code} %{redirect_url}\n' -o /dev/null \
                                 --fail \
                                 --max-time 2 \
-                                --resolve ${source}:443:${host} \
-                                --resolve ${source}:80:${host} \
+                                --resolve ${source}:443:${ips} \
+                                --resolve ${source}:80:${ips} \
                                 $url)
     if [[ "$gcode $glocation" != "$code $location" ]]; then
         echo "☠️"
