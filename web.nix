@@ -224,7 +224,7 @@ in
     sts = "add_header Strict-Transport-Security \"max-age=31557600; includeSubDomains\";";
     stsWithPreload = "add_header Strict-Transport-Security \"max-age=31557600; includeSubDomains; preload\";";
     redirectBlogVhost = {
-      forceSSL = true;
+      addSSL = true;
       globalRedirect = "vincent.bernat.ch";
       useACMEHost = "vincent.bernat.ch";
       extraConfig = stsWithPreload;
@@ -290,7 +290,7 @@ in
 
    # Une Oasis Une École
    (vhost "une-oasis-une-ecole.fr" {
-     forceSSL = true;
+     addSSL = true;
      globalRedirect = "www.une-oasis-une-ecole.fr";
      extraConfig = sts;
    })
@@ -309,7 +309,7 @@ in
 
    # Old website
    (vhost "luffy.cx" {
-     forceSSL = true;
+     addSSL = true;
      globalRedirect = "www.luffy.cx";
      extraConfig = sts;
    })

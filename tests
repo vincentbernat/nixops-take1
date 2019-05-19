@@ -26,20 +26,24 @@ while read url code location; do
 done <<EOF
 https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
+https://www.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+https://www.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
-http://bernat.ch/keepalive 301 https://bernat.ch/keepalive
-http://bernat.im/keepalive 301 https://bernat.im/keepalive
-http://vincent.bernat.im/keepalive 301 https://vincent.bernat.im/keepalive
+http://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+http://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
+http://www.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+http://www.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
+http://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://vincent.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.ch/keepalive 200
 http://www.luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://www.luffy.cx/keepalive 301 https://vincent.bernat.ch/keepalive
-http://luffy.cx/keepalive 301 https://luffy.cx/keepalive
+http://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 http://media.luffy.cx/css/common.css 301 https://media.luffy.cx/css/common.css
 https://media.luffy.cx/css/common.css 200
 
-http://une-oasis-une-ecole.fr/contact 301 https://une-oasis-une-ecole.fr/contact
+http://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://www.une-oasis-une-ecole.fr/contact 200
 http://media.une-oasis-une-ecole.fr/css/common.css 301 https://media.une-oasis-une-ecole.fr/css/common.css
