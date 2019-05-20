@@ -30,13 +30,4 @@ in
       address = "fe80::1"; interface = "ens3";
     };
   };
-  znc = server "hetzner" "znc.luffy.cx" [ ./znc.nix ] // {
-    # Static IPv6 configuration
-    networking.interfaces.ens3.ipv6.addresses = [
-      { address = "2a01:4f8:1c1c:96ca::1"; prefixLength = 64; }
-    ];
-    networking.defaultGateway6 = {
-      address = "fe80::1"; interface = "ens3";
-    };
-  };
 }
