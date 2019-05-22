@@ -36,6 +36,7 @@ http://www.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://vincent.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.ch/keepalive 200
+https://vincent.bernat.ch/$ 404
 http://www.luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://www.luffy.cx/keepalive 301 https://vincent.bernat.ch/keepalive
 http://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
