@@ -56,6 +56,8 @@ in
     enable = true;
 
     package = (pkgs.nginxStable.override {
+      # No stream module
+      withStream = false;
       # Additional modules
       modules = [ pkgs.nginxModules.ipscrub ];
     }).overrideAttrs (oldAttrs: {
