@@ -16,6 +16,7 @@ in {
   networking.firewall.rejectPackets = true;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall.extraCommands = "ip46tables -I INPUT -p tcp -m tcpmss --mss 1:500 -j DROP";
 
   # Services
   services.openssh = {
