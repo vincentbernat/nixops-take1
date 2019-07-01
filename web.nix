@@ -73,7 +73,7 @@ in
     recommendedGzipSettings  = false; # we want more stuff in gzip_types
     recommendedOptimisation  = true;
     recommendedProxySettings = true;
-    recommendedTlsSettings   = true;
+    recommendedTlsSettings   = false; # we want to turn off ssl_prefer_server_ciphers
     sslDhparam = pkgs.writeText "dhparam.pem"
       ''
       -----BEGIN DH PARAMETERS-----
@@ -94,26 +94,8 @@ in
                                            "ECDHE-ECDSA-CHACHA20-POLY1305"
                                            "ECDHE-RSA-CHACHA20-POLY1305"
                                            "DHE-RSA-AES128-GCM-SHA256"
-                                           "DHE-RSA-AES256-GCM-SHA384"
-                                           "DHE-RSA-CHACHA20-POLY1305"
-                                           "ECDHE-ECDSA-AES128-SHA256"
-                                           "ECDHE-RSA-AES128-SHA256"
-                                           "ECDHE-ECDSA-AES128-SHA"
-                                           "ECDHE-RSA-AES128-SHA"
-                                           "ECDHE-ECDSA-AES256-SHA384"
-                                           "ECDHE-RSA-AES256-SHA384"
-                                           "ECDHE-ECDSA-AES256-SHA"
-                                           "ECDHE-RSA-AES256-SHA"
-                                           "DHE-RSA-AES128-SHA256"
-                                           "DHE-RSA-AES256-SHA256"
-                                           "AES128-GCM-SHA256"
-                                           "AES256-GCM-SHA384"
-                                           "AES128-SHA256"
-                                           "AES256-SHA256"
-                                           "AES128-SHA"
-                                           "AES256-SHA"
-                                           "DES-CBC3-SHA"];
-    sslProtocols = "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3";
+                                           "DHE-RSA-AES256-GCM-SHA384"];
+    sslProtocols = "TLSv1.2 TLSv1.3";
 
     commonHttpConfig =
       ''
@@ -133,7 +115,12 @@ in
     appendHttpConfig =
       ''
         # SSL
+        ssl_session_timeout 1d;
+        ssl_session_cache shared:SSL:10m;
         ssl_session_tickets off;
+        ssl_prefer_server_ciphers off;
+        ssl_stapling on;
+        ssl_stapling_verify on;
 
         # Default charset
         default_type application/octet-stream;
