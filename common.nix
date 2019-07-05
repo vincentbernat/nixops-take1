@@ -27,11 +27,12 @@ in {
 
   # Packages
   environment.systemPackages = [
-    pkgs.zsh
     pkgs.htop
     pkgs.mg
-    pkgs.ncdu
     pkgs.mtr
+    pkgs.ncdu
+    pkgs.tmux
+    pkgs.zsh
   ];
   programs.zsh.enable = true;
 
