@@ -18,6 +18,7 @@ let
    services.nginx = {
      virtualHosts."${name}" = {
        root = "/data/webserver/${name}";
+       http2 = false;
        acmeFallbackHost = nextNode;
        sslTrustedCertificate = "${config.security.acme.directory}/${name}/full.pem";
        extraConfig =
