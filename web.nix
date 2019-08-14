@@ -68,16 +68,18 @@ in
         sed -i "s+application/javascript+text/javascript       +" $out/conf/mime.types
         sed -i "/text\/plain/ a \    text/vtt                                         vtt;" $out/conf/mime.types
       '';
-      # Patches for HTTP/2
       patches = oldAttrs.patches ++ [
+        # HTTP/2: reject zero length headers with PROTOCOL_ERROR.
         (pkgs.fetchpatch {
           url = https://github.com/nginx/nginx/commit/dbdd9ffea81d9db46fb88b5eba828f2ad080d388.patch;
           sha256 = "a481901729be3ada3ac86f200772f326ef655b3ed0f55a0b1355e16fd4698adc";
         })
+        # HTTP/2: limited number of DATA frames.
         (pkgs.fetchpatch {
           url = https://github.com/nginx/nginx/commit/94c5eb142e58a86f81eb1369fa6fcb96c2f23d6b.patch;
           sha256 = "af591ae3c711fc7c58f53ad493899f986dd5dabf3a154f9f597f3059e752c601";
         })
+        #  HTTP/2: limited number of PRIORITY frames.
         (pkgs.fetchpatch {
           url = https://github.com/nginx/nginx/commit/39bb3b9d4a33bd03c8ae0134dedc8a7700ae7b2b.patch;
           sha256 = "1ad8fecdb343d40224de0f63724a21a691c141f52274439d13eca6d53f0a9128";
