@@ -26,14 +26,8 @@ in {
   };
 
   # Packages
-  environment.systemPackages = [
-    pkgs.htop
-    pkgs.mg
-    pkgs.mtr
-    pkgs.ncdu
-    pkgs.tmux
-    pkgs.zsh
-  ];
+  environment.systemPackages =
+    [ pkgs.htop pkgs.mg pkgs.mtr pkgs.ncdu pkgs.tmux pkgs.zsh ];
   programs.zsh.enable = true;
 
   # Users
@@ -54,11 +48,10 @@ in {
   # Install my own zshrc. For some reason, the newuser function is
   # running quite early and zshenv also aborts early.
   environment.etc."zprofile.local" = {
-    text =
-      ''
-        [ -f ''${HOME}/.zshrc ] || \
-          ${pkgs.curl}/bin/curl -s https://vincentbernat-zshrc.s3.amazonaws.com/zsh-install.sh | sh
-      '';
+    text = ''
+      [ -f ''${HOME}/.zshrc ] || \
+        ${pkgs.curl}/bin/curl -s https://vincentbernat-zshrc.s3.amazonaws.com/zsh-install.sh | sh
+    '';
     mode = "0555";
   };
 }
