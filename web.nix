@@ -315,7 +315,7 @@ in {
         rewrite ^ https://github.com/vincentbernat/lldpd/archives/master permanent;
       '';
       locations."/".extraConfig = ''
-        rewrite ^ https://vincent.bernat.ch$uri permanent;
+        rewrite ^ https://vincent.bernat.ch$request_uri permanent;
       '';
     })
 
