@@ -137,12 +137,12 @@ in {
       charset utf-8;
       charset_types
         application/atom+xml
-        application/javascript
         application/json
         application/rss+xml
         application/xml
         image/svg+xml
         text/css
+        text/javascript
         text/plain
         text/vcard
         text/vtt
@@ -155,7 +155,6 @@ in {
       gzip_vary on;
       gzip_types
         application/atom+xml
-        application/javascript
         application/json
         application/ld+json
         application/manifest+json
