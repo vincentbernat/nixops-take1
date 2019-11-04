@@ -27,7 +27,7 @@ in {
 
   # Packages
   environment.systemPackages =
-    [ pkgs.htop pkgs.mg pkgs.mtr pkgs.ncdu pkgs.tmux pkgs.zsh ];
+    [ pkgs.htop pkgs.mg pkgs.mtr pkgs.ncdu pkgs.tmux ];
   programs.zsh.enable = true;
 
   # Users
