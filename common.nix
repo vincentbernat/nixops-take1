@@ -25,6 +25,10 @@ in {
     extraConfig = "AcceptEnv LANG LC_*";
   };
 
+  services.fstrim = {
+    enable = true;
+  };
+
   # Packages
   environment.systemPackages =
     [ pkgs.htop pkgs.mg pkgs.mtr pkgs.ncdu pkgs.tmux ];
