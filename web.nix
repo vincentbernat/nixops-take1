@@ -70,11 +70,7 @@ in {
       # No stream module
       withStream = false;
       # Additional modules
-      modules = [
-        pkgs.nginxModules.ipscrub
-        pkgs.nginxModules.develkit
-        pkgs.nginxModules.lua
-      ];
+      modules = [ pkgs.nginxModules.ipscrub ];
     }).overrideAttrs (oldAttrs: {
       # Use text/javascript instead of application/javascript.
       # Add text/vtt for WebVTT
@@ -128,8 +124,6 @@ in {
       pcre_jit on;
     '';
     appendHttpConfig = ''
-      lua_load_resty_core off;
-
       # SSL
       ssl_session_timeout 1d;
       ssl_session_cache shared:SSL:10m;
