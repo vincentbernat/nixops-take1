@@ -70,10 +70,7 @@ in {
       # No stream module
       withStream = false;
       # Additional modules
-      modules = [
-        pkgs.nginxModules.ipscrub
-        pkgs.nginxModules.lua
-      ];
+      modules = [ pkgs.nginxModules.ipscrub ];
     }).overrideAttrs (oldAttrs: {
       # Use text/javascript instead of application/javascript.
       # Add text/vtt for WebVTT
