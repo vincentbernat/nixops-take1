@@ -18,15 +18,14 @@ while read url code location; do
                                 --resolve ${source}:80:${ips} \
                                 $url)
     if [[ "$gcode $glocation" != "$code $location" ]]; then
-        echo "☠️"
-        echo "** $url: got $gcode${glocation:+ }$glocation, expected $code${location:+ }$location"
+        echo "☠️: $(wdiff -n =(echo $gcode${glocation:+ }$glocation) =(echo $code${location:+ }$location) | colordiff)"
     else
         echo "👌"
     fi
 done <<EOF
 https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
-https://www.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+https://www.bernat.ch/keepalive 303 https://vincent.bernat.ch/keepalive
 https://www.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
