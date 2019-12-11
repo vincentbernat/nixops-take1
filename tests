@@ -25,7 +25,7 @@ while read url code location; do
 done <<EOF
 https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
-https://www.bernat.ch/keepalive 303 https://vincent.bernat.ch/keepalive
+https://www.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://www.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
