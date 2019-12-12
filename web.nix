@@ -256,6 +256,9 @@ in {
         expires 1d;
         add_header Access-Control-Allow-Origin *;
       '';
+      locations."/images".extraConfig = ''
+        add_header Access-Control-Allow-Origin *;
+      '';
     };
   in [
 
