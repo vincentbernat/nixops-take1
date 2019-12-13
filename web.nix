@@ -213,6 +213,9 @@ in {
 
   # Virtual hosts
   imports = let
+    cors = ''
+      add_header  Access-Control-Allow-Origin *;
+    '';
     sts = ''
       add_header Strict-Transport-Security "max-age=31557600; includeSubDomains";'';
     stsWithPreload = ''
@@ -232,18 +235,21 @@ in {
       # The following resources are expected to use cache busting.
       locations."/js".extraConfig = ''
         expires     max;
-        add_header  Access-Control-Allow-Origin *;
         add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
       '';
       locations."/css".extraConfig = ''
         expires     max;
-        add_header  Access-Control-Allow-Origin *;
         add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
       '';
       locations."/fonts".extraConfig = ''
         expires     max;
-        add_header  Access-Control-Allow-Origin *;
         add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
         types {
           application/font-woff         woff;
           font/woff2                    woff2;
@@ -254,10 +260,12 @@ in {
       locations."/files".extraConfig = "expires 1d;";
       locations."/videos".extraConfig = ''
         expires 1d;
-        add_header Access-Control-Allow-Origin *;
+        ${cors}
+        ${sts}
       '';
       locations."/images".extraConfig = ''
-        add_header Access-Control-Allow-Origin *;
+        ${cors}
+        ${sts}
       '';
     };
   in [
