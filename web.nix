@@ -178,7 +178,8 @@ in {
     '';
   };
 
-  # Reload/restart logic
+  # Reload/restart logic. This could be enhanced once we have
+  # https://github.com/systemd/systemd/issues/13284
   services.nginx.enableReload = true;
   systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
   systemd.services.nginx.serviceConfig.TimeoutStopSec = "30s";
