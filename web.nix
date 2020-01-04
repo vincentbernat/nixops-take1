@@ -81,8 +81,6 @@ in {
       '';
     });
 
-    enableReload = true;
-
     recommendedGzipSettings = false; # we want more stuff in gzip_types
     recommendedOptimisation = true;
     recommendedProxySettings = true;
@@ -179,6 +177,11 @@ in {
         text/xml;
     '';
   };
+
+  # Reload/restart logic
+  services.nginx.enableReload = true;
+  systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
+  systemd.services.nginx.serviceConfig.TimeoutStopSec = "30s";
 
   # Logs
   systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
