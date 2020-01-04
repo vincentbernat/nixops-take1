@@ -81,6 +81,8 @@ in {
       '';
     });
 
+    enableReload = true;
+
     recommendedGzipSettings = false; # we want more stuff in gzip_types
     recommendedOptimisation = true;
     recommendedProxySettings = true;
