@@ -182,7 +182,7 @@ in {
   # https://github.com/systemd/systemd/issues/13284
   services.nginx.enableReload = true;
   systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
-  systemd.services.nginx.serviceConfig.TimeoutStopSec = "30s";
+  systemd.services.nginx.serviceConfig.TimeoutStopSec = "120s";
 
   # Logs
   systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
