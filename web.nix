@@ -162,6 +162,7 @@ in {
         application/vnd.apple.mpegurl
         application/vnd.geo+json
         application/vnd.ms-fontobject
+        application/wasm
         application/x-font-ttf
         application/x-web-app-manifest+json
         application/xhtml+xml
