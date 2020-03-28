@@ -9,6 +9,7 @@ let
     server hardware "web${lib.fixedWidthNumber 2 idx}.luffy.cx" [ ./web.nix ];
 in {
   network.description = "Luffy infrastructure";
+  network.enableRollback = true;
   defaults = import ./common.nix;
   web03 = web "hetzner" 3 // {
     # Static IPv6 configuration
