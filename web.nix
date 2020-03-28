@@ -54,6 +54,137 @@ let
           };
         };
     };
+  vhosts = let
+    cors = ''
+      add_header  Access-Control-Allow-Origin *;
+    '';
+    sts = ''
+      add_header Strict-Transport-Security "max-age=31557600; includeSubDomains";'';
+    stsWithPreload = ''
+      add_header Strict-Transport-Security "max-age=31557600; includeSubDomains; preload";'';
+    redirectBlogVhost = {
+      addSSL = true;
+      globalRedirect = "vincent.bernat.ch";
+      useACMEHost = "vincent.bernat.ch";
+      extraConfig = stsWithPreload;
+    };
+    mediaVhost = {
+      forceSSL = true;
+      extraConfig = ''
+        expires 30d;
+        ${sts}
+      '';
+      # The following resources are expected to use cache busting.
+      locations."/js".extraConfig = ''
+        expires     max;
+        add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
+      '';
+      locations."/css".extraConfig = ''
+        expires     max;
+        add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
+      '';
+      locations."/fonts".extraConfig = ''
+        expires     max;
+        add_header  Cache-Control max-age=31536000,immutable;
+        ${cors}
+        ${sts}
+        types {
+          application/font-woff         woff;
+          font/woff2                    woff2;
+          application/x-font-truetype   ttf;
+        }
+      '';
+      locations."= /favicon.ico".extraConfig = "expires 60d;";
+      locations."/files".extraConfig = "expires 1d;";
+      locations."/videos".extraConfig = ''
+        expires 1d;
+        ${cors}
+        ${sts}
+      '';
+      locations."/images".extraConfig = ''
+        ${cors}
+        ${sts}
+      '';
+    };
+  in [
+
+    # HAProxy
+    (vhost "haproxy.debian.net" {
+      # Make dists and pool available without encryption
+      addSSL = true;
+      locations."~ ^/(dists|pool)".extraConfig = ''
+        autoindex on;
+      '';
+      locations."/".extraConfig = ''
+        if ($scheme = http) {
+          # Safe usage of if-in-location
+          return 301 https://$host$request_uri;
+        }
+      '';
+    })
+
+    # Une Oasis Une École
+    (vhost "une-oasis-une-ecole.fr" {
+      addSSL = true;
+      globalRedirect = "www.une-oasis-une-ecole.fr";
+      extraConfig = sts;
+    })
+    (vhost "www.une-oasis-une-ecole.fr" {
+      forceSSL = true;
+      useACMEHost = "une-oasis-une-ecole.fr";
+      extraConfig = ''
+        include /data/webserver/www.une-oasis-une-ecole.fr/nginx*.conf;
+        ${sts}
+      '';
+    })
+    (vhost "media.une-oasis-une-ecole.fr"
+      (mediaVhost // { useACMEHost = "une-oasis-une-ecole.fr"; }))
+
+    # Old website
+    (vhost "luffy.cx" {
+      addSSL = true;
+      globalRedirect = "www.luffy.cx";
+      extraConfig = sts;
+    })
+    (vhost "www.luffy.cx" {
+      forceSSL = true;
+      extraConfig = sts;
+      useACMEHost = "luffy.cx";
+      locations."/wiremaps".extraConfig = ''
+        rewrite ^ https://github.com/vincentbernat/wiremaps/archives/master permanent;
+      '';
+      locations."/udpproxy".extraConfig = ''
+        rewrite ^ https://github.com/vincentbernat/udpproxy/archives/master permanent;
+      '';
+      locations."/snimpy".extraConfig = ''
+        rewrite ^ https://github.com/vincentbernat/snimpy/archives/master permanent;
+      '';
+      locations."/lldpd".extraConfig = ''
+        rewrite ^ https://github.com/vincentbernat/lldpd/archives/master permanent;
+      '';
+      locations."/".extraConfig = ''
+        rewrite ^ https://vincent.bernat.ch$request_uri permanent;
+      '';
+    })
+
+    # Blog
+    (vhost "vincent.bernat.ch" {
+      forceSSL = true;
+      extraConfig = ''
+        include /data/webserver/vincent.bernat.ch/nginx*.conf;
+      '';
+    })
+    (vhost "vincent.bernat.im" redirectBlogVhost)
+    (vhost "bernat.im" redirectBlogVhost)
+    (vhost "bernat.ch" redirectBlogVhost)
+    (vhost "www.bernat.im" redirectBlogVhost)
+    (vhost "www.bernat.ch" redirectBlogVhost)
+    (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
+  ];
 in {
   # Firewall
   networking.firewall.allowedTCPPorts = [ 80 443 ];
@@ -192,135 +323,5 @@ in {
   '';
 
   # Virtual hosts
-  imports = let
-    cors = ''
-      add_header  Access-Control-Allow-Origin *;
-    '';
-    sts = ''
-      add_header Strict-Transport-Security "max-age=31557600; includeSubDomains";'';
-    stsWithPreload = ''
-      add_header Strict-Transport-Security "max-age=31557600; includeSubDomains; preload";'';
-    redirectBlogVhost = {
-      addSSL = true;
-      globalRedirect = "vincent.bernat.ch";
-      useACMEHost = "vincent.bernat.ch";
-      extraConfig = stsWithPreload;
-    };
-    mediaVhost = {
-      forceSSL = true;
-      extraConfig = ''
-        expires 30d;
-        ${sts}
-      '';
-      # The following resources are expected to use cache busting.
-      locations."/js".extraConfig = ''
-        expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
-        ${cors}
-        ${sts}
-      '';
-      locations."/css".extraConfig = ''
-        expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
-        ${cors}
-        ${sts}
-      '';
-      locations."/fonts".extraConfig = ''
-        expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
-        ${cors}
-        ${sts}
-        types {
-          application/font-woff         woff;
-          font/woff2                    woff2;
-          application/x-font-truetype   ttf;
-        }
-      '';
-      locations."= /favicon.ico".extraConfig = "expires 60d;";
-      locations."/files".extraConfig = "expires 1d;";
-      locations."/videos".extraConfig = ''
-        expires 1d;
-        ${cors}
-        ${sts}
-      '';
-      locations."/images".extraConfig = ''
-        ${cors}
-        ${sts}
-      '';
-    };
-  in [
-
-    # HAProxy
-    (vhost "haproxy.debian.net" {
-      # Make dists and pool available without encryption
-      addSSL = true;
-      locations."~ ^/(dists|pool)".extraConfig = ''
-        autoindex on;
-      '';
-      locations."/".extraConfig = ''
-        if ($scheme = http) {
-          # Safe usage of if-in-location
-          return 301 https://$host$request_uri;
-        }
-      '';
-    })
-
-    # Une Oasis Une École
-    (vhost "une-oasis-une-ecole.fr" {
-      addSSL = true;
-      globalRedirect = "www.une-oasis-une-ecole.fr";
-      extraConfig = sts;
-    })
-    (vhost "www.une-oasis-une-ecole.fr" {
-      forceSSL = true;
-      useACMEHost = "une-oasis-une-ecole.fr";
-      extraConfig = ''
-        include /data/webserver/www.une-oasis-une-ecole.fr/nginx*.conf;
-        ${sts}
-      '';
-    })
-    (vhost "media.une-oasis-une-ecole.fr"
-      (mediaVhost // { useACMEHost = "une-oasis-une-ecole.fr"; }))
-
-    # Old website
-    (vhost "luffy.cx" {
-      addSSL = true;
-      globalRedirect = "www.luffy.cx";
-      extraConfig = sts;
-    })
-    (vhost "www.luffy.cx" {
-      forceSSL = true;
-      extraConfig = sts;
-      useACMEHost = "luffy.cx";
-      locations."/wiremaps".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/wiremaps/archives/master permanent;
-      '';
-      locations."/udpproxy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/udpproxy/archives/master permanent;
-      '';
-      locations."/snimpy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/snimpy/archives/master permanent;
-      '';
-      locations."/lldpd".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/lldpd/archives/master permanent;
-      '';
-      locations."/".extraConfig = ''
-        rewrite ^ https://vincent.bernat.ch$request_uri permanent;
-      '';
-    })
-
-    # Blog
-    (vhost "vincent.bernat.ch" {
-      forceSSL = true;
-      extraConfig = ''
-        include /data/webserver/vincent.bernat.ch/nginx*.conf;
-      '';
-    })
-    (vhost "vincent.bernat.im" redirectBlogVhost)
-    (vhost "bernat.im" redirectBlogVhost)
-    (vhost "bernat.ch" redirectBlogVhost)
-    (vhost "www.bernat.im" redirectBlogVhost)
-    (vhost "www.bernat.ch" redirectBlogVhost)
-    (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
-  ];
+  imports = vhosts;
 }
