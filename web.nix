@@ -62,6 +62,9 @@ in {
   boot.kernelModules = [ "tcp_bbr" ];
   boot.kernel.sysctl."net.ipv4.tcp_congestion_control" = "bbr";
 
+  # Let's Encrypt, accept ToS
+  security.acme.acceptTerms = true;
+
   # nginx generic configuration
   services.nginx = {
     enable = true;
