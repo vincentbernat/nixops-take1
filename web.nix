@@ -74,14 +74,6 @@ in {
       withStream = false;
       # Additional modules
       modules = [ pkgs.nginxModules.ipscrub ];
-    }).overrideAttrs (oldAttrs: {
-      # Use text/javascript instead of application/javascript.
-      # Add text/vtt for WebVTT
-      postInstall = ''
-        ${oldAttrs.postInstall}
-        sed -i "s+application/javascript+text/javascript       +" $out/conf/mime.types
-        sed -i "/text\/plain/ a \    text/vtt                                         vtt;" $out/conf/mime.types
-      '';
     });
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types

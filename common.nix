@@ -11,6 +11,9 @@ in {
   # no need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "18.09";
 
+  # Overlay
+  nixpkgs.overlays = [ (import ./overlay.nix) ];
+
   # Firewall
   networking.firewall.enable = true;
   networking.firewall.rejectPackets = true;
