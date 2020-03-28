@@ -323,5 +323,6 @@ in {
   '';
 
   # Virtual hosts
-  imports = vhosts;
+  imports = vhosts ++ [ ./modules/nginx.nix ];
+  disabledModules = [ "services/web-servers/nginx/default.nix" ];
 }
