@@ -42,7 +42,7 @@ in {
       isNormalUser = true;
       home = "/home/bernat";
       description = "Vincent Bernat";
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" "nginx" ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = sshKeys;
     };
