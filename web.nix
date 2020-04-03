@@ -54,172 +54,7 @@ let
           };
         };
     };
-in {
-  # Firewall
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
-
-  # Use BBR
-  boot.kernelModules = [ "tcp_bbr" ];
-  boot.kernel.sysctl."net.ipv4.tcp_congestion_control" = "bbr";
-
-  # nginx generic configuration
-  services.nginx = {
-    enable = true;
-
-    package = (pkgs.nginxStable.override {
-      # No stream module
-      withStream = false;
-      # Additional modules
-      modules = [ pkgs.nginxModules.ipscrub ];
-    }).overrideAttrs (oldAttrs: {
-      # Use text/javascript instead of application/javascript.
-      # Add text/vtt for WebVTT
-      postInstall = ''
-        ${oldAttrs.postInstall}
-        sed -i "s+application/javascript+text/javascript       +" $out/conf/mime.types
-        sed -i "/text\/plain/ a \    text/vtt                                         vtt;" $out/conf/mime.types
-      '';
-    });
-
-    recommendedGzipSettings = false; # we want more stuff in gzip_types
-    recommendedOptimisation = true;
-    recommendedProxySettings = true;
-    recommendedTlsSettings =
-      false; # we want to turn off ssl_prefer_server_ciphers
-    sslDhparam = pkgs.writeText "dhparam.pem" ''
-      -----BEGIN DH PARAMETERS-----
-      MIIBCAKCAQEA9MKu+OBtsJcYjeYMa8Y855WbHfQ5A2cCH7paxS5ildmZSBhxiNAP
-      y/bBCtaeAXFzJGojRtuPxoEQZS45h1ZcMHLG+QV7VWoJLv6EUWy2/snpLuTXPbeZ
-      B6/I2uNY/px8NOx+RObmQ92PUBsBQjJrmSShjFqGqC5vuNjenPh0NXTFqoVDb+ZP
-      OhsHnSuYWyphsegz6W7oEg3zzxq8n9cGjTLqoq3+KRYwq8Nalc1e6u540jm/kYAu
-      G4izxejVfu0gw2/86QNNA4V1BJSSkKek7IczFVaRmUMBiiGz1LJVNolvVPcPoL4X
-      vEQ5XXZQL17b3umXUao8M+MPH6cvrXfCAwIBAg==
-      -----END DH PARAMETERS-----
-    '';
-
-    # From https://mozilla.github.io/server-side-tls/ssl-config-generator/, intermediate level
-    sslCiphers = lib.concatStringsSep ":" [
-      "ECDHE-ECDSA-AES128-GCM-SHA256"
-      "ECDHE-RSA-AES128-GCM-SHA256"
-      "ECDHE-ECDSA-AES256-GCM-SHA384"
-      "ECDHE-RSA-AES256-GCM-SHA384"
-      "ECDHE-ECDSA-CHACHA20-POLY1305"
-      "ECDHE-RSA-CHACHA20-POLY1305"
-      "DHE-RSA-AES128-GCM-SHA256"
-      "DHE-RSA-AES256-GCM-SHA384"
-    ];
-    sslProtocols = "TLSv1.2 TLSv1.3";
-
-    commonHttpConfig = ''
-      # Logs
-      ipscrub_period_seconds 86400;
-      log_format anonymous '$remote_addr_ipscrub $ssl_cipher:$ssl_protocol $remote_user [$time_local] '
-                  '"$request" $status $body_bytes_sent '
-                  '"$http_referer" "$http_user_agent"';
-      access_log /var/log/nginx/access.log anonymous;
-      error_log stdout crit;
-    '';
-
-    appendConfig = ''
-      pcre_jit on;
-    '';
-    appendHttpConfig = ''
-      # SSL
-      ssl_session_timeout 1d;
-      ssl_session_cache shared:SSL:10m;
-      ssl_session_tickets off;
-      ssl_prefer_server_ciphers off;
-      ssl_stapling on;
-      ssl_stapling_verify on;
-
-      # Default charset
-      default_type application/octet-stream;
-      charset utf-8;
-      charset_types
-        application/atom+xml
-        application/json
-        application/rss+xml
-        application/xml
-        image/svg+xml
-        text/css
-        text/javascript
-        text/plain
-        text/vcard
-        text/vtt
-        text/xml;
-
-      # Enable gzip compression
-      gzip on;
-      gzip_proxied any;
-      gzip_comp_level 5;
-      gzip_vary on;
-      gzip_types
-        application/atom+xml
-        application/json
-        application/ld+json
-        application/manifest+json
-        application/rss+xml
-        application/vnd.apple.mpegurl
-        application/vnd.geo+json
-        application/vnd.ms-fontobject
-        application/wasm
-        application/x-font-ttf
-        application/x-web-app-manifest+json
-        application/xhtml+xml
-        application/xml
-        font/opentype
-        image/svg+xml
-        text/cache-manifest
-        text/css
-        text/javascript
-        text/plain
-        text/vcard
-        text/vtt
-        text/xml;
-    '';
-  };
-
-  # Reload/restart logic. This could be enhanced once we have
-  # https://github.com/systemd/systemd/issues/13284
-  services.nginx.enableReload = true;
-  systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
-  systemd.services.nginx.serviceConfig.TimeoutStopSec = "120s";
-
-  # Logs
-  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
-  services.logrotate = {
-    enable = true;
-    config = let path = "/var/log/nginx/*.log";
-    in ''
-      ${path} {
-        daily
-        missingok
-        rotate 30
-        compress
-        delaycompress
-        notifempty
-        create 0640 ${config.services.nginx.user} wheel
-        sharedscripts
-        postrotate
-          systemctl reload nginx
-        endscript
-      }
-    '';
-  };
-
-  # Create root directories for vhost. They are not pure yet.
-  system.activationScripts.nginxRoots = let
-    nginxRoots = lib.mapAttrsToList (vhost: config: config.root)
-      config.services.nginx.virtualHosts;
-  in ''
-    for d in ${builtins.concatStringsSep " " nginxRoots}; do
-      mkdir -p ''${d}
-      chown bernat:nginx ''${d}
-    done
-  '';
-
-  # Virtual hosts
-  imports = let
+  vhosts = let
     cors = ''
       add_header  Access-Control-Allow-Origin *;
     '';
@@ -350,4 +185,144 @@ in {
     (vhost "www.bernat.ch" redirectBlogVhost)
     (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
   ];
+in {
+  # Firewall
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
+
+  # Use BBR
+  boot.kernelModules = [ "tcp_bbr" ];
+  boot.kernel.sysctl."net.ipv4.tcp_congestion_control" = "bbr";
+
+  # Let's Encrypt, accept ToS
+  security.acme.acceptTerms = true;
+
+  # nginx generic configuration
+  services.nginx = {
+    enable = true;
+
+    package = (pkgs.nginxStable.override {
+      # No stream module
+      withStream = false;
+      # Additional modules
+      modules = [ pkgs.nginxModules.ipscrub ];
+    });
+
+    recommendedGzipSettings = false; # we want more stuff in gzip_types
+    recommendedOptimisation = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    sslDhparam = pkgs.writeText "dhparam.pem" ''
+      -----BEGIN DH PARAMETERS-----
+      MIIBCAKCAQEA9MKu+OBtsJcYjeYMa8Y855WbHfQ5A2cCH7paxS5ildmZSBhxiNAP
+      y/bBCtaeAXFzJGojRtuPxoEQZS45h1ZcMHLG+QV7VWoJLv6EUWy2/snpLuTXPbeZ
+      B6/I2uNY/px8NOx+RObmQ92PUBsBQjJrmSShjFqGqC5vuNjenPh0NXTFqoVDb+ZP
+      OhsHnSuYWyphsegz6W7oEg3zzxq8n9cGjTLqoq3+KRYwq8Nalc1e6u540jm/kYAu
+      G4izxejVfu0gw2/86QNNA4V1BJSSkKek7IczFVaRmUMBiiGz1LJVNolvVPcPoL4X
+      vEQ5XXZQL17b3umXUao8M+MPH6cvrXfCAwIBAg==
+      -----END DH PARAMETERS-----
+    '';
+
+    commonHttpConfig = ''
+      # Logs
+      ipscrub_period_seconds 86400;
+      log_format anonymous '$remote_addr_ipscrub $ssl_cipher:$ssl_protocol $remote_user [$time_local] '
+                  '"$request" $status $body_bytes_sent '
+                  '"$http_referer" "$http_user_agent"';
+      access_log /var/log/nginx/access.log anonymous;
+      error_log stdout crit;
+    '';
+
+    appendConfig = ''
+      pcre_jit on;
+    '';
+    appendHttpConfig = ''
+      # Default charset
+      default_type application/octet-stream;
+      charset utf-8;
+      charset_types
+        application/atom+xml
+        application/json
+        application/rss+xml
+        application/xml
+        image/svg+xml
+        text/css
+        text/javascript
+        text/plain
+        text/vcard
+        text/vtt
+        text/xml;
+
+      # Enable gzip compression
+      gzip on;
+      gzip_proxied any;
+      gzip_comp_level 5;
+      gzip_vary on;
+      gzip_types
+        application/atom+xml
+        application/json
+        application/ld+json
+        application/manifest+json
+        application/rss+xml
+        application/vnd.apple.mpegurl
+        application/vnd.geo+json
+        application/vnd.ms-fontobject
+        application/wasm
+        application/x-font-ttf
+        application/x-web-app-manifest+json
+        application/xhtml+xml
+        application/xml
+        font/opentype
+        image/svg+xml
+        text/cache-manifest
+        text/css
+        text/javascript
+        text/plain
+        text/vcard
+        text/vtt
+        text/xml;
+    '';
+  };
+
+  # Reload/restart logic. This could be enhanced once we have
+  # https://github.com/systemd/systemd/issues/13284
+  services.nginx.enableReload = true;
+  systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
+  systemd.services.nginx.serviceConfig.TimeoutStopSec = "120s";
+
+  # Logs
+  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
+  services.logrotate = {
+    enable = true;
+    config = let path = "/var/log/nginx/*.log";
+    in ''
+      ${path} {
+        daily
+        missingok
+        rotate 30
+        compress
+        delaycompress
+        notifempty
+        create 0640 ${config.services.nginx.user} wheel
+        sharedscripts
+        postrotate
+          systemctl reload nginx
+        endscript
+      }
+    '';
+  };
+
+  # Create root directories for vhost. They are not pure yet.
+  system.activationScripts.nginxRoots = let
+    nginxRoots = lib.mapAttrsToList (vhost: config: config.root)
+      config.services.nginx.virtualHosts;
+  in ''
+    for d in ${builtins.concatStringsSep " " nginxRoots}; do
+      mkdir -p ''${d}
+      chown bernat:nginx ''${d}
+    done
+  '';
+
+  # Virtual hosts
+  imports = vhosts ++ [ ./modules/nginx.nix ];
+  disabledModules = [ "services/web-servers/nginx/default.nix" ];
 }
