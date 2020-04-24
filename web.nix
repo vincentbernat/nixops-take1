@@ -201,6 +201,15 @@ in {
     enable = true;
 
     package = (pkgs.nginxStable.override {
+      # Recent OpenSSL
+      openssl = pkgs.openssl.overrideDerivation(oldAttrs: rec {
+        name = "openssl-${version}";
+        version = "1.1.1g";
+        src = pkgs.fetchurl {
+          url = "https://www.openssl.org/source/${name}.tar.gz";
+          sha256 = "0ikdcc038i7jk8h7asq5xcn8b1xc2rrbc88yfm4hqbz3y5s4gc6x";
+        };
+      });
       # No stream module
       withStream = false;
       # Additional modules
