@@ -6,11 +6,13 @@ shift 2> /dev/null || {
     exit 1
 }
 
+count=0
+total=0
 while read url code location; do
     [[ -n $url ]] || continue
     source=${${${url#http://}#https://}%%/*}
     echo -n "Testing $url... "
-    read gcode glocation <<(curl -s -w '%{http_code} %{redirect_url}\n' -o /dev/null \
+    read seconds gcode glocation <<(curl -s -w '%{time_total} %{http_code} %{redirect_url}\n' -o /dev/null \
                                 --fail \
                                 --max-time 2 \
                                 --connect-to ${source}:443:$host:443 \
@@ -19,7 +21,8 @@ while read url code location; do
     if [[ "$gcode $glocation" != "$code $location" ]]; then
         echo "☠️: $(wdiff -n =(echo $gcode${glocation:+ }$glocation) =(echo $code${location:+ }$location) | colordiff)"
     else
-        echo "👌"
+        ((count+=1,total+=seconds))
+        echo "👌 ($((~~(seconds*1000)))ms)"
     fi
 done <<EOF
 https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
@@ -53,3 +56,4 @@ https://haproxy.debian.net/haproxy.css 200
 http://haproxy.debian.net/dists/stretch-backports-1.9/Release 200
 https://haproxy.debian.net/dists/stretch-backports-1.9/Release 200
 EOF
+echo "Average response time: $((~~(total*1000/count)))ms"
