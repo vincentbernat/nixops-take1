@@ -30,8 +30,14 @@ in {
   };
 
   # Packages
-  environment.systemPackages =
-    [ pkgs.htop pkgs.mg pkgs.mtr pkgs.ncdu pkgs.tmux ];
+  environment.systemPackages = with pkgs;
+    [
+      htop
+      mg
+      mtr
+      ncdu
+      tmux
+    ];
   programs.zsh.enable = true;
 
   # Users
