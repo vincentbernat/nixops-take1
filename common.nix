@@ -32,6 +32,7 @@ in {
   # Packages
   environment.systemPackages = with pkgs;
     [
+      bat
       htop
       mg
       mtr
