@@ -13,6 +13,7 @@ let
                       sed -i -e "/^application\/javascript[ \t]/d" \
                              -e "1a text/javascript js;" \
                              -e "1a text/vtt        vtt;" \
+                             -e "1a image/avif      avif;" \
                           $out/etc/nginx/mime.types
                       '';
         } // removeAttrs args [ "postFetch" "sha256" ]);
