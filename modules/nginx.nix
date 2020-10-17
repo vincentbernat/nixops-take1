@@ -7,7 +7,7 @@ let
     mailcap = pkgs.mailcap.override {
       fetchzip = { ... } @ args:
         pkgs.fetchzip ({
-          sha256 = "06yzyk8gxa12z0dbxsi8fphspi9mwmccy37n2kgxhf3p94rjyds6";
+          sha256 = "0mdgssikjb12sw4ll3y8n64w17prhwbq5sj3acffqyxpqmb3x500";
           postFetch = ''
                       ${args.postFetch}
                       sed -i -e "/^application\/javascript[ \t]/d" \
