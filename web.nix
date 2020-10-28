@@ -44,13 +44,10 @@ let
           certs."${name}" = {
             email =
               lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
-            extraDomains = let
+            extraDomainNames = let
               otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
                 config.services.nginx.virtualHosts;
-            in lib.listToAttrs (lib.mapAttrsToList (name: vhost: {
-              name = name;
-              value = null;
-            }) otherVhosts);
+            in lib.mapAttrsToList (name: vhost: name) otherVhosts;
           };
         };
     };
@@ -229,7 +226,6 @@ in {
                   '"$request" $status $body_bytes_sent '
                   '"$http_referer" "$http_user_agent"';
       access_log /var/log/nginx/access.log anonymous;
-      error_log stdout crit;
     '';
 
     appendConfig = ''
@@ -290,10 +286,9 @@ in {
   systemd.services.nginx.serviceConfig.TimeoutStopSec = "120s";
 
   # Logs
-  systemd.services.nginx.serviceConfig.LogsDirectory = "nginx";
   services.logrotate = {
     enable = true;
-    config = let path = "/var/log/nginx/*.log";
+    extraConfig = let path = "/var/log/nginx/*.log";
     in ''
       ${path} {
         daily

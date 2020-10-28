@@ -1,12 +1,13 @@
 let
   lib = import <nixpkgs/lib>;
   server = hardware: name: imports: {
-    deployment.targetHost = name;
+    deployment.targetHost = "${name}.luffy.cx";
     networking.hostName = name;
+    networking.domain = "luffy.cx";
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
   web = hardware: idx:
-    server hardware "web${lib.fixedWidthNumber 2 idx}.luffy.cx" [ ./web.nix ];
+    server hardware "web${lib.fixedWidthNumber 2 idx}" [ ./web.nix ];
 in {
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
