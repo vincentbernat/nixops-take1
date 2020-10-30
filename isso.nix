@@ -120,6 +120,8 @@ in {
   # Nginx vhost
   services.nginx.virtualHosts."comments.luffy.cx" = {
     root = "/data/webserver/comments.luffy.cx";
+    enableACME = true;
+    forceSSL = true;
     extraConfig = ''
       access_log /var/log/nginx/comments.luffy.cx.log anonymous;
     '';
@@ -135,5 +137,8 @@ in {
         add_header Strict-Transport-Security "max-age=31536000" always;
       '';
     };
+  };
+  security.acme.certs."comments.luffy.cx" = {
+    email = lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
   };
 }
