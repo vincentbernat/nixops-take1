@@ -6,13 +6,13 @@ let
     networking.domain = "luffy.cx";
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
-  web = hardware: idx:
-    server hardware "web${lib.fixedWidthNumber 2 idx}" [ ./web.nix ];
+  web = hardware: idx: imports:
+    server hardware "web${lib.fixedWidthNumber 2 idx}" ([ ./web.nix ] ++ imports);
 in {
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
   defaults = import ./common.nix;
-  web03 = web "hetzner" 3 // {
+  web03 = web "hetzner" 3 [ ./isso.nix ] // {
     # Static IPv6 configuration
     networking.interfaces.ens3.ipv6.addresses = [{
       address = "2a01:4f9:c010:1a9c::1";
@@ -23,7 +23,7 @@ in {
       interface = "ens3";
     };
   };
-  web04 = web "hetzner" 4 // {
+  web04 = web "hetzner" 4 [] // {
     # Static IPv6 configuration
     networking.interfaces.ens3.ipv6.addresses = [{
       address = "2a01:4f8:1c0c:5eb5::1";
