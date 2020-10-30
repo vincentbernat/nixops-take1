@@ -37,6 +37,7 @@ allowed-attributes = href
 salt = ${secrets.salt}
         '';
   # Custom package for Isso, as the one in NixOS is currently broken
+  port = "8080";
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
     pname = "isso";
     version = "custom";
@@ -77,6 +78,7 @@ salt = ${secrets.salt}
       ];
   };
 in {
+  # Container
   virtualisation.oci-containers = {
     backend = "podman";
     containers = {
@@ -94,7 +96,7 @@ in {
           config = {
             Cmd = [ "${issoEnv}/bin/gunicorn"
                     "--name" "isso"
-                    "--bind" "0.0.0.0:8080"
+                    "--bind" "0.0.0.0:${port}"
                     "--worker-class" "gevent"
                     "--workers" "2"
                     "--worker-tmp-dir" "/dev/shm"
@@ -107,11 +109,31 @@ in {
             ];
           };
         };
-        ports = ["127.0.0.1:8080:8080"];
+        ports = ["127.0.0.1:${port}:${port}"];
         volumes = [
           "/var/db/isso:/db"
         ];
       };
+    };
+  };
+
+  # Nginx vhost
+  services.nginx.virtualHosts."comments.luffy.cx" = {
+    root = "/data/webserver/comments.luffy.cx";
+    extraConfig = ''
+      access_log /var/log/nginx/comments.luffy.cx.log anonymous;
+    '';
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${port}";
+      extraConfig = ''
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header X-Set-Cookie;
+        proxy_ignore_headers Set-Cookie;
+        add_header Strict-Transport-Security "max-age=31536000" always;
+      '';
     };
   };
 }

@@ -45,6 +45,9 @@ https://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 http://media.luffy.cx/css/common.css 301 https://media.luffy.cx/css/common.css
 https://media.luffy.cx/css/common.css 200
 
+http://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5 200
+http://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5 404
+
 http://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://www.une-oasis-une-ecole.fr/contact 200
