@@ -77,6 +77,31 @@ salt = ${secrets.salt}
         pkgs.python3Packages.gevent
       ];
   };
+  issoDockerImage = pkgs.dockerTools.buildImage {
+    name = "isso";
+    tag = "latest";
+    contents = [
+      issoPackage
+    ];
+    runAsRoot = ''
+            mkdir -p /db
+          '';
+    config = {
+      Cmd = [ "${issoEnv}/bin/gunicorn"
+              "--name" "isso"
+              "--bind" "0.0.0.0:${port}"
+              "--worker-class" "gevent"
+              "--workers" "2"
+              "--worker-tmp-dir" "/dev/shm"
+              "--preload"
+              "isso.run"
+            ];
+      Env = [
+        "ISSO_SETTINGS=${issoConfig}"
+        "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+      ];
+    };
+  };
 in {
   # Container
   virtualisation.oci-containers = {
@@ -84,31 +109,7 @@ in {
     containers = {
       isso = {
         image = "isso";
-        imageFile = pkgs.dockerTools.buildImage {
-          name = "isso";
-          tag = "latest";
-          contents = [
-            issoPackage
-          ];
-          runAsRoot = ''
-            mkdir -p /db
-          '';
-          config = {
-            Cmd = [ "${issoEnv}/bin/gunicorn"
-                    "--name" "isso"
-                    "--bind" "0.0.0.0:${port}"
-                    "--worker-class" "gevent"
-                    "--workers" "2"
-                    "--worker-tmp-dir" "/dev/shm"
-                    "--preload"
-                    "isso.run"
-                  ];
-            Env = [
-              "ISSO_SETTINGS=${issoConfig}"
-              "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
-            ];
-          };
-        };
+        imageFile = issoDockerImage;
         ports = ["127.0.0.1:${port}:${port}"];
         volumes = [
           "/var/db/isso:/db"
