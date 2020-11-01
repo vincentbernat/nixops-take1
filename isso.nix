@@ -36,8 +36,8 @@ allowed-attributes = href
 [hash]
 salt = ${secrets.salt}
         '';
-  # Custom package for Isso, as the one in NixOS is currently broken
-  port = "8080";
+  issoPort = "8080";
+  # Custom derivation for Isso, as the one in NixOS is currently broken
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
     pname = "isso";
     version = "custom";
@@ -89,7 +89,7 @@ salt = ${secrets.salt}
     config = {
       Cmd = [ "${issoEnv}/bin/gunicorn"
               "--name" "isso"
-              "--bind" "0.0.0.0:${port}"
+              "--bind" "0.0.0.0:${issoPort}"
               "--worker-class" "gevent"
               "--workers" "2"
               "--worker-tmp-dir" "/dev/shm"
@@ -110,7 +110,7 @@ in {
       isso = {
         image = "isso";
         imageFile = issoDockerImage;
-        ports = ["127.0.0.1:${port}:${port}"];
+        ports = ["127.0.0.1:${issoPort}:${issoPort}"];
         volumes = [
           "/var/db/isso:/db"
         ];
@@ -127,7 +127,7 @@ in {
       access_log /var/log/nginx/comments.luffy.cx.log anonymous;
     '';
     locations."/" = {
-      proxyPass = "http://127.0.0.1:${port}";
+      proxyPass = "http://127.0.0.1:${issoPort}";
       extraConfig = ''
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
