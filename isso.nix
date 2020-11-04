@@ -80,8 +80,8 @@ salt = ${secrets.salt}
   issoDockerImage = pkgs.dockerTools.buildImage {
     name = "isso";
     tag = "latest";
-    runAsRoot = ''
-      mkdir -p /db
+    extraCommands = ''
+      mkdir -p db
     '';
     config = {
       Cmd = [ "${issoEnv}/bin/gunicorn"
