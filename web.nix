@@ -106,6 +106,12 @@ let
         ${cors}
         ${sts}
       '';
+      locations."~ ^/images/.*\\.(png|jpe?g)$".extraConfig = ''
+        ${cors}
+        ${sts}
+        add_header Vary Accept;
+        try_files $uri$avif_suffix$webp_suffix $uri$avif_suffix $uri$webp_suffix $uri =404;
+      '';
     };
   in [
 
@@ -276,6 +282,15 @@ in {
         text/vcard
         text/vtt
         text/xml;
+
+      map $http_accept $webp_suffix {
+        default        "";
+        "~image/webp"  ".webp";
+      }
+      map $http_accept $avif_suffix {
+        default        "";
+        "~image/avif"  ".avif";
+      }
     '';
   };
 
