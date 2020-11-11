@@ -207,7 +207,10 @@ in {
       # No stream module
       withStream = false;
       # Additional modules
-      modules = [ pkgs.nginxModules.ipscrub ];
+      modules = with pkgs.nginxModules; [
+        brotli
+        ipscrub
+      ];
     });
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types
@@ -237,7 +240,31 @@ in {
     appendConfig = ''
       pcre_jit on;
     '';
-    appendHttpConfig = ''
+    appendHttpConfig = let compressedTypes = ''
+      application/atom+xml
+      application/json
+      application/ld+json
+      application/manifest+json
+      application/rss+xml
+      application/vnd.apple.mpegurl
+      application/vnd.geo+json
+      application/vnd.ms-fontobject
+      application/wasm
+      application/x-font-ttf
+      application/x-web-app-manifest+json
+      application/xhtml+xml
+      application/xml
+      font/opentype
+      image/svg+xml
+      text/cache-manifest
+      text/css
+      text/javascript
+      text/plain
+      text/vcard
+      text/vtt
+      text/xml
+    '';
+    in ''
       # Default charset
       default_type application/octet-stream;
       charset utf-8;
@@ -257,31 +284,15 @@ in {
       # Enable gzip compression
       gzip on;
       gzip_proxied any;
-      gzip_comp_level 5;
+      gzip_comp_level 6;
       gzip_vary on;
       gzip_types
-        application/atom+xml
-        application/json
-        application/ld+json
-        application/manifest+json
-        application/rss+xml
-        application/vnd.apple.mpegurl
-        application/vnd.geo+json
-        application/vnd.ms-fontobject
-        application/wasm
-        application/x-font-ttf
-        application/x-web-app-manifest+json
-        application/xhtml+xml
-        application/xml
-        font/opentype
-        image/svg+xml
-        text/cache-manifest
-        text/css
-        text/javascript
-        text/plain
-        text/vcard
-        text/vtt
-        text/xml;
+        ${compressedTypes};
+      # Enable brotli compression
+      brotli on;
+      brotli_comp_level 6;
+      brotli_types
+        ${compressedTypes};
 
       map $http_accept $webp_suffix {
         default        "";
