@@ -37,7 +37,8 @@ allowed-attributes = href
 salt = ${secrets.salt}
         '';
   issoPort = "8080";
-  # Custom derivation for Isso, as the one in NixOS is currently broken
+  # Custom derivation for Isso, as the one in NixOS is a PythonApp
+  # instead of a PythonPackage and cannot be imported with buildEnv.
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
     pname = "isso";
     version = "custom";
