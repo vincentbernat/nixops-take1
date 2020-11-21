@@ -2,6 +2,9 @@
 let
   secrets = (import ./secrets.nix).isso;
   # Isso configuration file
+  # Backup of sqlite can be done with:
+  #   nix run nixpkgs.sqlite --command sudo sqlite3 /var/db/isso/comments.db .dump \
+  #   | gzip -c > comments-isso-$(date -I).txt.gz
   issoConfig = pkgs.writeText "isso.conf" ''
 [general]
 dbpath = /db/comments.db
