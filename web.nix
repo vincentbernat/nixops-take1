@@ -182,8 +182,6 @@ let
     (vhost "vincent.bernat.im" redirectBlogVhost)
     (vhost "bernat.im" redirectBlogVhost)
     (vhost "bernat.ch" redirectBlogVhost)
-    (vhost "www.bernat.im" redirectBlogVhost)
-    (vhost "www.bernat.ch" redirectBlogVhost)
     (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
   ];
 in {
@@ -198,6 +196,7 @@ in {
   security.acme = {
     acceptTerms = true;
     email = lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
+    server = "https://api.buypass.com/acme/directory";
   };
 
   # nginx generic configuration

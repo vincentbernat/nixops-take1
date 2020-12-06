@@ -140,6 +140,5 @@ in {
       '';
     };
   };
-  security.acme.certs."comments.luffy.cx" = {
-  };
+  security.acme.certs."comments.luffy.cx" = {};
 }
