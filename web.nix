@@ -195,7 +195,8 @@ in {
   # Let's Encrypt
   security.acme = {
     acceptTerms = true;
-    email = lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
+    email = lib.concatStringsSep "@" [ "buypass+${config.deployment.targetHost}"
+                                       "vincent.bernat.ch" ];
     server = "https://api.buypass.com/acme/directory";
   };
 
