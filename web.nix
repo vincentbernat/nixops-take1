@@ -42,8 +42,6 @@ let
       security.acme =
         lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
           certs."${name}" = {
-            email =
-              lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
             extraDomainNames = let
               otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
                 config.services.nginx.virtualHosts;
@@ -196,8 +194,11 @@ in {
   boot.kernelModules = [ "tcp_bbr" ];
   boot.kernel.sysctl."net.ipv4.tcp_congestion_control" = "bbr";
 
-  # Let's Encrypt, accept ToS
-  security.acme.acceptTerms = true;
+  # Let's Encrypt
+  security.acme = {
+    acceptTerms = true;
+    email = lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
+  };
 
   # nginx generic configuration
   services.nginx = {

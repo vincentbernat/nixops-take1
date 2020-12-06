@@ -141,6 +141,5 @@ in {
     };
   };
   security.acme.certs."comments.luffy.cx" = {
-    email = lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ];
   };
 }
