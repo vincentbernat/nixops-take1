@@ -21,6 +21,7 @@ while read url code location; do
     if [[ "$gcode $glocation" != "$code $location" ]]; then
         echo "☠️: $(wdiff -n =(echo $gcode${glocation:+ }$glocation) =(echo $code${location:+ }$location) | colordiff)"
     else
+        ((seconds > 1000)) && ((seconds/=1000000.))
         ((count+=1,total+=seconds))
         echo "👌 ($((~~(seconds*1000)))ms)"
     fi
