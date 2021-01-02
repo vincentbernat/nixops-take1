@@ -145,6 +145,35 @@ let
     (vhost "media.une-oasis-une-ecole.fr"
       (mediaVhost // { useACMEHost = "une-oasis-une-ecole.fr"; }))
 
+    # ENXIO
+    (vhost "enx.io" {
+      addSSL = true;
+      globalRedirect = "www.enx.io";
+      extraConfig = sts;
+    })
+    (vhost "enxio.fr" {
+      addSSL = true;
+      globalRedirect = "www.enx.io";
+      useACMEHost = "enx.io";
+      extraConfig = sts;
+    })
+    (vhost "www.enxio.fr" {
+      addSSL = true;
+      globalRedirect = "www.enx.io";
+      useACMEHost = "enx.io";
+      extraConfig = sts;
+    })
+    (vhost "www.enx.io" {
+      forceSSL = true;
+      useACMEHost = "enx.io";
+      extraConfig = ''
+        include /data/webserver/www.enx.io/nginx*.conf;
+        ${sts}
+      '';
+    })
+    (vhost "media.enx.io"
+      (mediaVhost // { useACMEHost = "enx.io"; }))
+
     # Old website
     (vhost "luffy.cx" {
       addSSL = true;
