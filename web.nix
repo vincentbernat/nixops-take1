@@ -57,10 +57,13 @@ let
       add_header Strict-Transport-Security "max-age=31557600; includeSubDomains";'';
     stsWithPreload = ''
       add_header Strict-Transport-Security "max-age=31557600; includeSubDomains; preload";'';
-    redirectBlogVhost = {
+    redirectVhost = to: {
       addSSL = true;
-      globalRedirect = "vincent.bernat.ch";
-      useACMEHost = "vincent.bernat.ch";
+      globalRedirect = to;
+      useACMEHost = to;
+      extraConfig = sts;
+    };
+    redirectBlogVhost = (redirectVhost "vincent.bernat.ch") // {
       extraConfig = stsWithPreload;
     };
     mediaVhost = {
@@ -129,50 +132,30 @@ let
     })
 
     # Une Oasis Une École
-    (vhost "une-oasis-une-ecole.fr" {
-      addSSL = true;
-      globalRedirect = "www.une-oasis-une-ecole.fr";
-      extraConfig = sts;
-    })
+    (vhost "une-oasis-une-ecole.fr" (redirectVhost "www.une-oasis-une-ecole.fr"))
     (vhost "www.une-oasis-une-ecole.fr" {
       forceSSL = true;
-      useACMEHost = "une-oasis-une-ecole.fr";
       extraConfig = ''
         include /data/webserver/www.une-oasis-une-ecole.fr/nginx*.conf;
         ${sts}
       '';
     })
     (vhost "media.une-oasis-une-ecole.fr"
-      (mediaVhost // { useACMEHost = "une-oasis-une-ecole.fr"; }))
+      (mediaVhost // { useACMEHost = "www.une-oasis-une-ecole.fr"; }))
 
     # ENXIO
-    (vhost "enx.io" {
-      addSSL = true;
-      globalRedirect = "www.enx.io";
-      extraConfig = sts;
-    })
-    (vhost "enxio.fr" {
-      addSSL = true;
-      globalRedirect = "www.enx.io";
-      useACMEHost = "enx.io";
-      extraConfig = sts;
-    })
-    (vhost "www.enxio.fr" {
-      addSSL = true;
-      globalRedirect = "www.enx.io";
-      useACMEHost = "enx.io";
-      extraConfig = sts;
-    })
+    (vhost "enx.io" (redirectVhost "www.enx.io"))
+    (vhost "enxio.fr" (redirectVhost "www.enx.io"))
+    (vhost "www.enxio.fr" (redirectVhost "www.enx.io"))
     (vhost "www.enx.io" {
       forceSSL = true;
-      useACMEHost = "enx.io";
       extraConfig = ''
         include /data/webserver/www.enx.io/nginx*.conf;
         ${sts}
       '';
     })
     (vhost "media.enx.io"
-      (mediaVhost // { useACMEHost = "enx.io"; }))
+      (mediaVhost // { useACMEHost = "www.enx.io"; }))
 
     # Old website
     (vhost "luffy.cx" {
