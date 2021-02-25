@@ -7,11 +7,13 @@ let
     mailcap = pkgs.mailcap.override {
       fetchzip = { ... } @ args:
         pkgs.fetchzip ({
-          sha256 = "0mdgssikjb12sw4ll3y8n64w17prhwbq5sj3acffqyxpqmb3x500";
+          sha256 = "1xakfn0qif982xqsvn6r5pxmcqq0nh5rqa5mfqxpmdgf4yxmha86";
           postFetch = ''
                       ${args.postFetch}
                       sed -i -e "/^application\/javascript[ \t]/d" \
                              -e "1a text/javascript js;" \
+                             -e "/^text\/vnd.trolltech.linguist[ \t]/d" \
+                             -e "1a video/mp2t      ts;" \
                              -e "1a text/vtt        vtt;" \
                              -e "1a image/avif      avif;" \
                           $out/etc/nginx/mime.types
