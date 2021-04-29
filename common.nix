@@ -56,16 +56,6 @@ in {
   };
   security.sudo.wheelNeedsPassword = false;
 
-  # Install my own zshrc. For some reason, the newuser function is
-  # running quite early and zshenv also aborts early.
-  environment.etc."zprofile.local" = {
-    text = ''
-      [ -f ''${HOME}/.zshrc ] || [ `id -u` -eq 0 ] || \
-        ${pkgs.curl}/bin/curl -s https://vincentbernat-zshrc.s3.amazonaws.com/zsh-install.sh | sh
-    '';
-    mode = "0555";
-  };
-
   system.activationScripts.diff = ''
     ${pkgs.nixUnstable}/bin/nix store \
         --experimental-features 'nix-command' \
