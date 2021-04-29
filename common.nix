@@ -65,4 +65,11 @@ in {
     '';
     mode = "0555";
   };
+
+  system.activationScripts.diff = ''
+    ${pkgs.nixUnstable}/bin/nix store \
+        --experimental-features 'nix-command' \
+        diff-closures /run/current-system "$systemConfig"
+  '';
+
 }
