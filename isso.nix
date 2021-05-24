@@ -50,7 +50,7 @@ salt = ${secrets.salt}
       owner = "vincentbernat";
       repo = pname;
       rev = "vbe/master";
-      sha256 = "14q2w6q1zh6j6a24zj2rsyrlgdp6qbixk3jy5cmslld3gq9v1j6w";
+      sha256 = "1sf752s67c9f60ii6snxbihmpl81dwhwnbycywd3qy50q3vy5i1x";
     };
 
     propagatedBuildInputs = [
