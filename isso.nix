@@ -33,7 +33,7 @@ from = isso@vincent.bernat.ch
 
 [markup]
 options = autolink,fenced-code
-allowed-elements = a,blockquote,br,code,del,em,ins,li,ol,p,pre,strong,ul
+allowed-elements = a,blockquote,br,code,del,em,ins,li,ol,p,pre,strong,ul,kbd
 allowed-attributes = href
 
 [hash]
