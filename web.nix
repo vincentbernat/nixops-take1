@@ -168,16 +168,16 @@ let
       extraConfig = sts;
       useACMEHost = "luffy.cx";
       locations."/wiremaps".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/wiremaps/archives/master permanent;
+        rewrite ^ https://github.com/vincentbernat/wiremaps permanent;
       '';
       locations."/udpproxy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/udpproxy/archives/master permanent;
+        rewrite ^ https://github.com/vincentbernat/udpproxy permanent;
       '';
       locations."/snimpy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/snimpy/archives/master permanent;
+        rewrite ^ https://github.com/vincentbernat/snimpy permanent;
       '';
       locations."/lldpd".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/lldpd/archives/master permanent;
+        rewrite ^ https://lldpd.github.io permanent;
       '';
       locations."/".extraConfig = ''
         rewrite ^ https://vincent.bernat.ch$request_uri permanent;
