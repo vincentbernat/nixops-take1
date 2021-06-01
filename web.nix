@@ -219,27 +219,11 @@ in {
     package = (pkgs.nginxStable.override {
       # No stream module
       withStream = false;
-      # Additional modules
-      modules = with pkgs.nginxModules; [
-        # brotli is broken
-        {
-          src = let gitsrc = pkgs.fetchFromGitHub {
-            name = "brotli";
-            owner = "google";
-            repo = "ngx_brotli";
-            rev = "25f86f0bac1101b6512135eac5f93c49c63609e3";
-            sha256 = "02hfvfa6milj40qc2ikpb9f95sxqvxk4hly3x74kqhysbdi06hhv";
-          }; in pkgs.runCommandNoCC "ngx_brotli-src" {} ''
-            cp -r ${gitsrc} $out
-            chmod -R +w "$out"
-            substituteInPlace $out/filter/config \
-              --replace '$ngx_addon_dir/deps/brotli/c' ${lib.getDev pkgs.brotli}
-          '';
-          inputs = [ pkgs.brotli ];
-        }
-        ipscrub
-      ];
     });
+    additionalModules = with pkgs.nginxModules; [
+      brotli
+      ipscrub
+    ];
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types
     recommendedOptimisation = true;
