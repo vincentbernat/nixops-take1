@@ -219,11 +219,11 @@ in {
     package = (pkgs.nginxStable.override {
       # No stream module
       withStream = false;
+      modules = with pkgs.nginxModules; [
+        brotli
+        ipscrub
+      ];
     });
-    additionalModules = with pkgs.nginxModules; [
-      brotli
-      ipscrub
-    ];
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types
     recommendedOptimisation = true;
