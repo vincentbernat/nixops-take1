@@ -278,7 +278,6 @@ in {
     '';
     in ''
       # Default charset
-      default_type application/octet-stream;
       charset utf-8;
       charset_types
         application/atom+xml
