@@ -75,19 +75,19 @@ let
       # The following resources are expected to use cache busting.
       locations."/js".extraConfig = ''
         expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
+        add_header  Cache-Control immutable;
         ${cors}
         ${sts}
       '';
       locations."/css".extraConfig = ''
         expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
+        add_header  Cache-Control immutable;
         ${cors}
         ${sts}
       '';
       locations."/fonts".extraConfig = ''
         expires     max;
-        add_header  Cache-Control max-age=31536000,immutable;
+        add_header  Cache-Control immutable;
         ${cors}
         ${sts}
         types {
