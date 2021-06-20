@@ -20,7 +20,7 @@ let
     };
   } // (removeAttrs pkgs ["mailcap"]);
 in
-(import <nixpkgs/nixos/modules/services/web-servers/nginx/default.nix> (
+(import ./nginx-module.nix (
   {
     pkgs = pkgsWithModifiedMailcap;
   } // (removeAttrs args ["pkgs"])))
