@@ -29,7 +29,7 @@ let
           root = "/data/webserver/${name}";
           acmeFallbackHost = nextNode;
           sslTrustedCertificate =
-            "${config.security.acme.directory}/${name}/full.pem";
+            "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"; # Buypass use a different certificate for OCSP
           extraConfig = ''
             access_log /var/log/nginx/${name}.log anonymous;
             ${attrs.extraConfig or ""}
