@@ -5,7 +5,7 @@ export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-${NIXOS_V
 export NIXOPS_DEPLOYMENT=luffy
 export NIXOPS_STATE=state.nixops
 
-exec nix run -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz nixpkgs.nixops -c nixops "$@"
+exec nix run nixpkgs.nixopsUnstable -c nixops "$@"
 
 # Local Variables:
 # mode: sh
