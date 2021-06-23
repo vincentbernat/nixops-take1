@@ -1,12 +1,11 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i sh -p nixops
+#!/bin/sh
 
 NIXOS_VERSION=${NIXOS_VERSION:-21.05}
 export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-${NIXOS_VERSION}.tar.gz
 export NIXOPS_DEPLOYMENT=luffy
 export NIXOPS_STATE=state.nixops
 
-exec nixops "$@"
+exec nix run -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz nixpkgs.nixops -c nixops "$@"
 
 # Local Variables:
 # mode: sh
