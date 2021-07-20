@@ -6,7 +6,3 @@ export NIXOPS_DEPLOYMENT=luffy
 export NIXOPS_STATE=state.nixops
 
 exec nix run nixpkgs.nixopsUnstable -c nixops "$@"
-
-# Local Variables:
-# mode: sh
-# End:
