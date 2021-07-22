@@ -18,6 +18,11 @@ To deploy:
 
     ./nixops deploy
 
+In case of a security issue, it can take a few days to get the current
+release to be updated. Usually, switching to the small version helps:
+
+    NIXOS_VERSION=21.05-small ./nixops deploy
+
 If a reboot is needed, `--allow-reboot` as no effect. Reboot should be
 done manually or with:
 
