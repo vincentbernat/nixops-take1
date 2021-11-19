@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NIXOS_VERSION=${NIXOS_VERSION:-21.05}
+NIXOS_VERSION=${NIXOS_VERSION:-21.11}
 export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-${NIXOS_VERSION}.tar.gz
 export NIXOPS_DEPLOYMENT=luffy
 export NIXOPS_STATE=state.nixops

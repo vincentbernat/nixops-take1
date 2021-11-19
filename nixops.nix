@@ -11,6 +11,7 @@ let
 in {
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
+  network.storage.legacy = {};
   defaults = import ./common.nix;
   web03 = web "hetzner" 3 [ ./isso.nix ] // {
     # Static IPv6 configuration

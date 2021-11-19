@@ -7,7 +7,7 @@ let
     mailcap = pkgs.mailcap.override {
       fetchzip = { ... } @ args:
         pkgs.fetchzip ({
-          sha256 = "132477d9xsvfh96lz8d2zmlk235cmbfskcir6jgb1hlfvksfx1zr";
+          sha256 = "5n8JlCeXXCTL7aFDyQ+knIgPHJyouDuwulM0dCX3mh4=";
           postFetch = ''
                       ${args.postFetch}
                       sed -i -e "/^application\/javascript[ \t]/d" \
@@ -20,7 +20,7 @@ let
     };
   } // (removeAttrs pkgs ["mailcap"]);
 in
-(import ./nginx-module.nix (
+(import <nixpkgs/nixos/modules/services/web-servers/nginx/default.nix> (
   {
     pkgs = pkgsWithModifiedMailcap;
   } // (removeAttrs args ["pkgs"])))
