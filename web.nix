@@ -144,18 +144,18 @@ let
       (mediaVhost // { useACMEHost = "www.une-oasis-une-ecole.fr"; }))
 
     # ENXIO
-    (vhost "enx.io" (redirectVhost "www.enx.io"))
-    (vhost "enxio.fr" (redirectVhost "www.enx.io"))
-    (vhost "www.enxio.fr" (redirectVhost "www.enx.io"))
-    (vhost "www.enx.io" {
+    (vhost "enx.io" (redirectVhost "www.enxio.fr"))
+    (vhost "enxio.fr" (redirectVhost "www.enxio.fr"))
+    (vhost "www.enx.io" (redirectVhost "www.enxio.fr"))
+    (vhost "www.enxio.fr" {
       forceSSL = true;
       extraConfig = ''
         include /data/webserver/www.enx.io/nginx*.conf;
         ${sts}
       '';
     })
-    (vhost "media.enx.io"
-      (mediaVhost // { useACMEHost = "www.enx.io"; }))
+    (vhost "media.enxio.fr"
+      (mediaVhost // { useACMEHost = "www.enxio.fr"; }))
 
     # Old website
     (vhost "luffy.cx" {
