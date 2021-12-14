@@ -150,7 +150,7 @@ let
     (vhost "www.enxio.fr" {
       forceSSL = true;
       extraConfig = ''
-        include /data/webserver/www.enx.io/nginx*.conf;
+        include /data/webserver/www.enxio.fr/nginx*.conf;
         ${sts}
       '';
     })
