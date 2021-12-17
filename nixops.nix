@@ -46,4 +46,10 @@ in {
       interface = "enp1s0";
     };
   };
+  web06 = web "vultr" 6 [] // {
+    networking.interfaces.enp1s0.ipv6.addresses = [{
+      address = "2001:19f0:5c01:1894::1";
+      prefixLength = 64;
+    }];
+  };
 }
