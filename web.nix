@@ -319,8 +319,11 @@ in {
   # Reload/restart logic. This could be enhanced once we have
   # https://github.com/systemd/systemd/issues/13284
   services.nginx.enableReload = true;
-  systemd.services.nginx.serviceConfig.KillSignal = "QUIT";
-  systemd.services.nginx.serviceConfig.TimeoutStopSec = "120s";
+  systemd.services.nginx.serviceConfig = {
+      KillSignal = "QUIT";
+      TimeoutStopSec = "120s";
+      LogsDirectoryMode = lib.mkForce "0755";
+  };
 
   # Logs
   services.logrotate = {
