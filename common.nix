@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   sshKeys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIETuPJlu22nwrDxwiqAvrFbPvSIRq03g2PDGrLwMy299 bernat@zoro"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
   ];
 in {
   # Nix
