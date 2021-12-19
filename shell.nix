@@ -6,6 +6,8 @@ in
 pkgs.mkShell {
   name = "nixops-take1";
   buildInputs = [
+    pkgs.curl
+    pkgs.colordiff pkgs.wdiff
     pkgs.nixopsUnstable
   ];
   shellHook = ''
