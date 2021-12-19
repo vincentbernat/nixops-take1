@@ -2,10 +2,12 @@ let
   lib = import <nixpkgs/lib>;
   shortName = name: builtins.elemAt (lib.splitString "." name) 0;
   domainName = name: lib.concatStringsSep "." (builtins.tail (lib.splitString "." name));
-  server = hardware: name: imports: {
+  server = hardware: name: imports: extras: extras // {
+    networking = (if extras ? "networking" then extras.networking else {}) // {
+      hostName = shortName name;
+      domain = domainName name;
+    };
     deployment.targetHost = name;
-    networking.hostName = shortName name;
-    networking.domain = domainName name;
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
   extra-imports = {
@@ -31,7 +33,7 @@ let
             else {};
   in {
     name = shortName s.name;
-    value = server s.kind s.name ([ ./web.nix ] ++ web-imports) // extra-attrs;
+    value = server s.kind s.name ([ ./web.nix ] ++ web-imports) extra-attrs;
   }) web-servers-json;
 in {
   network.description = "Luffy infrastructure";
