@@ -7,7 +7,7 @@ in {
   # Nix
   nix.gc.automatic = true;
   nix.gc.dates = "03:15";
-  nix.gc.options = "--delete-older-than 30d";
+  nix.gc.options = "--delete-older-than 8d";
   # no need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "18.09";
 
