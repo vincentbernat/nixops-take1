@@ -328,22 +328,22 @@ in {
   # Logs
   services.logrotate = {
     enable = true;
-    extraConfig = let path = "/var/log/nginx/*.log";
-    in ''
-      ${path} {
-        daily
-        missingok
-        rotate 30
-        compress
-        delaycompress
-        notifempty
-        create 0640 ${config.services.nginx.user} wheel
-        sharedscripts
-        postrotate
-          systemctl reload nginx
-        endscript
-      }
-    '';
+    paths = {
+      nginx = {
+        path = "/var/log/nginx/*.log";
+        frequency = "daily";
+        keep = 30;
+        extraConfig = ''
+          compress
+          delaycompress
+          create 0640 ${config.services.nginx.user} wheel
+          sharedscripts
+          postrotate
+            systemctl reload nginx
+          endscript
+        '';
+      };
+    };
   };
 
   # Create root directories for vhost. They are not pure yet.
