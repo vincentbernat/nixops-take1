@@ -24,9 +24,23 @@ in {
     permitRootLogin = "prohibit-password";
     extraConfig = "AcceptEnv LANG LC_*";
   };
-
   services.fstrim = {
     enable = true;
+  };
+  services.logrotate = {
+    enable = true;
+    paths = {
+      btmp = {
+        path = "/var/log/btmp";
+        frequency = "weekly";
+        keep = 3;
+      };
+      wtmp = {
+        path = "/var/log/wtmp";
+        frequency = "monthly";
+        keep = 12;
+      };
+    };
   };
 
   # Packages

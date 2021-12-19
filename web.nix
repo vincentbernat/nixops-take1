@@ -327,7 +327,6 @@ in {
 
   # Logs
   services.logrotate = {
-    enable = true;
     paths = {
       nginx = {
         path = "/var/log/nginx/*.log";
