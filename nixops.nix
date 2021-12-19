@@ -1,50 +1,41 @@
 let
   lib = import <nixpkgs/lib>;
+  shortName = name: builtins.elemAt (lib.splitString "." name) 0;
+  domainName = name: lib.concatStringsSep "." (builtins.tail (lib.splitString "." name));
   server = hardware: name: imports: {
-    deployment.targetHost = "${name}.luffy.cx";
-    networking.hostName = name;
-    networking.domain = "luffy.cx";
+    deployment.targetHost = name;
+    networking.hostName = shortName name;
+    networking.domain = domainName name;
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
-  web = hardware: idx: imports:
-    server hardware "web${lib.fixedWidthNumber 2 idx}" ([ ./web.nix ] ++ imports);
+  extra-imports = {
+    "web03.luffy.cx" = [ ./isso.nix ];
+  };
+  web-servers-json = (lib.importJSON ./pulumi.json).www-servers;
+  web-servers = map (s: let
+    web-imports = if extra-imports ? ${s.name}
+              then extra-imports.${s.name}
+              else [];
+    extra-attrs = if s.kind == "hetzner"
+            then {
+              networking.usePredictableInterfaceNames = false;
+              networking.interfaces.eth0.ipv6.addresses = [{
+                address = s.ipv6_address;
+                prefixLength = 64;
+              }];
+              networking.defaultGateway6 = {
+                address = "fe80::1";
+                interface = "eth0";
+              };
+            }
+            else {};
+  in {
+    name = shortName s.name;
+    value = server s.kind s.name ([ ./web.nix ] ++ web-imports) // extra-attrs;
+  }) web-servers-json;
 in {
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
   network.storage.legacy = {};
   defaults = import ./common.nix;
-  web03 = web "hetzner" 3 [ ./isso.nix ] // {
-    # Static IPv6 configuration
-    networking.interfaces.ens3.ipv6.addresses = [{
-      address = "2a01:4f9:c010:1a9c::1";
-      prefixLength = 64;
-    }];
-    networking.defaultGateway6 = {
-      address = "fe80::1";
-      interface = "ens3";
-    };
-  };
-  web04 = web "hetzner" 4 [] // {
-    # Static IPv6 configuration
-    networking.interfaces.ens3.ipv6.addresses = [{
-      address = "2a01:4f8:1c0c:5eb5::1";
-      prefixLength = 64;
-    }];
-    networking.defaultGateway6 = {
-      address = "fe80::1";
-      interface = "ens3";
-    };
-  };
-  web05 = web "hetzner" 5 [] // {
-    # Static IPv6 configuration
-    networking.interfaces.enp1s0.ipv6.addresses = [{
-      address = "2a01:4ff:f0:b91::1";
-      prefixLength = 64;
-    }];
-    networking.defaultGateway6 = {
-      address = "fe80::1";
-      interface = "enp1s0";
-    };
-  };
-  web06 = web "vultr" 6 [];
-}
+} // builtins.listToAttrs web-servers

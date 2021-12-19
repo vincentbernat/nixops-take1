@@ -1,0 +1,28 @@
+{
+  "www-servers": [
+    {
+      "ipv4_address": "95.216.162.158",
+      "ipv6_address": "2a01:4f9:c010:1a9c::1",
+      "kind": "hetzner",
+      "name": "web03.luffy.cx"
+    },
+    {
+      "ipv4_address": "116.203.18.48",
+      "ipv6_address": "2a01:4f8:1c0c:5eb5::1",
+      "kind": "hetzner",
+      "name": "web04.luffy.cx"
+    },
+    {
+      "ipv4_address": "5.161.44.145",
+      "ipv6_address": "2a01:4ff:f0:b91::1",
+      "kind": "hetzner",
+      "name": "web05.luffy.cx"
+    },
+    {
+      "ipv4_address": "149.28.124.245",
+      "ipv6_address": "2001:19f0:5c01:1894:5400:03ff:febe:4284",
+      "kind": "vultr",
+      "name": "web06.luffy.cx"
+    }
+  ]
+}
