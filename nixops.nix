@@ -12,7 +12,7 @@ let
   };
   pulumi-servers-json = (lib.importJSON ./pulumi.json).all-servers;
   pulumi-servers = map (s: let
-    tags-import = map (t: ./. + builtins.toPath "/${t}.nix") s.tags;
+    tags-import = map (t: ./. + "/${t}.nix") s.tags;
     extra-attrs = if s.hardware == "hetzner"
             then {
               networking.usePredictableInterfaceNames = false;
