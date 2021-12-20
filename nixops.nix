@@ -10,15 +10,10 @@ let
     deployment.targetHost = name;
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
-  extra-imports = {
-    "web03.luffy.cx" = [ ./isso.nix ];
-  };
-  web-servers-json = (lib.importJSON ./pulumi.json).www-servers;
-  web-servers = map (s: let
-    web-imports = if extra-imports ? ${s.name}
-              then extra-imports.${s.name}
-              else [];
-    extra-attrs = if s.kind == "hetzner"
+  pulumi-servers-json = (lib.importJSON ./pulumi.json).all-servers;
+  pulumi-servers = map (s: let
+    tags-import = map (t: ./. + builtins.toPath "/${t}.nix") s.tags;
+    extra-attrs = if s.hardware == "hetzner"
             then {
               networking.usePredictableInterfaceNames = false;
               networking.interfaces.eth0.ipv6.addresses = [{
@@ -33,11 +28,11 @@ let
             else {};
   in {
     name = shortName s.name;
-    value = server s.kind s.name ([ ./web.nix ] ++ web-imports) extra-attrs;
-  }) web-servers-json;
+    value = server s.hardware s.name tags-import extra-attrs;
+  }) pulumi-servers-json;
 in {
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
   network.storage.legacy = {};
   defaults = import ./common.nix;
-} // builtins.listToAttrs web-servers
+} // builtins.listToAttrs pulumi-servers
