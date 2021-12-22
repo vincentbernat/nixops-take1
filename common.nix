@@ -48,6 +48,7 @@ in {
     [
       bat
       htop
+      liboping
       mg
       mtr
       ncdu
