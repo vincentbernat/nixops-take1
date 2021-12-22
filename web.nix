@@ -1,54 +1,43 @@
 { config, pkgs, lib, nodes, ... }:
 let
-  vhost = name: attrs:
-    let
-      sameNodes = lib.filterAttrs (n: v:
-        v.config.services.nginx.virtualHosts ? "${name}"
-        && (v.config.services.nginx.virtualHosts."${name}".enableACME
-          || v.config.services.nginx.virtualHosts."${name}".useACMEHost
-          != null)) nodes;
-      sameHosts =
-        lib.mapAttrsToList (name: node: node.config.deployment.targetHost)
-        sameNodes;
-      nextNodes = lib.foldl (acc: host:
-        if acc != [ ] then
-          acc ++ [ host ]
-        else if host == config.deployment.targetHost then
-          [ host ]
-        else
-          [ ]) [ ] sameHosts;
-      nextNode = if (builtins.length nextNodes) > 1 then
-        builtins.elemAt nextNodes 1
-      else
-        let first = builtins.elemAt sameHosts 0;
-        in if first != config.deployment.targetHost then first else null;
-    in { ... }: {
-      # Virtualhost definition
-      services.nginx = {
-        virtualHosts."${name}" = {
-          root = "/data/webserver/${name}";
-          acmeFallbackHost = nextNode;
-          sslTrustedCertificate =
-            "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"; # Buypass use a different certificate for OCSP
-          extraConfig = ''
-            access_log /var/log/nginx/${name}.log anonymous;
-            ${attrs.extraConfig or ""}
-          '';
-        } // (removeAttrs attrs [ "extraConfig" ])
-          // (if !attrs ? useACMEHost then { enableACME = true; } else { });
-      };
-
-      # Let's encrypt extra configuration
-      security.acme =
-        lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
-          certs."${name}" = {
-            extraDomainNames = let
-              otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
-                config.services.nginx.virtualHosts;
-            in lib.mapAttrsToList (name: vhost: name) otherVhosts;
-          };
-        };
+  vhost = name: attrs: {
+    # Virtualhost definition
+    services.nginx = {
+      virtualHosts."${name}" = {
+        root = "/data/webserver/${name}";
+        sslTrustedCertificate =
+          "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"; # Buypass use a different certificate for OCSP
+        extraConfig = ''
+          access_log /var/log/nginx/${name}.log anonymous;
+          ${attrs.extraConfig or ""}
+        '';
+      } // (removeAttrs attrs [ "extraConfig" ])
+      // (if !attrs ? useACMEHost then { enableACME = true; } else { });
     };
+
+    # Let's encrypt extra configuration
+    security.acme =
+      lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
+        certs."${name}" = {
+          webroot = lib.mkForce null;
+          dnsProvider = "route53";
+          credentialsFile = let
+            secrets = (import ./secrets.nix).acme.route53;
+            zoneid = (lib.importJSON ./pulumi.json).acme-zone;
+          in pkgs.writeText "route53-credentials" ''
+            AWS_REGION=us-east-1
+            AWS_ACCESS_KEY_ID=${secrets.key}
+            AWS_SECRET_ACCESS_KEY=${secrets.secret}
+            AWS_HOSTED_ZONE_ID=${zoneid}
+            LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
+          '';
+          extraDomainNames = let
+            otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
+              config.services.nginx.virtualHosts;
+          in lib.mapAttrsToList (name: vhost: name) otherVhosts;
+        };
+      };
+  };
   vhosts = let
     cors = ''
       add_header  Access-Control-Allow-Origin *;
@@ -199,14 +188,6 @@ let
 in {
   # Firewall
   networking.firewall.allowedTCPPorts = [ 80 443 ];
-
-  # Let's Encrypt
-  security.acme = {
-    acceptTerms = true;
-    email = lib.concatStringsSep "@" [ "buypass+${config.deployment.targetHost}"
-                                       "vincent.bernat.ch" ];
-    server = "https://api.buypass.com/acme/directory";
-  };
 
   # nginx generic configuration
   services.nginx = {

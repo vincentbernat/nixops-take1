@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
@@ -22,6 +22,14 @@ in {
   boot.kernel.sysctl = {
     "net.ipv4.tcp_min_snd_mss" = 536;
     "net.ipv4.tcp_congestion_control" = "bbr";
+  };
+
+  # Let's Encrypt
+  security.acme = {
+    acceptTerms = true;
+    email = lib.concatStringsSep "@" [ "buypass+${config.deployment.targetHost}"
+                                       "vincent.bernat.ch" ];
+    server = "https://api.buypass.com/acme/directory";
   };
 
   # Services
