@@ -200,10 +200,6 @@ in {
   # Firewall
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-  # Use BBR
-  boot.kernelModules = [ "tcp_bbr" ];
-  boot.kernel.sysctl."net.ipv4.tcp_congestion_control" = "bbr";
-
   # Let's Encrypt
   security.acme = {
     acceptTerms = true;

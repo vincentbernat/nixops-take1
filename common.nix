@@ -16,7 +16,13 @@ in {
   networking.firewall.rejectPackets = true;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
-  boot.kernel.sysctl."net.ipv4.tcp_min_snd_mss" = 536;
+
+  # Better performance
+  boot.kernelModules = [ "tcp_bbr" ];
+  boot.kernel.sysctl = {
+    "net.ipv4.tcp_min_snd_mss" = 536;
+    "net.ipv4.tcp_congestion_control" = "bbr";
+  };
 
   # Services
   services.openssh = {
