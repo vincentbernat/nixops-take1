@@ -3,7 +3,7 @@ let
   vhost = name: attrs: {
     # Virtualhost definition
     services.nginx = {
-      virtualHosts."${name}" = {
+      virtualHosts."${name}" = attrs // {
         root = "/data/webserver/${name}";
         sslTrustedCertificate =
           "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"; # Buypass use a different certificate for OCSP
@@ -11,8 +11,7 @@ let
           access_log /var/log/nginx/${name}.log anonymous;
           ${attrs.extraConfig or ""}
         '';
-      } // (removeAttrs attrs [ "extraConfig" ])
-      // (if !attrs ? useACMEHost then { enableACME = true; } else { });
+      } // (if !attrs ? useACMEHost then { enableACME = true; } else { });
     };
 
     # Let's encrypt extra configuration
@@ -333,7 +332,7 @@ in {
     done
   '';
 
-  # Virtual hosts
+  # Import vhosts and override nginx module to use a custom mailcap package
   imports = vhosts ++ [ ./modules/nginx.nix ];
   disabledModules = [ "services/web-servers/nginx/default.nix" ];
 }

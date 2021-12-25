@@ -1,12 +1,12 @@
 args@{ config, lib, pkgs, ... }:
 
 let
-  pkgsWithModifiedMailcap = {
+  pkgsWithModifiedMailcap = pkgs // {
     # Update mailcap to replace application/javascript (IANA) with text/javascript (HTML WHATWG).
     # Also fix some others.
     mailcap = pkgs.mailcap.override {
       fetchzip = { ... } @ args:
-        pkgs.fetchzip ({
+        pkgs.fetchzip (args // {
           sha256 = "5n8JlCeXXCTL7aFDyQ+knIgPHJyouDuwulM0dCX3mh4=";
           postFetch = ''
                       ${args.postFetch}
@@ -16,11 +16,9 @@ let
                              -e "1a video/mp2t      ts;" \
                           $out/etc/nginx/mime.types
                       '';
-        } // removeAttrs args [ "postFetch" "sha256" ]);
+        });
     };
-  } // (removeAttrs pkgs ["mailcap"]);
+  };
 in
-(import <nixpkgs/nixos/modules/services/web-servers/nginx/default.nix> (
-  {
-    pkgs = pkgsWithModifiedMailcap;
-  } // (removeAttrs args ["pkgs"])))
+(import <nixpkgs/nixos/modules/services/web-servers/nginx/default.nix>
+  (args // {pkgs = pkgsWithModifiedMailcap; }))
