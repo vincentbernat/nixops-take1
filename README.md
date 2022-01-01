@@ -19,7 +19,7 @@ can be done directly from a custom ISO.
 
 First, enable the appropriate shell:
 
-    nix-shell
+    nix develop -c $SHELL
 
 To create:
 
