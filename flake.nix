@@ -21,5 +21,7 @@
             export NIXOPS_STATE=state.nixops
           '';
         };
-      });
+      }) // {
+        nixopsConfigurations.default = import ./network.nix { inherit nixpkgs; };
+      };
 }

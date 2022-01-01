@@ -1,5 +1,6 @@
+{ nixpkgs }:
 let
-  lib = import <nixpkgs/lib>;
+  lib = nixpkgs.lib;
   shortName = name: builtins.elemAt (lib.splitString "." name) 0;
   domainName = name: lib.concatStringsSep "." (builtins.tail (lib.splitString "." name));
   server = hardware: name: imports: extras: extras // {
@@ -31,6 +32,7 @@ let
     value = server s.hardware s.name tags-import extra-attrs;
   }) pulumi-servers-json;
 in {
+  nixpkgs = nixpkgs;
   network.description = "Luffy infrastructure";
   network.enableRollback = true;
   network.storage.legacy = {};
