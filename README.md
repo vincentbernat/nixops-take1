@@ -27,13 +27,12 @@ To create:
 
 To deploy:
 
+    nix flake lock --update-input nixpkgs
     nixops deploy
 
 In case of a security issue, it can take a few days to get the current
 release to be updated. Usually, switching to the small version helps
-by setting version to `21.11-small` in `shell.nix`.
-
-    nixops deploy
+by setting version to `21.11-small` in `flake.nix`.
 
 If a reboot is needed, `--allow-reboot` as no effect. Reboot should be
 done manually or with:
