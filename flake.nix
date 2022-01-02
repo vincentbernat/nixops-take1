@@ -16,7 +16,6 @@
             pkgs.nixopsUnstable
           ];
           shellHook = ''
-            export NIX_PATH=nixpkgs=${nixpkgs}
             export NIXOPS_DEPLOYMENT=luffy
             export NIXOPS_STATE=state.nixops
           '';
