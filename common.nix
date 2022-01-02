@@ -3,7 +3,8 @@ let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
   ];
-in {
+in
+{
   # Nix
   nix = {
     # Only use Flakes
@@ -12,7 +13,7 @@ in {
       experimental-features = nix-command flakes
     '';
     registry.nixpkgs.flake = inputs.nixpkgs;
-    nixPath = [];
+    nixPath = [ ];
     # Garbage collection
     gc = {
       automatic = true;
@@ -39,8 +40,10 @@ in {
   # Let's Encrypt
   security.acme = {
     acceptTerms = true;
-    email = lib.concatStringsSep "@" [ "buypass+${config.deployment.targetHost}"
-                                       "vincent.bernat.ch" ];
+    email = lib.concatStringsSep "@" [
+      "buypass+${config.deployment.targetHost}"
+      "vincent.bernat.ch"
+    ];
     server = "https://api.buypass.com/acme/directory";
   };
 

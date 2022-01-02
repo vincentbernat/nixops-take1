@@ -9,16 +9,16 @@ let
         pkgs.fetchzip (args // {
           sha256 = "5n8JlCeXXCTL7aFDyQ+knIgPHJyouDuwulM0dCX3mh4=";
           postFetch = ''
-                      ${args.postFetch}
-                      sed -i -e "/^application\/javascript[ \t]/d" \
-                             -e "/^text\/vnd.trolltech.linguist[ \t]/d" \
-                             -e "1a text/javascript js;" \
-                             -e "1a video/mp2t      ts;" \
-                          $out/etc/nginx/mime.types
-                      '';
+            ${args.postFetch}
+            sed -i -e "/^application\/javascript[ \t]/d" \
+                   -e "/^text\/vnd.trolltech.linguist[ \t]/d" \
+                   -e "1a text/javascript js;" \
+                   -e "1a video/mp2t      ts;" \
+                $out/etc/nginx/mime.types
+          '';
         });
     };
   };
 in
 (import "${modulesPath}/services/web-servers/nginx/default.nix"
-  (args // {pkgs = pkgsWithModifiedMailcap; }))
+  (args // { pkgs = pkgsWithModifiedMailcap; }))
