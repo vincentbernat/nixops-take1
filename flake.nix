@@ -21,6 +21,6 @@
           '';
         };
       }) // {
-        nixopsConfigurations.default = import ./network.nix { inherit nixpkgs; };
+        nixopsConfigurations.default = import ./network.nix { inherit inputs; };
       };
 }

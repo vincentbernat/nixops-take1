@@ -1,4 +1,4 @@
-{ ... }:
+{ modulesPath, ... }:
 {
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
@@ -10,6 +10,6 @@
     loader.timeout = 0;
   };
   imports = [
-    <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
+    "${modulesPath}/profiles/qemu-guest.nix"
   ];
 }

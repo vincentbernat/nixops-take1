@@ -1,4 +1,4 @@
-args@{ config, lib, pkgs, ... }:
+args@{ config, lib, pkgs, modulesPath, ... }:
 
 let
   pkgsWithModifiedMailcap = pkgs // {
@@ -20,5 +20,5 @@ let
     };
   };
 in
-(import <nixpkgs/nixos/modules/services/web-servers/nginx/default.nix>
+(import "${modulesPath}/services/web-servers/nginx/default.nix"
   (args // {pkgs = pkgsWithModifiedMailcap; }))

@@ -1,13 +1,25 @@
-{ config, pkgs, lib, ... }:
+{ inputs }: { config, pkgs, lib, ... }:
 let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
   ];
 in {
   # Nix
-  nix.gc.automatic = true;
-  nix.gc.dates = "03:15";
-  nix.gc.options = "--delete-older-than 8d";
+  nix = {
+    # Only use Flakes
+    package = pkgs.nix_2_4;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    nixPath = [];
+    # Garbage collection
+    gc = {
+      automatic = true;
+      dates = "03:15";
+      options = "--delete-older-than 8d";
+    };
+  };
   # no need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "18.09";
 
