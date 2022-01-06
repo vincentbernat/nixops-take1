@@ -188,6 +188,7 @@ let
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
       (vhost "bernat.ch" redirectBlogVhost)
+      (vhost "media.bernat.ch" (mediaVhost // { useACMEHost = "vincent.bernat.ch"; }))
       (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
     ];
 in

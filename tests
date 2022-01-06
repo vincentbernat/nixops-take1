@@ -45,6 +45,7 @@ http://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 http://media.luffy.cx/css/common.css 301 https://media.luffy.cx/css/common.css
 https://media.luffy.cx/css/common.css 200
+https://media.bernat.ch/css/common.css 200
 
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5 200
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5 404
