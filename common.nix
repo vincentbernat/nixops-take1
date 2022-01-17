@@ -85,6 +85,11 @@ in
     ];
   programs.zsh.enable = true;
 
+  # No X11. This could be done with `environment.noXlibs = true;', but
+  # that would require recompiling too many stuff.
+  security.pam.services.su.forwardXAuth = lib.mkForce false;
+  fonts.fontconfig.enable = false;
+
   # Users
   users = {
     mutableUsers = false;
