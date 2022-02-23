@@ -235,6 +235,7 @@ in
 
     appendConfig = ''
       pcre_jit on;
+      worker_rlimit_nofile 8192;
     '';
     appendHttpConfig =
       let compressedTypes = ''
