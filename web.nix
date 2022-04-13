@@ -138,7 +138,9 @@ let
         (mediaVhost // { useACMEHost = "www.une-oasis-une-ecole.fr"; }))
 
       # ENXIO
+      (vhost "enx.io" (redirectVhost "www.enxio.fr"))
       (vhost "enxio.fr" (redirectVhost "www.enxio.fr"))
+      (vhost "www.enx.io" (redirectVhost "www.enxio.fr"))
       (vhost "www.enxio.fr" {
         forceSSL = true;
         extraConfig = ''
