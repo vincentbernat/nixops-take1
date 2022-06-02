@@ -313,22 +313,11 @@ in
   };
 
   # Logs
-  services.logrotate = {
-    paths = {
-      nginx = {
-        path = "/var/log/nginx/*.log";
-        frequency = "daily";
-        keep = 30;
-        extraConfig = ''
-          compress
-          delaycompress
-          create 0640 ${config.services.nginx.user} wheel
-          sharedscripts
-          postrotate
-            systemctl reload nginx
-          endscript
-        '';
-      };
+  services.logrotate.settings = {
+    nginx = {
+      frequency = "daily";
+      rotate = 30;
+      create = "0640 ${config.services.nginx.user} wheel";
     };
   };
 

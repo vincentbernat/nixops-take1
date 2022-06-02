@@ -40,11 +40,13 @@ in
   # Let's Encrypt
   security.acme = {
     acceptTerms = true;
-    email = lib.concatStringsSep "@" [
-      "buypass+${config.deployment.targetHost}"
-      "vincent.bernat.ch"
-    ];
-    server = "https://api.buypass.com/acme/directory";
+    defaults = {
+      email = lib.concatStringsSep "@" [
+        "buypass+${config.deployment.targetHost}"
+        "vincent.bernat.ch"
+      ];
+      server = "https://api.buypass.com/acme/directory";
+    };
   };
 
   # Services
@@ -56,21 +58,7 @@ in
   services.fstrim = {
     enable = true;
   };
-  services.logrotate = {
-    enable = true;
-    paths = {
-      btmp = {
-        path = "/var/log/btmp";
-        frequency = "weekly";
-        keep = 3;
-      };
-      wtmp = {
-        path = "/var/log/wtmp";
-        frequency = "monthly";
-        keep = 12;
-      };
-    };
-  };
+  services.logrotate.enable = true;
 
   # Packages
   environment.systemPackages = with pkgs;
