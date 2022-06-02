@@ -61,17 +61,12 @@ let
       werkzeug
       bleach
       flask-caching
+      passlib
     ];
 
     buildInputs = [
       cffi
     ];
-
-    checkInputs = [ nose ];
-
-    checkPhase = ''
-      ${python.interpreter} setup.py nosetests
-    '';
   };
   # Python environment to use, containing isso and gunicorn
   issoEnv = pkgs.python3.buildEnv.override {
