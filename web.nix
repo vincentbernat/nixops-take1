@@ -318,6 +318,7 @@ in
       frequency = "daily";
       rotate = 30;
       create = "0640 ${config.services.nginx.user} wheel";
+      su = "${config.services.nginx.user} wheel";
     };
   };
 
