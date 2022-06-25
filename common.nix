@@ -93,6 +93,7 @@ in
   };
   security.sudo.wheelNeedsPassword = false;
 
+  documentation.enable = false;
   system.activationScripts.diff = ''
     ${pkgs.nixUnstable}/bin/nix store \
         --experimental-features 'nix-command' \
