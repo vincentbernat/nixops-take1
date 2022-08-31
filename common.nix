@@ -95,7 +95,7 @@ in
 
   documentation.enable = false;
   system.activationScripts.diff = ''
-    ${pkgs.nixUnstable}/bin/nix store \
+    ${config.nix.package}/bin/nix store \
         --experimental-features 'nix-command' \
         diff-closures /run/current-system "$systemConfig"
   '';
