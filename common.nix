@@ -95,7 +95,8 @@ in
 
   documentation.enable = false;
   system.activationScripts.diff = ''
-    ${pkgs.nvd}/bin/nvd diff /run/current-system "$systemConfig"
+    PATH=$PATH:${config.nix.package}/bin \
+      ${pkgs.nvd}/bin/nvd diff /run/current-system "$systemConfig"
   '';
 
 }
