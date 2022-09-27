@@ -95,9 +95,7 @@ in
 
   documentation.enable = false;
   system.activationScripts.diff = ''
-    ${config.nix.package}/bin/nix store \
-        --experimental-features 'nix-command' \
-        diff-closures /run/current-system "$systemConfig"
+    ${pkgs.nvd}/bin/nvd diff /run/current-system "$systemConfig"
   '';
 
 }
