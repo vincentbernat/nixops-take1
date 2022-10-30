@@ -207,6 +207,7 @@ in
         brotli
         ipscrub
       ];
+      openssl = pkgs.openssl_1_1;
     });
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types
