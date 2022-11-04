@@ -50,7 +50,7 @@ let
       owner = "vincentbernat";
       repo = pname;
       rev = "vbe/master";
-      sha256 = "1sf752s67c9f60ii6snxbihmpl81dwhwnbycywd3qy50q3vy5i1x";
+      hash = "sha256-s4mM+jv3LDRoI3S8X+v2JdRltPivk8+NvkEyIItuOnM=";
     };
 
     propagatedBuildInputs = [
@@ -61,11 +61,13 @@ let
       werkzeug
       bleach
       flask-caching
-      passlib
+      flask
     ];
 
     buildInputs = [
       cffi
+      pytest
+      pytest-cov
     ];
   };
   # Python environment to use, containing isso and gunicorn
