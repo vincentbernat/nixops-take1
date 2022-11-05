@@ -1,1 +1,1 @@
-((nix-mode . ((mode . apheleia))))
+((nix-mode . ((mode . format-all))))
