@@ -89,6 +89,7 @@ in
       isReadOnly = false;
     };
     config = {
+      systemd.services.console-getty.enable = false;
       systemd.services.isso = {
         description = "Isso commenting server";
         wantedBy = [ "multi-user.target" ];
