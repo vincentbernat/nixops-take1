@@ -7,7 +7,7 @@ let
   #   | gzip -c > comments-isso-$(date -I).txt.gz
   issoConfig = pkgs.writeText "isso.conf" ''
     [general]
-    dbpath = /db/comments.db
+    dbpath = /var/lib/isso/db/comments.db
     host =
       https://vincent.bernat.ch
       http://localhost:8080
@@ -78,48 +78,36 @@ let
       pkgs.python3Packages.gevent
     ];
   };
-  issoDockerImage = pkgs.dockerTools.buildImage {
-    name = "isso";
-    tag = "latest";
-    extraCommands = ''
-      mkdir -p db
-    '';
-    config = {
-      Cmd = [
-        "${issoEnv}/bin/gunicorn"
-        "--name"
-        "isso"
-        "--bind"
-        "0.0.0.0:${toString issoPort}"
-        "--worker-class"
-        "gevent"
-        "--workers"
-        "2"
-        "--worker-tmp-dir"
-        "/dev/shm"
-        "--preload"
-        "isso.run"
-      ];
-      Env = [
-        "ISSO_SETTINGS=${issoConfig}"
-        "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
-      ];
-    };
-  };
 in
 {
-  # Container
-  boot.enableContainers = false;
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-      isso = {
-        image = "isso";
-        imageFile = issoDockerImage;
-        ports = [ "127.0.0.1:${toString issoPort}:${toString issoPort}" ];
-        volumes = [
-          "/var/db/isso:/db"
-        ];
+  # Systemd container
+  containers.isso = {
+    ephemeral = true;
+    autoStart = true;
+    bindMounts."/var/lib/private/isso/db" = {
+      hostPath = "/var/db/isso";
+      isReadOnly = false;
+    };
+    config = {
+      systemd.services.isso = {
+        description = "Isso commenting server";
+        wantedBy = [ "multi-user.target" ];
+        script = ''
+          ${issoEnv}/bin/gunicorn \
+            --name isso \
+            --bind 127.0.0.1:${toString issoPort} \
+            --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
+            --preload isso.run
+        '';
+        environment = {
+          ISSO_SETTINGS = issoConfig;
+          SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+        };
+        serviceConfig = {
+          DynamicUser = true;
+          StateDirectory = "isso";
+          Restart = "always";
+        };
       };
     };
   };
