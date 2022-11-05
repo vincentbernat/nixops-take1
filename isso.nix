@@ -61,11 +61,11 @@ let
       werkzeug
       bleach
       flask-caching
-      flask
     ];
-
     buildInputs = [
       cffi
+    ];
+    checkInputs = [
       pytest
       pytest-cov
     ];
