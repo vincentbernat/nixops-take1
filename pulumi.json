@@ -32,7 +32,7 @@
     {
       "hardware": "vultr",
       "ipv4_address": "149.28.124.245",
-      "ipv6_address": "2001:19f0:5c01:1894:5400:03ff:febe:4284",
+      "ipv6_address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
       "name": "web06.luffy.cx",
       "tags": [
         "web"
