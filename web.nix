@@ -187,7 +187,21 @@ let
       })
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
-      (vhost "bernat.ch" redirectBlogVhost)
+      (vhost "bernat.ch" (redirectBlogVhost // {
+        globalRedirect = null;
+        locations."= /.well-known/webfinger".extraConfig = ''
+          if ($arg_resource = acct:vincent@bernat.ch) {
+            return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
+          }
+          return 404;
+        '';
+        locations."= /@vincent".extraConfig = ''
+          return 302  https://hachyderm.io/@vbernat;
+        '';
+        locations."/".extraConfig = ''
+          rewrite ^ https://vincent.bernat.ch$request_uri permanent;
+        '';
+      }))
       (vhost "media.bernat.ch" (mediaVhost // { useACMEHost = "vincent.bernat.ch"; }))
       (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
     ];
