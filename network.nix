@@ -11,17 +11,17 @@ let
     deployment.targetHost = name;
     imports = [ (./hardware/. + "/${hardware}.nix") ] ++ imports;
   };
-  pulumi-servers-json = (lib.importJSON ./pulumi.json).all-servers;
-  pulumi-servers = map
+  cdktf-servers-json = (lib.importJSON ./cdktf.json).servers.value;
+  cdktf-servers = map
     (s:
       let
-        tags-import = map (t: ./. + "/${t}.nix") s.tags;
+        tags-import = builtins.filter (t: builtins.pathExists t) (map (t: ./. + "/${t}.nix") s.tags);
         extra-attrs =
           if s.hardware == "hetzner"
           then {
             networking.usePredictableInterfaceNames = false;
             networking.interfaces.eth0.ipv6.addresses = [{
-              address = s.ipv6_address;
+              address = s.ipv6Address;
               prefixLength = 64;
             }];
             networking.defaultGateway6 = {
@@ -35,7 +35,7 @@ let
         name = shortName s.name;
         value = server s.hardware s.name tags-import extra-attrs;
       })
-    pulumi-servers-json;
+    cdktf-servers-json;
 in
 {
   nixpkgs = inputs.nixpkgs;
@@ -43,4 +43,4 @@ in
   network.enableRollback = true;
   network.storage.legacy = { };
   defaults = import ./common.nix { inherit inputs; };
-} // builtins.listToAttrs pulumi-servers
+} // builtins.listToAttrs cdktf-servers

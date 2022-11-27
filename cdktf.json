@@ -1,0 +1,131 @@
+{
+  "acme-zone": {
+    "sensitive": false,
+    "type": "string",
+    "value": "Z06451241YB3NS45AH4J8"
+  },
+  "servers": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        [
+          "object",
+          {
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ]
+      ]
+    ],
+    "value": [
+      {
+        "hardware": "hetzner",
+        "ipv4Address": "95.216.162.158",
+        "ipv6Address": "2a01:4f9:c010:1a9c::1",
+        "name": "web03.luffy.cx",
+        "tags": [
+          "web",
+          "isso",
+          "continent:EU",
+          "continent:AF"
+        ]
+      },
+      {
+        "hardware": "hetzner",
+        "ipv4Address": "116.203.18.48",
+        "ipv6Address": "2a01:4f8:1c0c:5eb5::1",
+        "name": "web04.luffy.cx",
+        "tags": [
+          "web",
+          "continent:EU",
+          "continent:AF"
+        ]
+      },
+      {
+        "hardware": "hetzner",
+        "ipv4Address": "5.161.44.145",
+        "ipv6Address": "2a01:4ff:f0:b91::1",
+        "name": "web05.luffy.cx",
+        "tags": [
+          "web",
+          "continent:NA",
+          "continent:SA"
+        ]
+      },
+      {
+        "hardware": "vultr",
+        "ipv4Address": "149.28.124.245",
+        "ipv6Address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
+        "name": "web06.luffy.cx",
+        "tags": [
+          "web",
+          "continent:NA",
+          "continent:SA"
+        ]
+      }
+    ]
+  }
+}

@@ -7,11 +7,11 @@ using it and there are some lingering bugs, like the inability to
 reboot when a kernel is updated or the poor support for `nixops
 show-option`.
 
-I am using this setup in conjuction with Pulumi. See [pulumi-take1
-repository](https://github.com/vincentbernat/pulumi-take1). Notably,
-`pulumi.json` is the output of
+I am using this setup in conjuction with CDKTF. See [cdktf-take1
+repository](https://github.com/vincentbernat/cdktf-take1). Notably,
+`cdktf.json` is the output of
 
-    pulumi stack output --json > pulumi.json
+    terraform output --json > cdktf.json
 
 To deploy NixOS on Hetzner, see
 https://blog.oro.nu/posts/hetzner-cloud-with-nixos/. On Vultr, this

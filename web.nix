@@ -23,7 +23,7 @@ let
           credentialsFile =
             let
               secrets = (import ./secrets.nix).acme.route53;
-              zoneid = (lib.importJSON ./pulumi.json).acme-zone;
+              zoneid = (lib.importJSON ./cdktf.json).acme-zone.value;
             in
             pkgs.writeText "route53-credentials" ''
               AWS_REGION=us-east-1
