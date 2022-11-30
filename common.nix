@@ -8,7 +8,7 @@ in
   # Nix
   nix = {
     # Only use Flakes
-    package = pkgs.nix_2_4;
+    package = pkgs.nix;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';

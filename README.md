@@ -32,7 +32,7 @@ To deploy:
 
 In case of a security issue, it can take a few days to get the current
 release to be updated. Usually, switching to the small version helps
-by setting version to `22.05-small` in `flake.nix`.
+by setting version to `22.11-small` in `flake.nix`.
 
 If a reboot is needed, `--allow-reboot` as no effect. Reboot should be
 done manually or with:

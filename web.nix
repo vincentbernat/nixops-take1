@@ -221,6 +221,9 @@ in
         brotli
         ipscrub
       ];
+    }).overrideAttrs (old: {
+      # See https://github.com/NixOS/nixpkgs/issues/182935
+      disallowedReferences = null;
     });
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types
