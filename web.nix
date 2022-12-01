@@ -221,6 +221,7 @@ in
         brotli
         ipscrub
       ];
+      openssl = pkgs.openssl_1_1;
     }).overrideAttrs (old: {
       # See https://github.com/NixOS/nixpkgs/issues/182935
       disallowedReferences = null;
