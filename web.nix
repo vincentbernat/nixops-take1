@@ -256,30 +256,31 @@ in
       worker_rlimit_nofile 8192;
     '';
     appendHttpConfig =
-      let compressedTypes = ''
-        application/atom+xml
-        application/json
-        application/ld+json
-        application/manifest+json
-        application/rss+xml
-        application/vnd.apple.mpegurl
-        application/vnd.geo+json
-        application/vnd.ms-fontobject
-        application/wasm
-        application/x-font-ttf
-        application/x-web-app-manifest+json
-        application/xhtml+xml
-        application/xml
-        font/opentype
-        image/svg+xml
-        text/cache-manifest
-        text/css
-        text/javascript
-        text/plain
-        text/vcard
-        text/vtt
-        text/xml
-      '';
+      let
+        compressedTypes = ''
+          application/atom+xml
+          application/json
+          application/ld+json
+          application/manifest+json
+          application/rss+xml
+          application/vnd.apple.mpegurl
+          application/vnd.geo+json
+          application/vnd.ms-fontobject
+          application/wasm
+          application/x-font-ttf
+          application/x-web-app-manifest+json
+          application/xhtml+xml
+          application/xml
+          font/opentype
+          image/svg+xml
+          text/cache-manifest
+          text/css
+          text/javascript
+          text/plain
+          text/vcard
+          text/vtt
+          text/xml
+        '';
       in
       ''
         # Default charset
