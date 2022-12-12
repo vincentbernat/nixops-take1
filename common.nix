@@ -25,10 +25,12 @@ in
   system.stateVersion = "18.09";
 
   # Firewall
-  networking.firewall.enable = true;
-  networking.firewall.rejectPackets = true;
-  networking.firewall.allowPing = true;
-  networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall = {
+    enable = true;
+    rejectPackets = true;
+    allowPing = true;
+    allowedTCPPorts = [ 22 ];
+  };
 
   # Better performance
   boot.kernelModules = [ "tcp_bbr" ];
