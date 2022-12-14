@@ -7,7 +7,13 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          pkgs = nixpkgs.legacyPackages."${system}";
+          pkgs = import inputs.nixpkgs
+            {
+              inherit system;
+              config = {
+                permittedInsecurePackages = [ "python3.10-poetry-1.2.2" ];
+              };
+            };
         in
         {
           devShells.default = pkgs.mkShell {
@@ -24,6 +30,8 @@
             '';
           };
         }) // {
-      nixopsConfigurations.default = import ./network.nix { inherit inputs; };
+      nixopsConfigurations.default = import ./network.nix {
+        inherit inputs;
+      };
     };
 }
