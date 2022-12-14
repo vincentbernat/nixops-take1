@@ -10,7 +10,7 @@
           pkgs = nixpkgs.legacyPackages."${system}";
         in
         {
-          devShell = pkgs.mkShell {
+          devShells.default = pkgs.mkShell {
             name = "nixops-take1";
             buildInputs = [
               pkgs.curl
