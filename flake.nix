@@ -11,7 +11,7 @@
             {
               inherit system;
               config = {
-                permittedInsecurePackages = [ "python3.10-poetry-1.2.2" ];
+                permittedInsecurePackages = [ "python3.10-poetry-1.2.2" "python3.10-certifi-2022.9.24" ];
               };
             };
         in
