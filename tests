@@ -43,9 +43,9 @@ http://www.luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://www.luffy.cx/keepalive 301 https://vincent.bernat.ch/keepalive
 http://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
 https://luffy.cx/keepalive 301 https://www.luffy.cx/keepalive
-http://media.luffy.cx/css/common.css 301 https://media.luffy.cx/css/common.css
-https://media.luffy.cx/css/common.css 200
-https://media.bernat.ch/css/common.css 200
+http://media.luffy.cx/images/favicon.png 301 https://media.luffy.cx/images/favicon.png
+https://media.luffy.cx/images/favicon.png 200
+https://media.bernat.ch/images/favicon.png 200
 https://bernat.ch/.well-known/webfinger 404
 https://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io
 http://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io
@@ -56,8 +56,8 @@ https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5 200
 http://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
 https://www.une-oasis-une-ecole.fr/contact 200
-http://media.une-oasis-une-ecole.fr/css/common.css 301 https://media.une-oasis-une-ecole.fr/css/common.css
-https://media.une-oasis-une-ecole.fr/css/common.css 200
+http://media.une-oasis-une-ecole.fr/images/l/favicon.png 301 https://media.une-oasis-une-ecole.fr/images/l/favicon.png
+https://media.une-oasis-une-ecole.fr/images/l/favicon.png 200
 
 http://haproxy.debian.net/haproxy.css 301 https://haproxy.debian.net/haproxy.css
 https://haproxy.debian.net/haproxy.css 200
