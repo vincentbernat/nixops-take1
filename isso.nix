@@ -89,6 +89,7 @@ in
       isReadOnly = false;
     };
     config = {
+      system.stateVersion = config.system.stateVersion;
       systemd.services.console-getty.enable = false;
       systemd.services.isso = {
         description = "Isso commenting server";
