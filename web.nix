@@ -221,13 +221,7 @@ in
         brotli
         ipscrub
       ];
-      openssl = pkgs.openssl_1_1.overrideAttrs (old: rec {
-        version = "1.1.1t";
-        src = pkgs.fetchurl {
-          url = "https://www.openssl.org/source/openssl-${version}.tar.gz";
-          sha256 = "sha256-je6bJL2x3L8MPR6bAvuPa/IhZegH9Fret8lndTaFnTs=";
-        };
-      });
+      openssl = pkgs.openssl_1_1;
     }).overrideAttrs (old: {
       # See https://github.com/NixOS/nixpkgs/issues/182935
       disallowedReferences = null;
