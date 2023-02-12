@@ -18,6 +18,7 @@ let
     [moderation]
     enabled = true
     purge-after = 120d
+    approve-if-email-previously-approved = true
 
     [server]
     public-endpoint = https://comments.luffy.cx
