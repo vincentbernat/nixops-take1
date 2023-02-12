@@ -31,6 +31,7 @@ in
     allowPing = true;
     allowedTCPPorts = [ 22 ];
   };
+  networking.nat.externalInterface = "eth0";
 
   # Better performance
   boot.kernelModules = [ "tcp_bbr" ];
