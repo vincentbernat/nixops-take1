@@ -88,6 +88,7 @@ in
     enable = true;
     internalInterfaces = [ "ve-isso" ];
   };
+  systemd.services."container@isso".after = [ "network-online.target" ];
   containers.isso = {
     ephemeral = true;
     autoStart = true;
