@@ -188,7 +188,7 @@ let
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
       (vhost "bernat.ch" (redirectBlogVhost // {
-        globalRedirect = null;
+        globalRedirect = null; # this can be removed in 23.05
         locations."= /.well-known/webfinger".extraConfig = ''
           if ($arg_resource = acct:vincent@bernat.ch) {
             return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
