@@ -23,6 +23,7 @@
               pkgs.colordiff
               pkgs.wdiff
               pkgs.nixopsUnstable
+              pkgs.nix
             ];
             shellHook = ''
               export NIXOPS_DEPLOYMENT=luffy
