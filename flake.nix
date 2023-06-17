@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
@@ -11,7 +11,9 @@
             {
               inherit system;
               config = {
-                permittedInsecurePackages = [ "python3.10-certifi-2022.9.24" ];
+                permittedInsecurePackages = [
+                  "python3.10-cryptography-3.4.8" # nixops
+                ];
               };
             };
         in

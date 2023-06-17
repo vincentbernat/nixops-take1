@@ -188,7 +188,6 @@ let
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
       (vhost "bernat.ch" (redirectBlogVhost // {
-        globalRedirect = null; # this can be removed in 23.05
         locations."= /.well-known/webfinger".extraConfig = ''
           if ($arg_resource = acct:vincent@bernat.ch) {
             return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
@@ -197,9 +196,6 @@ let
         '';
         locations."= /@vincent".extraConfig = ''
           return 302  https://hachyderm.io/@vbernat;
-        '';
-        locations."/".extraConfig = ''
-          rewrite ^ https://vincent.bernat.ch$request_uri permanent;
         '';
       }))
       (vhost "media.bernat.ch" (mediaVhost // { useACMEHost = "vincent.bernat.ch"; }))
@@ -221,16 +217,9 @@ in
         brotli
         ipscrub
       ];
-      openssl = pkgs.openssl_1_1.overrideAttrs (_: rec {
-        version = "1.1.1u";
-        src = pkgs.fetchurl {
-          url = "https://www.openssl.org/source/openssl-${version}.tar.gz";
-          sha256 = "sha256-4vjYS1I+7NBse+diaDA3AwD7zBU4a/UULXJ1j2lj68Y=";
-        };
-      });
     }).overrideAttrs (old: {
       # See https://github.com/NixOS/nixpkgs/issues/182935
-      disallowedReferences = null;
+      disallowedReferences = [ ];
     });
 
     recommendedGzipSettings = false; # we want more stuff in gzip_types

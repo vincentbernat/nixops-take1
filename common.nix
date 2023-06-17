@@ -55,8 +55,10 @@ in
   # Services
   services.openssh = {
     enable = true;
-    permitRootLogin = "prohibit-password";
-    extraConfig = "AcceptEnv LANG LC_*";
+    settings = {
+      PermitRootLogin = "prohibit-password";
+      AcceptEnv = "LANG LC_*";
+    };
   };
   services.fstrim = {
     enable = true;
