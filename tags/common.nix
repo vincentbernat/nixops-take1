@@ -1,4 +1,4 @@
-{ inputs }: { config, pkgs, lib, ... }:
+{ inputs, config, pkgs, lib, ... }:
 let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
@@ -45,7 +45,7 @@ in
     acceptTerms = true;
     defaults = {
       email = lib.concatStringsSep "@" [
-        "buypass+${config.deployment.targetHost}"
+        "buypass+${config.networking.hostName}.${config.networking.domain}"
         "vincent.bernat.ch"
       ];
       server = "https://api.buypass.com/acme/directory";

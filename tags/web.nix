@@ -1,4 +1,4 @@
-{ config, pkgs, lib, nodes, ... }:
+{ config, pkgs, lib, ... }:
 let
   vhost = name: attrs: {
     # Virtualhost definition
@@ -22,8 +22,8 @@ let
           dnsProvider = "route53";
           credentialsFile =
             let
-              secrets = (import ./secrets.nix).acme.route53;
-              zoneid = (lib.importJSON ./cdktf.json).acme-zone.value;
+              secrets = (import ../secrets.nix).acme.route53;
+              zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
             in
             pkgs.writeText "route53-credentials" ''
               AWS_REGION=us-east-1
@@ -350,6 +350,6 @@ in
     '';
 
   # Import vhosts and override nginx module to use a custom mailcap package
-  imports = vhosts ++ [ ./modules/nginx.nix ];
+  imports = vhosts ++ [ ../modules/nginx.nix ];
   disabledModules = [ "services/web-servers/nginx/default.nix" ];
 }
