@@ -1,5 +1,5 @@
-This is my tentative to get more familiar with NixOS and Colmena. I am
-unsure if it's the right way.
+This is my tentative to get more familiar with NixOS and Colmena. I am unsure if
+it's the right way. Previously, I was using NixOps (see commit 7e583aca7906).
 
 I am using this setup in conjuction with CDKTF. See [cdktf-take1
 repository](https://github.com/vincentbernat/cdktf-take1). Notably,
