@@ -99,7 +99,7 @@ in
       isReadOnly = false;
     };
     bindMounts."/etc/isso.cfg" = {
-      hostPath = "/etc/keys/isso.cfg";
+      hostPath = "/var/keys/isso.cfg";
       isReadOnly = true;
     };
     extraFlags = [ "--resolv-conf=bind-host" ];
@@ -136,7 +136,7 @@ in
   deployment.keys."isso.cfg" = {
     group = "keys";
     permissions = "0640";
-    destDir = "/etc/keys";
+    destDir = "/var/keys";
     keyCommand = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
   };
 
