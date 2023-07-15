@@ -1,11 +1,13 @@
 { config, pkgs, lib, ... }:
 let
-  secrets = (import ../secrets.nix).isso;
   # Isso configuration file
   # Backup of sqlite can be done with:
   #   nix run nixpkgs.sqlite --command sudo sqlite3 /var/db/isso/comments.db .dump \
   #   | gzip -c > comments-isso-$(date -I).txt.gz
-  issoConfig = pkgs.writeText "isso.conf" ''
+  issoMkConfig = builtins.toFile "isso-mkconf" ''
+    source <(pass show personal/nixops/secrets)
+
+    cat <<EOF
     [general]
     dbpath = /var/lib/isso/db/comments.db
     host =
@@ -28,7 +30,7 @@ let
     username = vincent@bernat.ch
     port = 587
     security = starttls
-    password = ${secrets.smtp-password}
+    password = $ISSO_SMTP_PASSWORD
     to = isso@vincent.bernat.ch
     from = isso@vincent.bernat.ch
 
@@ -38,7 +40,8 @@ let
     allowed-attributes = href
 
     [hash]
-    salt = ${secrets.salt}
+    salt = $ISSO_SALT
+    EOF
   '';
   issoPort = 8080;
   issoIP = "192.168.247.10";
@@ -95,6 +98,10 @@ in
       hostPath = "/var/db/isso";
       isReadOnly = false;
     };
+    bindMounts."/etc/isso.cfg" = {
+      hostPath = "/etc/keys/isso.cfg";
+      isReadOnly = true;
+    };
     extraFlags = [ "--resolv-conf=bind-host" ];
     privateNetwork = true;
     hostAddress = "${hostIP}";
@@ -114,16 +121,23 @@ in
             --preload isso.run
         '';
         environment = {
-          ISSO_SETTINGS = issoConfig;
+          ISSO_SETTINGS = "/etc/isso.cfg";
           SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
         };
         serviceConfig = {
+          SupplementaryGroups = [ "keys" ];
           DynamicUser = true;
           StateDirectory = "isso";
           Restart = "always";
         };
       };
     };
+  };
+  deployment.keys."isso.cfg" = {
+    group = "keys";
+    permissions = "0640";
+    destDir = "/etc/keys";
+    keyCommand = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
   };
 
   # Nginx vhost

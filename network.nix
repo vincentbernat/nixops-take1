@@ -38,8 +38,10 @@ let
     cdktf-servers-json;
 in
 {
-  nixpkgs = inputs.nixpkgs;
-  network.description = "Luffy infrastructure";
-  network.enableRollback = true;
-  network.storage.legacy = { };
+  meta = {
+    description = "Luffy infrastructure";
+    nixpkgs = import inputs.nixpkgs {
+      system = "x86_64-linux";
+    };
+  };
 } // builtins.listToAttrs cdktf-servers

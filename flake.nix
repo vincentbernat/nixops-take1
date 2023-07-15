@@ -24,16 +24,12 @@
               pkgs.curl
               pkgs.colordiff
               pkgs.wdiff
-              pkgs.nixopsUnstable
+              pkgs.colmena
               pkgs.nix
             ];
-            shellHook = ''
-              export NIXOPS_DEPLOYMENT=luffy
-              export NIXOPS_STATE=state.nixops
-            '';
           };
         }) // {
-      nixopsConfigurations.default = import ./network.nix {
+      colmena = import ./network.nix {
         inherit inputs;
       };
     };

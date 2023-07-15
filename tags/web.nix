@@ -20,18 +20,7 @@ let
         certs."${name}" = {
           webroot = lib.mkForce null;
           dnsProvider = "route53";
-          credentialsFile =
-            let
-              secrets = (import ../secrets.nix).acme.route53;
-              zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
-            in
-            pkgs.writeText "route53-credentials" ''
-              AWS_REGION=us-east-1
-              AWS_ACCESS_KEY_ID=${secrets.key}
-              AWS_SECRET_ACCESS_KEY=${secrets.secret}
-              AWS_HOSTED_ZONE_ID=${zoneid}
-              LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
-            '';
+          credentialsFile = "/run/keys/acme-credentials.${name}.secret";
           extraDomainNames =
             let
               otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
@@ -40,6 +29,30 @@ let
             lib.mapAttrsToList (name: vhost: name) otherVhosts;
         };
       };
+
+    deployment.keys."acme-credentials.${name}.secret" = {
+      user = "acme";
+      group = "nginx";
+      permissions = "0640";
+      keyCommand =
+        let
+          zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
+          cmd = builtins.toFile
+            "compile-acme-credentials.${name}"
+            ''
+              source <(pass show personal/nixops/secrets)
+
+              cat <<EOF
+              AWS_REGION=us-east-1
+              AWS_ACCESS_KEY_ID=$ACME_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY=$ACME_AWS_SECRET_ACCESS_KEY
+              AWS_HOSTED_ZONE_ID=${zoneid}
+              LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
+              EOF
+            '';
+        in
+        [ "${pkgs.runtimeShell}" "${cmd}" ];
+    };
   };
   vhosts =
     let
