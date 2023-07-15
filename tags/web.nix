@@ -29,7 +29,6 @@ let
             lib.mapAttrsToList (name: vhost: name) otherVhosts;
         };
       };
-
     deployment.keys."acme-credentials.${name}.secret" = {
       user = "acme";
       group = "nginx";
@@ -53,7 +52,12 @@ let
         in
         [ "${pkgs.runtimeShell}" "${cmd}" ];
     };
+    systemd.services."acme-${name}" = {
+      requires = [ "acme-credentials.${name}.secret-key.service" ];
+      after = [ "acme-credentials.${name}.secret-key.service" ];
+    };
   };
+
   vhosts =
     let
       cors = ''

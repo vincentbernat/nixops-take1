@@ -139,6 +139,10 @@ in
     destDir = "/var/keys";
     keyCommand = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
   };
+  systemd.services."container@isso" = {
+    requires = [ "isso.cfg-key.service" ];
+    after = [ "isso.cfg-key.service" ];
+  };
 
   # Nginx vhost
   services.nginx.virtualHosts."comments.luffy.cx" = {
