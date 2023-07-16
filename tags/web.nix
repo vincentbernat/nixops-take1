@@ -11,6 +11,8 @@ let
           access_log /var/log/nginx/${name}.log anonymous;
           ${attrs.extraConfig or ""}
         '';
+        quic = true;
+        http3 = true;
       } // (if !attrs ? useACMEHost then { enableACME = true; } else { });
     };
 
@@ -221,14 +223,16 @@ let
 in
 {
   # Firewall
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall = {
+    allowedTCPPorts = [ 80 443 ];
+    allowedUDPPorts = [ 443 ];
+  };
 
   # nginx generic configuration
   services.nginx = {
     enable = true;
 
-    package = (pkgs.nginxStable.override {
-      # No stream module
+    package = (pkgs.nginxQuic.override {
       withStream = false;
       modules =
         let
