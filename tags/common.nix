@@ -69,6 +69,7 @@ in
   environment.systemPackages = with pkgs;
     [
       bat
+      fzf
       htop
       liboping
       mg
