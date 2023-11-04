@@ -17,6 +17,7 @@ in
     };
   };
   services.resolved.enable = true;
+  security.acme.defaults.dnsResolver = "1.1.1.1:53";
   networking = {
     usePredictableInterfaceNames = false;
     useDHCP = false;
