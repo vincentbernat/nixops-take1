@@ -22,6 +22,8 @@
               [
                 "string",
                 "string",
+                "string",
+                "string",
                 "string"
               ]
             ]
@@ -103,12 +105,14 @@
         "disabled": true,
         "hardware": "sapinet",
         "ipv4Address": "45.90.160.60",
-        "ipv6Address": "2a0c:8881::1",
+        "ipv6Address": "2a0c:8881::948e:48ff:fe0d:d535",
         "name": "web02.luffy.cx",
         "tags": [
           "web",
-          "contient:EU",
-          "continent:AF"
+          "continent:EU",
+          "continent:AF",
+          "gateway4:45.90.160.33",
+          "gateway6:fe80::200:ff:fe00:1"
         ]
       },
       {

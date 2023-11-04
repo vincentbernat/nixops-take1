@@ -3,12 +3,12 @@ let
   lib = inputs.nixpkgs.lib;
   shortName = name: builtins.elemAt (lib.splitString "." name) 0;
   domainName = name: lib.concatStringsSep "." (builtins.tail (lib.splitString "." name));
-  server = { name, ipv4Address, ipv6Address, modules }: {
+  server = { name, ipv4Address, ipv6Address, tags, modules }: {
     deployment.targetHost = name;
     imports = [
       {
         _module.args = {
-          inherit inputs ipv4Address ipv6Address;
+          inherit inputs ipv4Address ipv6Address tags;
         };
       }
       {
@@ -29,7 +29,7 @@ let
       {
         name = shortName s.name;
         value = server {
-          inherit (s) name ipv4Address ipv6Address;
+          inherit (s) name ipv4Address ipv6Address tags;
           modules = [
             (./hardware/. + "/${s.hardware}.nix")
           ] ++ tag-imports;
