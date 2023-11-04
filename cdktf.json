@@ -12,6 +12,24 @@
         [
           "object",
           {
+            "disabled": "bool",
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -81,6 +99,18 @@
       ]
     ],
     "value": [
+      {
+        "disabled": true,
+        "hardware": "sapinet",
+        "ipv4Address": "45.90.160.60",
+        "ipv6Address": "2a0c:8881::1",
+        "name": "web02.luffy.cx",
+        "tags": [
+          "web",
+          "contient:EU",
+          "continent:AF"
+        ]
+      },
       {
         "hardware": "hetzner",
         "ipv4Address": "95.216.162.158",
