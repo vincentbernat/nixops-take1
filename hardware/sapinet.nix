@@ -18,6 +18,9 @@ in
   };
   services.resolved.enable = true;
   security.acme.defaults.dnsResolver = "1.1.1.1:53";
+  boot.kernel.sysctl = {
+    "net.ipv6.conf.eth0.accept_ra" = 0;
+  };
   networking = {
     usePredictableInterfaceNames = false;
     useDHCP = false;
