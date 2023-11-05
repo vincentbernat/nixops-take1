@@ -11,10 +11,6 @@ in
   boot = {
     loader.grub.device = "/dev/vda";
     loader.timeout = 0;
-    initrd = {
-      availableKernelModules = [ "ata_piix" "uhci_hcd" "xen_blkfront" "vmw_pvscsi" ];
-      kernelModules = [ "nvme" ];
-    };
   };
   services.resolved.enable = true;
   security.acme.defaults.dnsResolver = "1.1.1.1:53";
