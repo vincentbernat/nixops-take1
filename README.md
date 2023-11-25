@@ -17,7 +17,7 @@ First, enable the appropriate shell:
 
 To deploy:
 
-    nix flake lock --update-input nixpkgs
+    nix flake update nixpkgs
     colmena apply
 
 To avoid parallelism and reboot after deploying:
