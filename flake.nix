@@ -7,15 +7,7 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          pkgs = import inputs.nixpkgs
-            {
-              inherit system;
-              config = {
-                permittedInsecurePackages = [
-                  "python3.10-cryptography-3.4.8" # nixops
-                ];
-              };
-            };
+          pkgs = import inputs.nixpkgs { inherit system; };
         in
         {
           devShells.default = pkgs.mkShell {
