@@ -44,6 +44,7 @@ in
   security.acme = {
     acceptTerms = true;
     defaults = {
+      validMinDays = 174;
       email = lib.concatStringsSep "@" [
         "buypass+${config.networking.hostName}.${config.networking.domain}"
         "vincent.bernat.ch"
