@@ -45,8 +45,6 @@ in
     acceptTerms = true;
     defaults = {
       validMinDays = 174;
-      dnsResolver = "1.1.1.1:53";
-      dnsPropagationCheck = false;
       email = lib.concatStringsSep "@" [
         "buypass+${config.networking.hostName}.${config.networking.domain}"
         "vincent.bernat.ch"
