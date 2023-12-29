@@ -44,12 +44,11 @@ in
   security.acme = {
     acceptTerms = true;
     defaults = {
-      validMinDays = 174;
+      dnsPropagationCheck = false;
       email = lib.concatStringsSep "@" [
-        "buypass+${config.networking.hostName}.${config.networking.domain}"
+        "letsencrypt+${config.networking.hostName}.${config.networking.domain}"
         "vincent.bernat.ch"
       ];
-      server = "https://api.buypass.com/acme/directory";
     };
   };
 

@@ -6,7 +6,7 @@ let
       virtualHosts."${name}" = attrs // {
         root = "/data/webserver/${name}";
         sslTrustedCertificate =
-          "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"; # Buypass use a different certificate for OCSP
+          "/var/lib/acme/${attrs.useACMEHost or name}/full.pem";
         extraConfig = ''
           access_log /var/log/nginx/${name}.log anonymous;
           ${attrs.extraConfig or ""}
