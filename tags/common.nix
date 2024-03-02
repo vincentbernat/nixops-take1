@@ -22,7 +22,7 @@ in
     };
   };
   # no need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  system.stateVersion = "18.09";
+  system.stateVersion = "23.11";
 
   # Firewall
   networking.firewall = {
