@@ -69,13 +69,23 @@ in
   environment.systemPackages = with pkgs;
     [
       bat
+      bpftrace
+      cpuid
+      ethtool
       fzf
       htop
       liboping
       mg
+      msr-tools
       mtr
       ncdu
+      nicstat
+      numactl
+      sysstat
+      tcpdump
+      tiptop
       tmux
+      trace-cmd
     ];
   programs.zsh.enable = true;
 
