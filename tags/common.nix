@@ -79,7 +79,6 @@ in
       msr-tools
       mtr
       ncdu
-      nicstat
       numactl
       sysstat
       tcpdump
