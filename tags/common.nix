@@ -13,7 +13,7 @@ in
       experimental-features = nix-command flakes
     '';
     registry.nixpkgs.flake = inputs.nixpkgs;
-    nixPath = [ ];
+    channel.enable = false;
     # Garbage collection
     gc = {
       automatic = true;
