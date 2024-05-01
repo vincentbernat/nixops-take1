@@ -143,6 +143,11 @@ let
         '';
       })
 
+      # Insolites en Méné
+      (vhost "insolites-en-mene.luffy.cx" {
+        forceSSL = true;
+      })
+
       # Une Oasis Une École
       (vhost "une-oasis-une-ecole.fr" (redirectVhost "www.une-oasis-une-ecole.fr"))
       (vhost "www.une-oasis-une-ecole.fr" {
