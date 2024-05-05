@@ -409,9 +409,9 @@ in
         config.services.nginx.virtualHosts;
     in
     ''
-      for d in ${builtins.concatStringsSep " " nginxRoots}; do
-        mkdir -p ''${d}
-        chown bernat:nginx ''${d}
+      for d in ${builtins.concatStringsSep " " (map lib.escapeShellArg nginxRoots)}; do
+        mkdir -p "$d"
+        chown bernat:nginx "$d"
       done
     '';
 
