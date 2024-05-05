@@ -29,34 +29,40 @@ let
             lib.mapAttrsToList (name: vhost: name) otherVhosts;
         };
       };
-    deployment.keys."acme-credentials.${name}.secret" = {
-      user = "acme";
-      group = "nginx";
-      permissions = "0640";
-      uploadAt = "post-activation";
-      keyCommand =
-        let
-          zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
-          cmd = builtins.toFile
-            "compile-acme-credentials.${name}"
-            ''
-              source <(pass show personal/nixops/secrets)
+    deployment.keys =
+      lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
+        "acme-credentials.${name}.secret" = {
+          user = "acme";
+          group = "nginx";
+          permissions = "0640";
+          uploadAt = "post-activation";
+          keyCommand =
+            let
+              zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
+              cmd = builtins.toFile
+                "compile-acme-credentials.${name}"
+                ''
+                  source <(pass show personal/nixops/secrets)
 
-              cat <<EOF
-              AWS_REGION=us-east-1
-              AWS_ACCESS_KEY_ID=$ACME_AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY=$ACME_AWS_SECRET_ACCESS_KEY
-              AWS_HOSTED_ZONE_ID=${zoneid}
-              LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
-              EOF
-            '';
-        in
-        [ "${pkgs.runtimeShell}" "${cmd}" ];
-    };
-    systemd.services."acme-${name}" = {
-      requires = [ "acme-credentials.${name}.secret-key.service" ];
-      after = [ "acme-credentials.${name}.secret-key.service" ];
-    };
+                  cat <<EOF
+                  AWS_REGION=us-east-1
+                  AWS_ACCESS_KEY_ID=$ACME_AWS_ACCESS_KEY_ID
+                  AWS_SECRET_ACCESS_KEY=$ACME_AWS_SECRET_ACCESS_KEY
+                  AWS_HOSTED_ZONE_ID=${zoneid}
+                  LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
+                  EOF
+                '';
+            in
+            [ "${pkgs.runtimeShell}" "${cmd}" ];
+        };
+      };
+    systemd.services =
+      lib.mkIf config.services.nginx.virtualHosts."${name}".enableACME {
+        "acme-${name}" = {
+          requires = [ "acme-credentials.${name}.secret-key.service" ];
+          after = [ "acme-credentials.${name}.secret-key.service" ];
+        };
+      };
   };
 
   vhosts =
