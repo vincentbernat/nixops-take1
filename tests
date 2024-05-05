@@ -64,6 +64,10 @@ http://haproxy.debian.net/haproxy.css 301 https://haproxy.debian.net/haproxy.css
 https://haproxy.debian.net/haproxy.css 200
 http://haproxy.debian.net/dists/stretch-backports-1.9/Release 200
 https://haproxy.debian.net/dists/stretch-backports-1.9/Release 200
+
+http://insolites-en-mene.pages.luffy.cx 301 https://insolites-en-mene.pages.luffy.cx/
+https://insolites-en-mene.pages.luffy.cx 200
+https://pages.luffy.cx 403
 EOF
 [ $count -gt 0 ] && \
     echo "Average response time: $((~~(total*1000/count)))ms"

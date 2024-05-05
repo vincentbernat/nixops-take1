@@ -4,7 +4,7 @@ let
     # Virtualhost definition
     services.nginx = {
       virtualHosts."${name}" = attrs // {
-        root = "/data/webserver/${name}";
+        root = attrs.root or "/data/webserver/${name}";
         sslTrustedCertificate =
           "/var/lib/acme/${attrs.useACMEHost or name}/full.pem";
         extraConfig = ''
@@ -170,6 +170,17 @@ let
       #   forceSSL = true;
       #   extraConfig = sts;
       # })
+
+      # *.pages.luffy.cx
+      (vhost "pages.luffy.cx" {
+        forceSSL = true;
+      })
+      (vhost "*.pages.luffy.cx" {
+        forceSSL = true;
+        serverName = "~^(.*)\.pages\.luffy\.cx$";
+        root = "/data/webserver/pages.luffy.cx/$1";
+        useACMEHost = "pages.luffy.cx";
+      })
 
       # Une Oasis Une École
       (vhost "une-oasis-une-ecole.fr" (redirectVhost "www.une-oasis-une-ecole.fr"))
