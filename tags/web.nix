@@ -149,7 +149,8 @@ let
       })
 
       # Insolites en Méné
-      (vhost "insolites-en-mene.luffy.cx" {
+      (vhost "insolites-en-mene.fr" (redirectVhost "www.insolites-en-mene.fr"))
+      (vhost "www.insolites-en-mene.fr" {
         forceSSL = true;
         locations = {
           "/insolites-en-mene".extraConfig = "rewrite ^ / permanent;";
@@ -164,12 +165,8 @@ let
           "/reservation".extraConfig = "rewrite ^ / permanent;";
           "/book-online".extraConfig = "rewrite ^ / permanent;";
         };
+        extraConfig = sts;
       })
-      # (vhost "insolites-en-mene.fr" (redirectVhost "www.insolites-en-mene.fr"))
-      # (vhost "www.insolites-en-mene.fr" {
-      #   forceSSL = true;
-      #   extraConfig = sts;
-      # })
 
       # *.pages.luffy.cx
       (vhost "pages.luffy.cx" {
