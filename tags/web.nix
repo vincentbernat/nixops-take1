@@ -157,11 +157,12 @@ let
           "/roulotte-et-tipi".extraConfig = "rewrite ^ / permanent;";
           "/roulotte-western".extraConfig = "rewrite ^ / permanent;";
           "/tipi-camp".extraConfig = "rewrite ^ / permanent;";
-          "/activites-et-decouvertes".extraConfig = "rewrite ^ / permanent;";
+          "/activites-et-decouverte".extraConfig = "rewrite ^ / permanent;";
           "/activites-cenre-bretagne".extraConfig = "rewrite ^ / permanent;";
           "/decouverte-de-notre-region".extraConfig = "rewrite ^ / permanent;";
           "/nos-tarifs".extraConfig = "rewrite ^ / permanent;";
           "/nous-contacter".extraConfig = "rewrite ^ / permanent;";
+          "/menus".extraConfig = "rewrite ^ / permanent;";
           "/reservation".extraConfig = "rewrite ^ / permanent;";
           "/book-online".extraConfig = "rewrite ^ / permanent;";
         };
