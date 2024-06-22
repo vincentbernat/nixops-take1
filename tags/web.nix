@@ -233,6 +233,17 @@ let
         '';
       })
 
+      # vincentbernat.com
+      (vhost "vincentbernat.com" {
+        addSSL = true;
+        globalRedirect = "vincent.bernat.ch";
+      })
+      (vhost "www.vincentbernat.com" {
+        addSSL = true;
+        globalRedirect = "vincent.bernat.ch";
+        useACMEHost = "vincentbernat.com";
+      })
+
       # Blog
       (vhost "vincent.bernat.ch" {
         forceSSL = true;
