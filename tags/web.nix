@@ -70,9 +70,9 @@ let
         add_header  Access-Control-Allow-Origin *;
       '';
       sts = ''
-        add_header Strict-Transport-Security "max-age=31557600; includeSubDomains";'';
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";'';
       stsWithPreload = ''
-        add_header Strict-Transport-Security "max-age=31557600; includeSubDomains; preload";'';
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";'';
       redirectVhost = to: {
         addSSL = true;
         globalRedirect = to;
