@@ -33,7 +33,7 @@ done <<EOF
 https://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
 https://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 https://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
-http://bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
+http://bernat.ch/keepalive 301 https://bernat.ch/keepalive
 http://bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://vincent.bernat.im/keepalive 301 https://vincent.bernat.ch/keepalive
 http://vincent.bernat.ch/keepalive 301 https://vincent.bernat.ch/keepalive
@@ -49,7 +49,6 @@ https://media.luffy.cx/images/favicon.png 200
 https://media.bernat.ch/images/favicon.png 200
 https://bernat.ch/.well-known/webfinger 404
 https://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io
-http://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io
 
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5 200
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5 200

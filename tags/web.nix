@@ -80,7 +80,7 @@ let
         extraConfig = sts;
       };
       redirectBlogVhost = (redirectVhost "vincent.bernat.ch") // {
-        extraConfig = stsWithPreload;
+        extraConfig = sts;
       };
       mediaVhost = {
         forceSSL = true;
@@ -253,7 +253,10 @@ let
       })
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
-      (vhost "bernat.ch" (redirectBlogVhost // {
+      (vhost "bernat.ch" {
+        forceSSL = true;
+        useACMEHost = "vincent.bernat.ch";
+        extraConfig = stsWithPreload;
         locations."= /.well-known/webfinger".extraConfig = ''
           if ($arg_resource = acct:vincent@bernat.ch) {
             return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
@@ -263,7 +266,12 @@ let
         locations."= /@vincent".extraConfig = ''
           return 302  https://hachyderm.io/@vbernat;
         '';
-      }))
+        # Use that instead of globalRedirect as it will only takes effect for
+        # HTTPS. This is needed for HSTS.
+        locations."/".extraConfig = ''
+          return 301 https://vincent.bernat.ch$request_uri;
+        '';
+      })
       (vhost "media.bernat.ch" (mediaVhost // { useACMEHost = "vincent.bernat.ch"; }))
       (vhost "media.luffy.cx" (mediaVhost // { useACMEHost = "luffy.cx"; }))
     ];
