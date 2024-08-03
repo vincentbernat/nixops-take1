@@ -316,7 +316,8 @@ in
       disallowedReferences = [ ];
     });
 
-    recommendedGzipSettings = false; # we want more stuff in gzip_types
+    recommendedGzipSettings = true;
+    recommendedBrotliSettings = true;
     recommendedOptimisation = true;
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
@@ -344,71 +345,31 @@ in
       pcre_jit on;
       worker_rlimit_nofile 8192;
     '';
-    appendHttpConfig =
-      let
-        compressedTypes = ''
-          application/atom+xml
-          application/json
-          application/ld+json
-          application/manifest+json
-          application/rss+xml
-          application/vnd.apple.mpegurl
-          application/vnd.geo+json
-          application/vnd.ms-fontobject
-          application/wasm
-          application/x-font-ttf
-          application/x-web-app-manifest+json
-          application/xhtml+xml
-          application/xml
-          font/opentype
-          image/svg+xml
-          text/cache-manifest
-          text/css
-          text/javascript
-          text/plain
-          text/vcard
-          text/vtt
-          text/xml
-        '';
-      in
-      ''
-        # Default charset
-        charset utf-8;
-        charset_types
-          application/atom+xml
-          application/json
-          application/rss+xml
-          application/xml
-          image/svg+xml
-          text/css
-          text/javascript
-          text/plain
-          text/vcard
-          text/vtt
-          text/xml;
+    appendHttpConfig = ''
+      # Default charset
+      charset utf-8;
+      charset_types
+        application/atom+xml
+        application/json
+        application/rss+xml
+        application/xml
+        image/svg+xml
+        text/css
+        text/javascript
+        text/plain
+        text/vcard
+        text/vtt
+        text/xml;
 
-        # Enable gzip compression
-        gzip on;
-        gzip_proxied any;
-        gzip_comp_level 6;
-        gzip_vary on;
-        gzip_types
-          ${compressedTypes};
-        # Enable brotli compression
-        brotli on;
-        brotli_comp_level 6;
-        brotli_types
-          ${compressedTypes};
-
-        map $http_accept $webp_suffix {
-          default        "";
-          "~image/webp"  ".webp";
-        }
-        map $http_accept $avif_suffix {
-          default        "";
-          "~image/avif"  ".avif";
-        }
-      '';
+      map $http_accept $webp_suffix {
+        default        "";
+        "~image/webp"  ".webp";
+      }
+      map $http_accept $avif_suffix {
+        default        "";
+        "~image/avif"  ".avif";
+      }
+    '';
   };
 
   # Reload/restart logic. This could be enhanced once we have
