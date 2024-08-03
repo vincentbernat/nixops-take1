@@ -308,6 +308,7 @@ in
         in
         with pkgs.nginxModules; [
           brotli
+          zstd
           ipscrub
           acceptlanguage
         ];
@@ -318,6 +319,7 @@ in
 
     recommendedGzipSettings = true;
     recommendedBrotliSettings = true;
+    recommendedZstdSettings = true;
     recommendedOptimisation = true;
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
