@@ -26,6 +26,7 @@ while read url code location; do
         else
             ((seconds > 1000)) && ((seconds/=1000000.))
             ((count+=1,total+=seconds))
+            # ~ = not, ~~ = truncate
             echo "👌 ($((~~(seconds*1000)))ms)"
         fi
     done
