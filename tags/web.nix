@@ -250,6 +250,11 @@ let
         extraConfig = ''
           include /data/webserver/vincent.bernat.ch/nginx*.conf;
         '';
+        # Bluesky
+        locations."= /.well-known/atproto-did".extraConfig = ''
+          add_header Content-Type text/plain;
+          return 200 'did:plc:kb6tyjomr47ndk2rq4daooln';
+        '';
       })
       (vhost "vincent.bernat.im" redirectBlogVhost)
       (vhost "bernat.im" redirectBlogVhost)
@@ -257,6 +262,7 @@ let
         forceSSL = true;
         useACMEHost = "vincent.bernat.ch";
         extraConfig = stsWithPreload;
+        # Mastodon
         locations."= /.well-known/webfinger".extraConfig = ''
           if ($arg_resource = acct:vincent@bernat.ch) {
             return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
@@ -264,7 +270,7 @@ let
           return 404;
         '';
         locations."= /@vincent".extraConfig = ''
-          return 302  https://hachyderm.io/@vbernat;
+          return 302 https://hachyderm.io/@vbernat;
         '';
         # Use that instead of globalRedirect as it will only takes effect for
         # HTTPS. This is needed for HSTS.
