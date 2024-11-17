@@ -90,6 +90,7 @@ in
 
   # No X11. This could be done with `environment.noXlibs = true;', but
   # that would require recompiling too many stuff.
+  programs.ssh.setXAuthLocation = false;
   security.pam.services.su.forwardXAuth = lib.mkForce false;
   fonts.fontconfig.enable = false;
 
