@@ -252,7 +252,7 @@ let
         '';
         # Bluesky
         locations."= /.well-known/atproto-did".extraConfig = ''
-          add_header Content-Type text/plain;
+          default_type text/plain;
           return 200 'did:plc:kb6tyjomr47ndk2rq4daooln';
         '';
       })
