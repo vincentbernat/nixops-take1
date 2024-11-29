@@ -293,6 +293,8 @@ in
     package = (pkgs.nginxStable.override {
       # No stream module
       withStream = false;
+      # Temporary fix. See https://github.com/NixOS/nixpkgs/pull/355989#issuecomment-2506841275
+      pcre2 = pkgs.pcre;
       modules =
         let
           acceptlanguage = {
