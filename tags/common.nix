@@ -69,7 +69,6 @@ in
   environment.systemPackages = with pkgs;
     [
       bat
-      bpftrace
       cpuid
       ethtool
       fzf
@@ -82,9 +81,7 @@ in
       numactl
       sysstat
       tcpdump
-      tiptop
       tmux
-      trace-cmd
     ];
   programs.zsh.enable = true;
 
