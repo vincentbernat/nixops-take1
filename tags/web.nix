@@ -169,6 +169,13 @@ let
         extraConfig = sts;
       })
 
+      # Le val insolite
+      (vhost "le-val-insolite.fr" (redirectVhost "www.le-val-insolite.fr"))
+      (vhost "www.le-val-insolite.fr" {
+        forceSSL = true;
+        extraConfig = sts;
+      })
+
       # *.pages.luffy.cx
       (vhost "pages.luffy.cx" {
         forceSSL = true;
