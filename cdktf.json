@@ -12,7 +12,6 @@
         [
           "object",
           {
-            "disabled": "bool",
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -39,7 +38,6 @@
             "tags": [
               "tuple",
               [
-                "string",
                 "string",
                 "string",
                 "string"
@@ -102,7 +100,6 @@
     ],
     "value": [
       {
-        "disabled": true,
         "hardware": "sapinet",
         "ipv4Address": "45.90.160.60",
         "ipv6Address": "2a0c:8881::948e:48ff:fe0d:d535",
@@ -123,8 +120,7 @@
         "tags": [
           "web",
           "isso",
-          "continent:EU",
-          "continent:AF"
+          "continent:EU"
         ]
       },
       {
