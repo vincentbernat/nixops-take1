@@ -152,20 +152,9 @@ let
       (vhost "insolites-en-mene.fr" (redirectVhost "www.insolites-en-mene.fr"))
       (vhost "www.insolites-en-mene.fr" {
         forceSSL = true;
-        locations = {
-          "/insolites-en-mene".extraConfig = "rewrite ^ / permanent;";
-          "/roulotte-et-tipi".extraConfig = "rewrite ^ / permanent;";
-          "/roulotte-western".extraConfig = "rewrite ^ / permanent;";
-          "/tipi-camp".extraConfig = "rewrite ^ / permanent;";
-          "/activites-et-decouverte".extraConfig = "rewrite ^ / permanent;";
-          "/activites-cenre-bretagne".extraConfig = "rewrite ^ / permanent;";
-          "/decouverte-de-notre-region".extraConfig = "rewrite ^ / permanent;";
-          "/nos-tarifs".extraConfig = "rewrite ^ / permanent;";
-          "/nous-contacter".extraConfig = "rewrite ^ / permanent;";
-          "/menus".extraConfig = "rewrite ^ / permanent;";
-          "/reservation".extraConfig = "rewrite ^ / permanent;";
-          "/book-online".extraConfig = "rewrite ^ / permanent;";
-        };
+        locations."/".extraConfig = ''
+          rewrite ^ https://www.le-val-insolite.fr/ permanent;
+        '';
         extraConfig = sts;
       })
 
