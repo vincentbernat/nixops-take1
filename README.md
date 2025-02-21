@@ -22,7 +22,7 @@ To deploy:
 
 To avoid parallelism and reboot after deploying:
 
-    colmena apply --parallel 1 --reboot boot
+    colmena apply --parallel 1 --reboot
 
 In case of a security issue, it can take a few days to get the current
 release to be updated. Usually, switching to the small version helps

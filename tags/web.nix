@@ -35,6 +35,7 @@ let
           user = "acme";
           group = "nginx";
           permissions = "0640";
+          uploadAt = "post-activation";
           keyCommand =
             let
               zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
