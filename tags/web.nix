@@ -290,7 +290,9 @@ in
     package = (pkgs.nginxStable.override {
       # No stream module
       withStream = false;
-      pcre2 = pkgs.pcre;
+      pcre2 = pkgs.pcre2.override {
+        withJitSealloc = false; # avoid crashes
+      };
       modules =
         let
           acceptlanguage = {
