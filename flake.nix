@@ -8,10 +8,6 @@
       (system:
         let
           pkgs = import inputs.nixpkgs { inherit system; };
-          # Colmena has an issue with Nix 2.28
-          # See: https://github.com/zhaofengli/colmena/issues/272
-          nix = pkgs.nixVersions.nix_2_24;
-          colmena = pkgs.colmena.override { inherit nix; };
         in
         {
           devShells.default = pkgs.mkShell {
@@ -20,8 +16,8 @@
               pkgs.curl
               pkgs.colordiff
               pkgs.wdiff
-              colmena
-              nix
+              pkgs.colmena
+              pkgs.nix
             ];
           };
         }) // {
