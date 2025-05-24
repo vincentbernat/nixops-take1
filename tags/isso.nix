@@ -9,7 +9,7 @@ let
 
     cat <<EOF
     [general]
-    dbpath = /var/db/isso/comments.db
+    dbpath = /var/lib/isso/db/comments.db
     host =
       https://vincent.bernat.ch
       http://localhost:8080
@@ -94,7 +94,7 @@ in
   containers.isso = {
     ephemeral = true;
     autoStart = true;
-    bindMounts."/var/db/isso" = {
+    bindMounts."/var/lib/private/isso/db" = {
       hostPath = "/var/db/isso";
       isReadOnly = false;
     };
@@ -129,7 +129,6 @@ in
           DynamicUser = true;
           StateDirectory = "isso";
           Restart = "always";
-          ExecStartPre = "${pkgs.coreutils}/bin/chown %i:%i /var/db/isso/comments.db";
         };
       };
     };
