@@ -2,20 +2,16 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     flake-utils.url = "github:numtide/flake-utils";
-    colmena = {
-      url = "github:zhaofengli/colmena";
-      inputs = {
-        flake-utils.follows = "flake-utils";
-        nixpkgs.follows = "nixpkgs";
-        stable.follows = "nixpkgs";
-      };
-    };
   };
-  outputs = { self, nixpkgs, flake-utils, colmena, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
     flake-utils.lib.eachDefaultSystem
       (system:
         let
           pkgs = import inputs.nixpkgs { inherit system; };
+          # Colmena has an issue with Nix 2.28
+          # See: https://github.com/zhaofengli/colmena/issues/272
+          nix = pkgs.nixVersions.nix_2_24;
+          colmena = pkgs.colmena.override { inherit nix; };
         in
         {
           devShells.default = pkgs.mkShell {
@@ -24,12 +20,11 @@
               pkgs.curl
               pkgs.colordiff
               pkgs.wdiff
-              colmena.packages."${system}".colmena
-              pkgs.nix
+              colmena
+              nix
             ];
           };
         }) // {
-      colmenaHive = colmena.lib.makeHive self.outputs.colmena;
       colmena = import ./network.nix {
         inherit inputs;
       };
