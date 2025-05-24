@@ -129,6 +129,7 @@ in
           DynamicUser = true;
           StateDirectory = "isso";
           Restart = "always";
+          ExecStartPre = "${pkgs.coreutils}/bin/chown %i:%i /var/db/isso/comments.db";
         };
       };
     };
