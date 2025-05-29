@@ -383,10 +383,24 @@ in
   # Reload/restart logic. This could be enhanced once we have
   # https://github.com/systemd/systemd/issues/13284
   services.nginx.enableReload = true;
-  systemd.services.nginx.serviceConfig = {
-    KillSignal = "QUIT";
-    TimeoutStopSec = "120s";
-    LogsDirectoryMode = lib.mkForce "0755";
+  systemd.services.nginx = {
+    serviceConfig = {
+      KillSignal = "QUIT";
+      TimeoutStopSec = "120s";
+      LogsDirectoryMode = lib.mkForce "0755";
+    };
+    after =
+      let
+        vhostsConfigs = lib.mapAttrsToList
+          (vhostName: vhostConfig: vhostConfig // { certName = vhostName; })
+          config.services.nginx.virtualHosts;
+        acmeEnabledVhosts = lib.filter
+          (vhostConfig: vhostConfig.enableACME)
+          vhostsConfigs;
+        vhostCertNames = lib.unique (map (hostOpts: hostOpts.certName) acmeEnabledVhosts);
+      in
+      lib.mkForce
+        ([ "network.target" ] ++ map (certName: "acme-selfsigned-${certName}.service") vhostCertNames);
   };
 
   # Logs
