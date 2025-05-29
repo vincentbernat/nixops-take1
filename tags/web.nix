@@ -389,6 +389,9 @@ in
       TimeoutStopSec = "120s";
       LogsDirectoryMode = lib.mkForce "0755";
     };
+    # Do not make nginx wait for ACME certificates, even those not requiring
+    # nginx. On unattended boot, we may not have the secrets to refresh them
+    # while the certificates we have are still valid. See https://github.com/NixOS/nixpkgs/pull/336412
     after =
       let
         vhostsConfigs = lib.mapAttrsToList
