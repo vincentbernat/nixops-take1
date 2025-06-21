@@ -21,7 +21,7 @@ in
       options = "--delete-older-than 8d";
     };
   };
-  # no need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  # No need to change this when upgrading. See https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.11";
 
   # Firewall
@@ -107,6 +107,7 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   documentation.enable = false;
+  system.rebuild.enableNg = true;
   system.activationScripts = {
     diff = ''
       PATH=$PATH:${config.nix.package}/bin \
