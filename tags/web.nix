@@ -149,16 +149,6 @@ let
         '';
       })
 
-      # Insolites en Méné
-      (vhost "insolites-en-mene.fr" (redirectVhost "www.insolites-en-mene.fr"))
-      (vhost "www.insolites-en-mene.fr" {
-        forceSSL = true;
-        locations."/".extraConfig = ''
-          rewrite ^ https://www.le-val-insolite.fr/ permanent;
-        '';
-        extraConfig = sts;
-      })
-
       # Le val insolite
       (vhost "le-val-insolite.fr" (redirectVhost "www.le-val-insolite.fr"))
       (vhost "www.le-val-insolite.fr" {
