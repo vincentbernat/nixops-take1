@@ -344,6 +344,10 @@ in
       worker_rlimit_nofile 8192;
     '';
     appendHttpConfig = ''
+      # Disable OCSP (can be removed in NixOS 25.11)
+      ssl_stapling off;
+      ssl_stapling_verify off;
+
       # Default charset
       charset utf-8;
       charset_types
