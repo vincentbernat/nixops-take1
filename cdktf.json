@@ -12,6 +12,7 @@
         [
           "object",
           {
+            "disabled": "bool",
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -38,6 +39,7 @@
             "tags": [
               "tuple",
               [
+                "string",
                 "string",
                 "string",
                 "string"
@@ -100,16 +102,17 @@
     ],
     "value": [
       {
+        "disabled": true,
         "hardware": "sapinet",
         "ipv4Address": "45.90.160.60",
-        "ipv6Address": "2a0c:8881::948e:48ff:fe0d:d535",
+        "ipv6Address": "2a0c:8881:5:100::1",
         "name": "web02.luffy.cx",
         "tags": [
           "web",
           "continent:EU",
           "continent:AF",
-          "gateway4:45.90.160.33",
-          "gateway6:fe80::200:ff:fe00:1"
+          "gateway4:100.100.100.1",
+          "gateway6:fe80::1"
         ]
       },
       {
@@ -120,7 +123,8 @@
         "tags": [
           "web",
           "isso",
-          "continent:EU"
+          "continent:EU",
+          "continent:AF"
         ]
       },
       {
