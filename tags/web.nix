@@ -316,7 +316,7 @@ in
     recommendedBrotliSettings = true;
     recommendedOptimisation = true;
     recommendedProxySettings = true;
-    recommendedTlsSettings = false;
+    recommendedTlsSettings = true;
     sslDhparam = pkgs.writeText "dhparam.pem" ''
       -----BEGIN DH PARAMETERS-----
       MIIBCAKCAQEA9MKu+OBtsJcYjeYMa8Y855WbHfQ5A2cCH7paxS5ildmZSBhxiNAP
@@ -342,13 +342,6 @@ in
       worker_rlimit_nofile 8192;
     '';
     appendHttpConfig = ''
-      # In NixOS 25.11, this can be removed in favor of recommendedTlsSettings.
-      ssl_ecdh_curve X25519:prime256v1:secp384r1;
-      ssl_session_timeout 1d;
-      ssl_session_cache shared:SSL:10m;
-      ssl_session_tickets off;
-      ssl_prefer_server_ciphers off;
-
       # Default charset
       charset utf-8;
       charset_types
