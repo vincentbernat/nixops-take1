@@ -8,10 +8,7 @@ in
     device = "/dev/vda1";
     fsType = "ext4";
   };
-  boot = {
-    loader.grub.device = "/dev/vda";
-    loader.timeout = 0;
-  };
+  boot.loader.grub.device = "/dev/vda";
   services.resolved.enable = true;
   security.acme.defaults.dnsResolver = "1.1.1.1:53";
   boot.kernel.sysctl = {

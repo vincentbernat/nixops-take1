@@ -8,7 +8,6 @@
   boot = {
     growPartition = true;
     loader.grub.device = "/dev/sda";
-    loader.timeout = 0;
   };
   networking = {
     usePredictableInterfaceNames = false;
