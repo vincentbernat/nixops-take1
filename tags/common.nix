@@ -107,7 +107,6 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   documentation.enable = false;
-  system.rebuild.enableNg = true;
   system.activationScripts = {
     diff = ''
       PATH=$PATH:${config.nix.package}/bin \
