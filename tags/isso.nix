@@ -51,6 +51,7 @@ let
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
     pname = "isso";
     version = "custom";
+    format = "setuptools";
 
     src = pkgs.fetchFromGitHub {
       owner = "vincentbernat";
