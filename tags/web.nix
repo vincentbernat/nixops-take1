@@ -124,7 +124,7 @@ let
           ${cors}
           ${sts}
         '';
-        locations."~ ^/images/.*\\.(png|jpe?g)$".extraConfig = ''
+        locations."~ ^/images/.*\\.(png|jpe?g|gif)$".extraConfig = ''
           ${cors}
           ${sts}
           add_header Vary Accept;
