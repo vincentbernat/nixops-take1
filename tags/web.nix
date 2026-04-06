@@ -87,6 +87,7 @@ let
         forceSSL = true;
         extraConfig = ''
           expires 30d;
+          ${cors}
           ${sts}
         '';
         # The following resources are expected to use cache busting.
