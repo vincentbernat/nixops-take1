@@ -57,7 +57,7 @@ let
       owner = "vincentbernat";
       repo = pname;
       rev = "vbe/master";
-      hash = "sha256-s4mM+jv3LDRoI3S8X+v2JdRltPivk8+NvkEyIItuOnM=";
+      hash = "sha256-kuZB0eXbO6vgxea3d5BnjevEUnyI2ZkktAZfaijXOwo=";
     };
 
     propagatedBuildInputs = [
