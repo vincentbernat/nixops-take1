@@ -55,9 +55,9 @@ https://vincent.bernat.ch/.well-known/atproto-did 200
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5 200
 https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5 200
 
-http://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
-https://une-oasis-une-ecole.fr/contact 301 https://www.une-oasis-une-ecole.fr/contact
-https://www.une-oasis-une-ecole.fr/contact 200
+http://une-oasis-une-ecole.fr/projet 301 https://www.une-oasis-une-ecole.fr/projet
+https://une-oasis-une-ecole.fr/projet 301 https://www.une-oasis-une-ecole.fr/projet
+https://www.une-oasis-une-ecole.fr/projet 200
 http://media.une-oasis-une-ecole.fr/images/l/favicon.png 301 https://media.une-oasis-une-ecole.fr/images/l/favicon.png
 https://media.une-oasis-une-ecole.fr/images/l/favicon.png 200
 
