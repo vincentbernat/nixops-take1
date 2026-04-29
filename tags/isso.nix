@@ -35,9 +35,12 @@ let
     from = isso@vincent.bernat.ch
 
     [markup]
-    options = autolink,fenced-code
+    renderer = misaka
     allowed-elements = a,blockquote,br,code,del,em,ins,li,ol,p,pre,strong,ul,kbd
     allowed-attributes = href
+
+    [markup.misaka]
+    options = autolink,fenced-code
 
     [hash]
     salt = $ISSO_SALT
@@ -57,7 +60,7 @@ let
       owner = "vincentbernat";
       repo = pname;
       rev = "vbe/master";
-      hash = "sha256-kuZB0eXbO6vgxea3d5BnjevEUnyI2ZkktAZfaijXOwo=";
+      hash = "sha256-tLyi8NYr4WB1Hcf3IRJ1vb9JW/NKNcxtN9Spnfw00mc=";
     };
 
     propagatedBuildInputs = [
@@ -67,7 +70,6 @@ let
       html5lib
       werkzeug
       bleach
-      flask-caching
     ];
     buildInputs = [
       cffi
