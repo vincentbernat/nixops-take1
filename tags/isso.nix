@@ -35,12 +35,9 @@ let
     from = isso@vincent.bernat.ch
 
     [markup]
-    renderer = misaka
+    renderer = mistune
     allowed-elements = a,blockquote,br,code,del,em,ins,li,ol,p,pre,strong,ul,kbd
     allowed-attributes = href
-
-    [markup.misaka]
-    options = autolink,fenced-code
 
     [hash]
     salt = $ISSO_SALT
