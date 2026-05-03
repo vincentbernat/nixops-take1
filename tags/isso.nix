@@ -64,6 +64,7 @@ let
       itsdangerous
       jinja2
       misaka
+      mistune
       html5lib
       werkzeug
       bleach
