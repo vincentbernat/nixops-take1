@@ -146,6 +146,7 @@ in
   systemd.services."container@isso" = {
     requires = [ "isso.cfg-key.service" ];
     after = [ "isso.cfg-key.service" ];
+    restartTriggers = [ issoMkConfig ];
   };
 
   # Nginx vhost
