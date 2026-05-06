@@ -350,6 +350,7 @@ in
         application/json
         application/rss+xml
         application/xml
+        application/xslt+xml
         image/svg+xml
         text/css
         text/javascript
