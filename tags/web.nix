@@ -68,7 +68,7 @@ let
   vhosts =
     let
       cors = ''
-        add_header  Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Origin *;
       '';
       sts = ''
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";'';
