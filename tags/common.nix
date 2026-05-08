@@ -37,6 +37,9 @@ in
   boot.kernelModules = [ "tcp_bbr" ];
   boot.extraModprobeConfig = ''
     install algif_aead /bin/false
+    install esp4 /bin/false
+    install esp6 /bin/false
+    install rxrpc /bin/false
   '';
   boot.kernel.sysctl = {
     "net.ipv4.tcp_min_snd_mss" = 536;
