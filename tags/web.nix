@@ -114,7 +114,6 @@ let
             application/x-font-truetype   ttf;
           }
         '';
-        locations."= /favicon.ico".extraConfig = "expires 60d;";
         locations."/files".extraConfig = "expires 1d;";
         locations."/videos".extraConfig = ''
           expires 1d;
