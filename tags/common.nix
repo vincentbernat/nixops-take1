@@ -35,16 +35,13 @@ in
 
   # Better performance
   boot.kernelModules = [ "tcp_bbr" ];
-  boot.extraModprobeConfig = ''
-    install algif_aead /bin/false
-    install esp4 /bin/false
-    install esp6 /bin/false
-    install rxrpc /bin/false
-  '';
   boot.kernel.sysctl = {
     "net.ipv4.tcp_min_snd_mss" = 536;
     "net.ipv4.tcp_congestion_control" = "bbr";
   };
+
+  # Lock modules
+  security.lockKernelModules = true;
 
   # Let's Encrypt
   security.acme = {
