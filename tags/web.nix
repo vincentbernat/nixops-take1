@@ -310,6 +310,28 @@ in
     }).overrideAttrs (old: {
       # See https://github.com/NixOS/nixpkgs/issues/182935
       disallowedReferences = [ ];
+      patches = (old.patches or [ ]) ++ [
+        (pkgs.fetchpatch {
+          # CVE-2026-42934
+          url = "https://github.com/nginx/nginx/commit/696a7f1b9198d576e6a59c1655b746fbf06561cf.patch";
+          hash = "sha256-/vjyEGysPv5VK4TZmk/gtIg9Zc5ogUXMwpBfBwe55Bc=";
+        })
+        (pkgs.fetchpatch {
+          # CVE-2026-42945
+          url = "https://github.com/nginx/nginx/commit/2046b45aa0c6e712c216b9075886f3f26e9b4ca9.patch";
+          hash = "sha256-VK9CXgrCIqORsaRivTZBmkoLyQhbZ07ss6nAbLNvfJM=";
+        })
+        (pkgs.fetchpatch {
+          # CVE-2026-40701
+          url = "https://github.com/nginx/nginx/commit/71841dcedfdf46048ef5e25413fdf97a66957913.patch";
+          hash = "sha256-FzNZpEwIj76r5dpqEP6TgpSc1ywcW7ZOEQpFpwI/YZw=";
+        })
+        (pkgs.fetchpatch {
+          # CVE-2026-40460
+          url = "https://github.com/nginx/nginx/commit/f37ec3e5d4f527e52ed5b25951ad8aa7d1ff6266.patch";
+          hash = "sha256-++hYEzMUkl3mbBMaffR2LQTYMxOR/YziNkYCVyhw2Qg=";
+        })
+      ];
     });
 
     recommendedGzipSettings = true;
