@@ -38,6 +38,8 @@ in
   boot.kernel.sysctl = {
     "net.ipv4.tcp_min_snd_mss" = 536;
     "net.ipv4.tcp_congestion_control" = "bbr";
+    # Workaround for ssh-keysign-pwn
+    "kernel.yama.ptrace_scope" = 2;
   };
 
   # Lock modules
