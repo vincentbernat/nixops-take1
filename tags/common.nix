@@ -42,7 +42,11 @@ in
   };
 
   # Lock modules
-  boot.kernelModules = [ "tcp_bbr" "vfat" ];
+  boot.kernelModules = [
+    "tcp_bbr" # congestion algo
+    "vfat" # for /efi
+    "cp437" # for /efi
+  ];
   security.lockKernelModules = true;
 
   # Let's Encrypt
