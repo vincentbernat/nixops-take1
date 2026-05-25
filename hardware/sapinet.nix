@@ -9,6 +9,7 @@ in
     fsType = "ext4";
   };
   boot.loader.grub.device = "/dev/vda";
+  boot.kernelModules = [ "vfat" "nls_cp437" ]; # /efi with autofs
   services.resolved.enable = true;
   security.acme.defaults.dnsResolver = "1.1.1.1:53";
   boot.kernel.sysctl = {

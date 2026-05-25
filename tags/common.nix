@@ -34,6 +34,7 @@ in
   networking.nat.externalInterface = "eth0";
 
   # Better performance
+  boot.kernelModules = [ "tcp_bbr" ];
   boot.kernel.sysctl = {
     "net.ipv4.tcp_min_snd_mss" = 536;
     "net.ipv4.tcp_congestion_control" = "bbr";
@@ -42,11 +43,6 @@ in
   };
 
   # Lock modules
-  boot.kernelModules = [
-    "tcp_bbr" # congestion algo
-    "vfat" # for /efi
-    "cp437" # for /efi
-  ];
   security.lockKernelModules = true;
 
   # Let's Encrypt
