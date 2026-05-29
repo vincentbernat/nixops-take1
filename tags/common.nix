@@ -76,6 +76,7 @@ in
       bat
       cpuid
       ethtool
+      fastfetch
       fzf
       htop
       liboping
