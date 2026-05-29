@@ -76,7 +76,6 @@ in
       bat
       cpuid
       ethtool
-      fastfetch
       fzf
       htop
       liboping
@@ -85,6 +84,7 @@ in
       mtr
       ncdu
       numactl
+      pfetch
       sysstat
       tcpdump
       tmux
