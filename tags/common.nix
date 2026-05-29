@@ -62,7 +62,7 @@ in
     enable = true;
     settings = {
       PermitRootLogin = "prohibit-password";
-      AcceptEnv = "LANG LC_*";
+      AcceptEnv = [ "LANG" "LC_*" ];
     };
   };
   services.fstrim = {

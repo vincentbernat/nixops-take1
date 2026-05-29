@@ -20,7 +20,7 @@ let
         certs."${name}" = {
           webroot = lib.mkForce null;
           dnsProvider = "route53";
-          credentialsFile = "/run/keys/acme-credentials.${name}.secret";
+          environmentFile = "/run/keys/acme-credentials.${name}.secret";
           extraDomainNames =
             let
               otherVhosts = lib.filterAttrs (n: v: v.useACMEHost == name)
