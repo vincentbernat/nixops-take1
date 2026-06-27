@@ -14,6 +14,7 @@
             name = "nixops-take1";
             buildInputs = [
               pkgs.curl
+              pkgs.hurl
               pkgs.colordiff
               pkgs.wdiff
               pkgs.colmena
