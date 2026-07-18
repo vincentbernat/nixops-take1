@@ -10,8 +10,6 @@ in
   };
   boot.loader.grub.device = "/dev/vda";
   boot.kernelModules = [ "vfat" "nls_cp437" "nls_iso8859_1" ]; # /efi with autofs
-  services.resolved.enable = true;
-  security.acme.defaults.dnsResolver = "1.1.1.1:53";
   boot.kernel.sysctl = {
     "net.ipv6.conf.eth0.accept_ra" = 0;
   };

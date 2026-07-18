@@ -58,6 +58,7 @@ in
   };
 
   # Services
+  services.resolved.enable = true;
   services.openssh = {
     enable = true;
     settings = {
