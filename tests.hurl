@@ -1,5 +1,3 @@
-# HTTP tests
-
 GET https://bernat.ch/keepalive
 HTTP 301
 [Asserts]
@@ -42,6 +40,11 @@ GET https://vincent.bernat.ch/
 HTTP 301
 [Asserts]
 header "Location" == "https://vincent.bernat.ch/en"
+
+GET https://vincent.bernat.ch/hit
+HTTP 400
+[Asserts]
+header "Content-Type" == "image/gif"
 
 GET https://vincent.bernat.ch/$
 HTTP 404

@@ -328,6 +328,9 @@ in
       -----END DH PARAMETERS-----
     '';
 
+    resolver.addresses = [ "127.0.0.53" ];
+    proxyResolveWhileRunning = true;
+
     commonHttpConfig = ''
       # Logs
       ipscrub_period_seconds 86400;
