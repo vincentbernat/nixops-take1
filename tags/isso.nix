@@ -103,7 +103,7 @@ in
       hostPath = "/var/keys/isso.cfg";
       isReadOnly = true;
     };
-    extraFlags = [ "--resolv-conf=bind-host" ];
+    extraFlags = [ "--resolv-conf=replace-uplink" ];
     privateNetwork = true;
     hostAddress = "${hostIP}";
     localAddress = "${issoIP}";
