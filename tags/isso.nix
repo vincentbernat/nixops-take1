@@ -43,9 +43,8 @@ let
     salt = $ISSO_SALT
     EOF
   '';
-  issoPort = 8080;
-  issoIP = "192.168.247.10";
-  hostIP = "192.168.247.11";
+  issoIP = "127.0.0.2";
+  issoPort = 8086;
   # Custom derivation for Isso, as the one in NixOS is a PythonApp
   # instead of a PythonPackage and cannot be imported with buildEnv.
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
@@ -88,10 +87,6 @@ let
 in
 {
   # Systemd container
-  networking.nat = {
-    enable = true;
-    internalInterfaces = [ "ve-isso" ];
-  };
   containers.isso = {
     ephemeral = true;
     autoStart = true;
@@ -103,12 +98,10 @@ in
       hostPath = "/var/keys/isso.cfg";
       isReadOnly = true;
     };
-    extraFlags = [ "--resolv-conf=replace-uplink" ];
-    privateNetwork = true;
-    hostAddress = "${hostIP}";
-    localAddress = "${issoIP}";
+    extraFlags = [ "--resolv-conf=replace-host" ];
+    privateNetwork = false;
     config = {
-      networking.firewall.allowedTCPPorts = [ issoPort ];
+      networking.firewall.enable = false;
       system.stateVersion = config.system.stateVersion;
       systemd.services.console-getty.enable = false;
       systemd.services.isso = {
