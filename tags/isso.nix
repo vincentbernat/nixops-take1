@@ -69,12 +69,8 @@ let
       werkzeug
       bleach
     ];
-    buildInputs = [
+    nativeBuildInputs = [
       cffi
-    ];
-    checkInputs = [
-      pytest
-      pytest-cov
     ];
   };
   # Python environment to use, containing isso and gunicorn
