@@ -45,8 +45,9 @@ let
   '';
   issoIP = "127.0.0.2";
   issoPort = 8086;
-  # Custom derivation for Isso, as the one in NixOS is a PythonApp
-  # instead of a PythonPackage and cannot be imported with buildEnv.
+  # Custom derivation for Isso using a personal fork. It would be possible to
+  # use the one from nixpkgs with `python3Packages.toPythonModule pkgs.isso`.
+  # Also, we don't build the JS part as it is not served from here.
   issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
     pname = "isso";
     version = "custom";
