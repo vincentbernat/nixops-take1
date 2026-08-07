@@ -312,6 +312,14 @@ in
       disallowedReferences = [ ];
     });
 
+    # Use the MIME types from mailcap, with a few adjustments.
+    defaultMimeTypes = pkgs.runCommand "nginx-mime.types" { } ''
+      sed -e "/^text\/vnd.trolltech.linguist[ \t]/d" \
+          -e "1a video/mp2t      ts;" \
+          ${pkgs.mailcap}/etc/nginx/mime.types > $out
+    '';
+    typesHashMaxSize = 2688;
+
     recommendedGzipSettings = true;
     recommendedBrotliSettings = true;
     recommendedOptimisation = true;
@@ -423,7 +431,5 @@ in
       done
     '';
 
-  # Import vhosts and override nginx module to use a custom mailcap package
-  imports = vhosts ++ [ ../modules/nginx.nix ];
-  disabledModules = [ "services/web-servers/nginx/default.nix" ];
+  imports = vhosts;
 }
