@@ -6,6 +6,7 @@ let
     (lib.getExe pkgs.luffy.goatcounter)
     "serve"
     "-listen=${goatcounterIP}:${toString goatcounterPort}"
+    "-tls=none"
     "-db=sqlite+/var/db/goatcounter/db.sqlite"
     "-automigrate"
   ];
