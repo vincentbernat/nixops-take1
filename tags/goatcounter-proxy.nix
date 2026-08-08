@@ -5,7 +5,7 @@ let
   goatcounterCommand = lib.escapeShellArgs [
     (lib.getExe pkgs.luffy.goatcounter)
     "proxy"
-    "-site=vincentbernat.goatcounter.com"
+    "-site=goatcounter.luffy.cx"
     "-listen=${goatcounterIP}:${toString goatcounterPort}"
     "-ratelimit=10/1"
   ];
