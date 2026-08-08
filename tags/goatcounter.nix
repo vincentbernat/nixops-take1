@@ -7,9 +7,20 @@ let
     "serve"
     "-listen=${goatcounterIP}:${toString goatcounterPort}"
     "-db=sqlite+/var/db/goatcounter/db.sqlite"
+    "-automigrate"
   ];
 in
 {
+  deployment.keys."goatcounter.env" = {
+    group = "keys";
+    permissions = "0640";
+    destDir = "/var/keys";
+    keyCommand = [
+      "${pkgs.runtimeShell}"
+      "-c"
+      "pass show personal/nixops/secrets | grep '^GOATCOUNTER_GEODB='"
+    ];
+  };
   systemd.services."container@goatcounter" = { };
   containers.goatcounter = {
     ephemeral = true;
@@ -19,6 +30,10 @@ in
     bindMounts."/var/db/goatcounter" = {
       hostPath = "/var/db/goatcounter";
       isReadOnly = false;
+    };
+    bindMounts."/etc/goatcounter.env" = {
+      hostPath = "/var/keys/goatcounter.env";
+      isReadOnly = true;
     };
     config = {
       networking.firewall.enable = false;
@@ -31,6 +46,8 @@ in
           description = "GoatCounter.";
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
+            EnvironmentFile = "/etc/goatcounter.env";
+            SupplementaryGroups = [ "keys" ];
             DynamicUser = true;
             Restart = "always";
             StateDirectory = "goatcounter";
