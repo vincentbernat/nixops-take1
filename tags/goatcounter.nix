@@ -72,11 +72,6 @@ in
     '';
     locations."/" = {
       proxyPass = "http://${goatcounterIP}:${toString goatcounterPort}";
-      extraConfig = ''
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-      '';
     };
   };
   security.acme.certs."goatcounter.luffy.cx" = { };
