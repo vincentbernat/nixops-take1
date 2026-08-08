@@ -147,3 +147,6 @@ HTTP 404
 
 GET https://pages.luffy.cx
 HTTP 403
+
+GET https://goatcounter.luffy.cx/api/v0/me
+HTTP 401

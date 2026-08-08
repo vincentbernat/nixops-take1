@@ -13,14 +13,19 @@ trap 'rm -rf "$tmpdir"' EXIT
 # single `hurl --test` can run them all in parallel.
 for host in "$@"; do
 
-    # comments.luffy.cx is only served by web03, so skip it elsewhere.
+    # comments.luffy.cx is only served by web03
+    # goatcounter.luffy.cx is only served by web02
     case $host in
         web03*) skipcomments=false ;;
         *) skipcomments=true ;;
     esac
+    case $host in
+        web02*) skipgoatcounter=false ;;
+        *) skipgoatcounter=true ;;
+    esac
 
     for version in ipv4 ipv6; do
-        awk -v host="$host" -v version="$version" -v skipcomments="$skipcomments" '
+        awk -v host="$host" -v version="$version" -v skipcomments="$skipcomments" -v skipgoatcounter="$skipgoatcounter" '
             /^[A-Z]+[ \t]+https?:\/\// {
                 print
                 print "[Options]"
@@ -28,6 +33,8 @@ for host in "$@"; do
                 print "connect-to: :80:" host ":80"
                 print version ": true"
                 if (skipcomments == "true" && $2 ~ /comments\.luffy\.cx/)
+                    print "skip: true"
+                if (skipgoatcounter == "true" && $2 ~ /goatcounter\.luffy\.cx/)
                     print "skip: true"
                 next
             }
