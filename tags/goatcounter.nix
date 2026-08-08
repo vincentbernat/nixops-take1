@@ -70,8 +70,13 @@ in
     extraConfig = ''
       access_log /var/log/nginx/goatcounter.luffy.cx.log anonymous;
     '';
-    locations."/" = {
-      proxyPass = "http://${goatcounterIP}:${toString goatcounterPort}";
+    locations = {
+      "/" = {
+        proxyPass = "http://${goatcounterIP}:${toString goatcounterPort}";
+      };
+      "= /count".extraConfig = ''
+        return 404;
+      '';
     };
   };
   security.acme.certs."goatcounter.luffy.cx" = { };
