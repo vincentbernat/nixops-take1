@@ -72,29 +72,33 @@ in
     config = {
       networking.firewall.enable = false;
       system.stateVersion = config.system.stateVersion;
-      systemd.services.console-getty.enable = false;
-      systemd.services.isso = {
-        description = "Isso commenting server";
-        wantedBy = [ "multi-user.target" ];
-        script = ''
-          ${issoEnv}/bin/gunicorn \
-            --name isso \
-            --bind ${issoIP}:${toString issoPort} \
-            --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
-            --preload isso.run
-        '';
-        environment = {
-          ISSO_SETTINGS = "/etc/isso.cfg";
-          SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-        };
-        serviceConfig = {
-          SupplementaryGroups = [ "keys" ];
-          DynamicUser = true;
-          StateDirectory = "isso";
-          Restart = "always";
-          ExecStartPre = "+${pkgs.coreutils}/bin/chown -R isso:isso /var/db/isso";
-          ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/isso";
-          ReadWritePaths = "/var/db/isso";
+      systemd.services = {
+        console-getty.enable = false;
+        systemd-logind.enable = false;
+        systemd-oomd.enable = false;
+        isso = {
+          description = "Isso commenting server";
+          wantedBy = [ "multi-user.target" ];
+          script = ''
+            ${issoEnv}/bin/gunicorn \
+              --name isso \
+              --bind ${issoIP}:${toString issoPort} \
+              --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
+              --preload isso.run
+          '';
+          environment = {
+            ISSO_SETTINGS = "/etc/isso.cfg";
+            SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+          };
+          serviceConfig = {
+            SupplementaryGroups = [ "keys" ];
+            DynamicUser = true;
+            StateDirectory = "isso";
+            Restart = "always";
+            ExecStartPre = "+${pkgs.coreutils}/bin/chown -R isso:isso /var/db/isso";
+            ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/isso";
+            ReadWritePaths = "/var/db/isso";
+          };
         };
       };
     };

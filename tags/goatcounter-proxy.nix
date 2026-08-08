@@ -37,16 +37,20 @@ in
     config = {
       networking.firewall.enable = false;
       system.stateVersion = config.system.stateVersion;
-      systemd.services.console-getty.enable = false;
-      systemd.services.goatcounter = {
-        description = "Proxy to GoatCounter.";
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          EnvironmentFile = "/etc/goatcounter-proxy.env";
-          SupplementaryGroups = [ "keys" ];
-          DynamicUser = true;
-          Restart = "always";
-          ExecStart = goatcounterCommand;
+      systemd.services = {
+        console-getty.enable = false;
+        systemd-logind.enable = false;
+        systemd-oomd.enable = false;
+        goatcounter = {
+          description = "Proxy to GoatCounter.";
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            EnvironmentFile = "/etc/goatcounter-proxy.env";
+            SupplementaryGroups = [ "keys" ];
+            DynamicUser = true;
+            Restart = "always";
+            ExecStart = goatcounterCommand;
+          };
         };
       };
     };
