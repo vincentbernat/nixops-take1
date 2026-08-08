@@ -96,9 +96,11 @@ header "Location" == "https://hachyderm.io/.well-known/webfinger?resource=acct:v
 GET https://vincent.bernat.ch/.well-known/atproto-did
 HTTP 200
 
+# Skip except on web03.luffy.cx
 GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5
 HTTP 200
 
+# Skip except on web03.luffy.cx
 GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5
 HTTP 200
 
@@ -148,5 +150,6 @@ HTTP 404
 GET https://pages.luffy.cx
 HTTP 403
 
+# Skip except on web02.luffy.cx
 GET https://goatcounter.luffy.cx/api/v0/me
 HTTP 401

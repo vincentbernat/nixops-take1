@@ -9,33 +9,32 @@ tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 
 # For each host and IP version, materialize a copy of the suite with the
-# connect-to, IP version and per-host skips baked into every request, so a
-# single `hurl --test` can run them all in parallel.
+# connect-to and IP version baked into every request, so a single `hurl --test`
+# can run them all in parallel. A request preceded by a "# Skip except on
+# HOST" comment is skipped on the other hosts.
 for host in "$@"; do
-
-    # comments.luffy.cx is only served by web03
-    # goatcounter.luffy.cx is only served by web02
-    case $host in
-        web03*) skipcomments=false ;;
-        *) skipcomments=true ;;
-    esac
-    case $host in
-        web02*) skipgoatcounter=false ;;
-        *) skipgoatcounter=true ;;
-    esac
-
     for version in ipv4 ipv6; do
-        awk -v host="$host" -v version="$version" -v skipcomments="$skipcomments" -v skipgoatcounter="$skipgoatcounter" '
+        awk -v host="$host" -v version="$version" '
+            # HOST also matches when the caller only gave the first label
+            function wanted(target) {
+                return target == host || index(target, host ".") == 1
+            }
+            /^#[ \t]*Skip except on / {
+                only = $0
+                sub(/^#[ \t]*Skip except on[ \t]*/, "", only)
+                sub(/[ \t]*$/, "", only)
+                print
+                next
+            }
             /^[A-Z]+[ \t]+https?:\/\// {
                 print
                 print "[Options]"
                 print "connect-to: :443:" host ":443"
                 print "connect-to: :80:" host ":80"
                 print version ": true"
-                if (skipcomments == "true" && $2 ~ /comments\.luffy\.cx/)
+                if (only != "" && !wanted(only))
                     print "skip: true"
-                if (skipgoatcounter == "true" && $2 ~ /goatcounter\.luffy\.cx/)
-                    print "skip: true"
+                only = ""
                 next
             }
             /^\[Options\]$/ { next }   # merge any existing options into ours
