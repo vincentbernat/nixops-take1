@@ -126,9 +126,6 @@ in
     locations."/" = {
       proxyPass = "http://${issoIP}:${toString issoPort}";
       extraConfig = ''
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_hide_header Set-Cookie;
         proxy_hide_header X-Set-Cookie;
         proxy_ignore_headers Set-Cookie;

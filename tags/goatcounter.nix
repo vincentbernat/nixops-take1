@@ -71,11 +71,6 @@ in
     '';
     locations."/" = {
       proxyPass = "http://${goatcounterIP}:${toString goatcounterPort}";
-      extraConfig = ''
-        proxy_set_header X-Real-Ip $proxy_add_x_forwarded_for;
-        proxy_set_header Host $host;
-        add_header Strict-Transport-Security "max-age=31536000" always;
-      '';
     };
   };
   security.acme.certs."goatcounter.luffy.cx" = { };
