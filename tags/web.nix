@@ -397,5 +397,5 @@ in
       done
     '';
 
-  imports = vhosts;
+  imports = vhosts ++ [ ./goatcounter-proxy.nix ];
 }
