@@ -22,6 +22,7 @@
             ];
           };
         }) // {
+      overlays.default = import ./packages;
       colmena = import ./network.nix {
         inherit inputs;
       };

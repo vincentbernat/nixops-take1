@@ -42,6 +42,7 @@ in
     description = "Luffy infrastructure";
     nixpkgs = import inputs.nixpkgs {
       system = "x86_64-linux";
+      overlays = [ inputs.self.overlays.default ];
     };
   };
 } // builtins.listToAttrs cdktf-servers

@@ -45,38 +45,10 @@ let
   '';
   issoIP = "127.0.0.2";
   issoPort = 8086;
-  # Custom derivation for Isso using a personal fork. It would be possible to
-  # use the one from nixpkgs with `python3Packages.toPythonModule pkgs.isso`.
-  # Also, we don't build the JS part as it is not served from here.
-  issoPackage = with pkgs.python3Packages; buildPythonPackage rec {
-    pname = "isso";
-    version = "custom";
-    format = "setuptools";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "vincentbernat";
-      repo = pname;
-      rev = "vbe/master";
-      hash = "sha256-tLyi8NYr4WB1Hcf3IRJ1vb9JW/NKNcxtN9Spnfw00mc=";
-    };
-
-    propagatedBuildInputs = [
-      itsdangerous
-      jinja2
-      misaka
-      mistune
-      html5lib
-      werkzeug
-      bleach
-    ];
-    nativeBuildInputs = [
-      cffi
-    ];
-  };
   # Python environment to use, containing isso and gunicorn
   issoEnv = pkgs.python3.buildEnv.override {
     extraLibs = [
-      issoPackage
+      pkgs.luffy.isso
       pkgs.python3Packages.gunicorn
       pkgs.python3Packages.gevent
     ];
