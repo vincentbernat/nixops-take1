@@ -66,19 +66,31 @@ in
           # Litestream expands $VAR in its configuration file before reading
           # it, so the credentials stay out of the Nix store.
           environmentFile = "/etc/litestream.env";
-          settings.dbs = lib.mapAttrsToList
-            (name: path: {
-              inherit path;
-              replica = {
-                type = "sftp";
-                host = "\${SQLITE_BACKUP_HOST}";
-                user = "\${SQLITE_BACKUP_USER}";
-                password = "\${SQLITE_BACKUP_PASSWORD}";
-                host-key = "\${SQLITE_BACKUP_HOSTKEY}";
-                path = "${config.networking.hostName}/${name}";
-              };
-            })
-            cfg.databases;
+          settings = {
+            sync-interval = "20s";
+            snapshot = {
+              interval = "24h";
+              retention = "360h";
+            };
+            levels = [
+              { interval = "5m"; }
+              { interval = "30m"; }
+              { interval = "3h"; }
+            ];
+            dbs = lib.mapAttrsToList
+              (name: path: {
+                inherit path;
+                replica = {
+                  type = "sftp";
+                  host = "\${SQLITE_BACKUP_HOST}";
+                  user = "\${SQLITE_BACKUP_USER}";
+                  password = "\${SQLITE_BACKUP_PASSWORD}";
+                  host-key = "\${SQLITE_BACKUP_HOSTKEY}";
+                  path = "${config.networking.hostName}/${name}";
+                };
+              })
+              cfg.databases;
+          };
         };
       };
     };
