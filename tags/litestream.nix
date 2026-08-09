@@ -68,6 +68,7 @@ in
           environmentFile = "/etc/litestream.env";
           settings = {
             sync-interval = "20s";
+            auto-recover = true;
             snapshot = {
               interval = "24h";
               retention = "360h";
