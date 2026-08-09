@@ -55,6 +55,9 @@ let
   };
 in
 {
+  imports = [ ./litestream.nix ];
+  luffy.litestream.databases.isso = "/var/db/isso/comments.db";
+
   # Systemd container
   containers.isso = {
     ephemeral = true;
