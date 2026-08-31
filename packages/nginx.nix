@@ -10,4 +10,7 @@
     brotli
     ipscrub
   ];
+}).overrideAttrs (old: {
+  # See https://github.com/NixOS/nixpkgs/issues/182935
+  disallowedReferences = [ ];
 })
