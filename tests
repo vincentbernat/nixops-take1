@@ -19,6 +19,18 @@ for host in "$@"; do
             function wanted(target) {
                 return target == host || index(target, host ".") == 1
             }
+            # hurl wants [Options] after the request headers, so emit it once
+            # the header block is over
+            function options() {
+                if (!pending) return
+                pending = 0
+                print "[Options]"
+                print "connect-to: :443:" host ":443"
+                print "connect-to: :80:" host ":80"
+                print version ": true"
+                if (excluded) print "skip: true"
+                excluded = 0
+            }
             /^#[ \t]*Skip except on / {
                 only = $0
                 sub(/^#[ \t]*Skip except on[ \t]*/, "", only)
@@ -28,17 +40,15 @@ for host in "$@"; do
             }
             /^[A-Z]+[ \t]+https?:\/\// {
                 print
-                print "[Options]"
-                print "connect-to: :443:" host ":443"
-                print "connect-to: :80:" host ":80"
-                print version ": true"
-                if (only != "" && !wanted(only))
-                    print "skip: true"
+                pending = 1
+                excluded = (only != "" && !wanted(only))
                 only = ""
                 next
             }
-            /^\[Options\]$/ { next }   # merge any existing options into ours
+            /^\[Options\]$/ { options(); next }   # merge any existing options into ours
+            !/^[A-Za-z0-9_-]+[ \t]*:/ { options() }
             { print }
+            END { options() }
         ' tests.hurl > "$tmpdir/$host-$version.hurl"
     done
 done

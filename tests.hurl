@@ -41,6 +41,41 @@ HTTP 301
 [Asserts]
 header "Location" == "https://vincent.bernat.ch/en"
 
+GET https://vincent.bernat.ch/
+Accept-Language: fr-CA
+HTTP 301
+[Asserts]
+header "Location" == "https://vincent.bernat.ch/fr"
+header "Vary" == "Accept-Language"
+
+GET https://vincent.bernat.ch/
+Accept-Language: es, en, fr
+HTTP 301
+[Asserts]
+header "Location" == "https://vincent.bernat.ch/en"
+header "Vary" == "Accept-Language"
+
+GET https://vincent.bernat.ch/
+Accept-Language: es, fr, en
+HTTP 301
+[Asserts]
+header "Location" == "https://vincent.bernat.ch/fr"
+header "Vary" == "Accept-Language"
+
+GET https://vincent.bernat.ch/
+Accept-Language: de-DE,de;q=0.9,fr;q=0.8,en;q=0.7
+HTTP 301
+[Asserts]
+header "Location" == "https://vincent.bernat.ch/fr"
+header "Vary" == "Accept-Language"
+
+GET https://vincent.bernat.ch/
+Accept-Language: zh-Hans,zh;q=0.9
+HTTP 301
+[Asserts]
+header "Location" == "https://vincent.bernat.ch/en"
+header "Vary" == "Accept-Language"
+
 GET https://vincent.bernat.ch/hit
 HTTP 400
 [Asserts]
