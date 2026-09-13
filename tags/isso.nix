@@ -1,15 +1,12 @@
-{ pkgs, lib, ... }:
+{ config, ... }:
 let
-  # Isso configuration file
-  # Backup of sqlite can be done with:
-  #   nix run nixpkgs.sqlite --command sudo sqlite3 /var/db/isso/comments.db .dump \
-  #   | gzip -c > comments-isso-$(date -I).txt.gz
+  cfg = config.luffy.isso;
   issoMkConfig = builtins.toFile "isso-mkconf" ''
     source <(pass show personal/nixops/secrets)
 
     cat <<EOF
     [general]
-    dbpath = /var/db/isso/comments.db
+    dbpath = ${cfg.databaseFile}
     host =
       https://vincent.bernat.ch
       http://localhost:8080
@@ -43,49 +40,15 @@ let
     salt = $ISSO_SALT
     EOF
   '';
-  issoIP = "127.0.0.2";
-  issoPort = 8086;
-  # Python environment to use, containing isso and gunicorn
-  issoEnv = pkgs.python3.buildEnv.override {
-    extraLibs = [
-      pkgs.luffy.isso
-      pkgs.python3Packages.gunicorn
-      pkgs.python3Packages.gevent
-    ];
-  };
 in
 {
-  luffy.litestream.databases.isso = "/var/db/isso/comments.db";
-
-  luffy.containers.isso = {
-    paths = [ "/var/db/isso" ];
-    keys."isso.cfg" = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
-    config.systemd.services.isso = {
-      description = "Isso commenting server";
-      wantedBy = [ "multi-user.target" ];
-      script = ''
-        ${issoEnv}/bin/gunicorn \
-          --name isso \
-          --bind ${issoIP}:${toString issoPort} \
-          --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
-          --preload isso.run
-      '';
-      environment = {
-        ISSO_SETTINGS = "/etc/isso.cfg";
-        SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-      };
-      serviceConfig = {
-        SupplementaryGroups = [ "keys" ];
-        DynamicUser = true;
-        StateDirectory = "isso";
-        Restart = "always";
-        ExecStartPre = "+${pkgs.coreutils}/bin/chown -R isso:isso /var/db/isso";
-        ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/isso";
-        ReadWritePaths = "/var/db/isso";
-      };
-    };
+  luffy.isso = {
+    enable = true;
+    listenAddress = "127.0.0.2";
+    port = 8086;
+    configScript = issoMkConfig;
   };
-  systemd.services."container@isso".restartTriggers = [ issoMkConfig ];
+  luffy.litestream.databases.isso = cfg.databaseFile;
 
   # Nginx vhost
   services.nginx.virtualHosts."comments.luffy.cx" = {
@@ -96,7 +59,7 @@ in
       access_log /var/log/nginx/comments.luffy.cx.log anonymous;
     '';
     locations."/" = {
-      proxyPass = "http://${issoIP}:${toString issoPort}";
+      proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
       extraConfig = ''
         proxy_hide_header Set-Cookie;
         proxy_hide_header X-Set-Cookie;
