@@ -17,6 +17,7 @@ let
           domain = domainName name;
         };
       }
+      ./modules
       ./tags/common.nix
     ] ++ modules;
   };

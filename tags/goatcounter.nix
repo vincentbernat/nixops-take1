@@ -12,7 +12,6 @@ let
   ];
 in
 {
-  imports = [ ./litestream.nix ];
   luffy.litestream.databases.goatcounter = "/var/db/goatcounter/db.sqlite";
 
   deployment.keys."goatcounter.env" = {
