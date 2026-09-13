@@ -1,5 +1,6 @@
-This is my tentative to get more familiar with NixOS and Colmena. I am unsure if
-it's the right way. Previously, I was using NixOps (see commit 7e583aca7906).
+This is my tentative to get more familiar with NixOS and Colmena. This looks
+better than a couple years back. Previously, I was using NixOps (see commit
+7e583aca7906).
 
 I am using this setup in conjuction with CDKTF. See [cdktf-take1
 repository](https://github.com/vincentbernat/cdktf-take1). Notably,
@@ -23,6 +24,11 @@ To deploy:
 To avoid parallelism and reboot after deploying:
 
     colmena apply --parallel 1 --reboot
+
+To check if the hosts change between two revisions (`OLD` defaults to `HEAD~1`,
+`NEW` to `HEAD`), run the following command. No output means no change:
+
+    nix run .#compare [OLD] [NEW]
 
 In case of a security issue, it can take a few days to get the current
 release to be updated. Usually, switching to the small version helps
