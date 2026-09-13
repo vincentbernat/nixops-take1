@@ -7,9 +7,13 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          pkgs = import inputs.nixpkgs { inherit system; };
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [ self.overlays.default ];
+          };
         in
         {
+          packages = pkgs.luffy;
           devShells.default = pkgs.mkShell {
             name = "nixops-take1";
             buildInputs = [
