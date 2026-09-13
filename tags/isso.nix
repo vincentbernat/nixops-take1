@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 let
   # Isso configuration file
   # Backup of sqlite can be done with:
@@ -57,65 +57,35 @@ in
 {
   luffy.litestream.databases.isso = "/var/db/isso/comments.db";
 
-  # Systemd container
-  containers.isso = {
-    ephemeral = true;
-    autoStart = true;
-    bindMounts."/var/db/isso" = {
-      hostPath = "/var/db/isso";
-      isReadOnly = false;
-    };
-    bindMounts."/etc/isso.cfg" = {
-      hostPath = "/var/keys/isso.cfg";
-      isReadOnly = true;
-    };
-    extraFlags = [ "--resolv-conf=replace-host" ];
-    privateNetwork = false;
-    config = {
-      networking.firewall.enable = false;
-      system.stateVersion = config.system.stateVersion;
-      systemd.services = {
-        console-getty.enable = false;
-        systemd-logind.enable = false;
-        systemd-oomd.enable = false;
-        isso = {
-          description = "Isso commenting server";
-          wantedBy = [ "multi-user.target" ];
-          script = ''
-            ${issoEnv}/bin/gunicorn \
-              --name isso \
-              --bind ${issoIP}:${toString issoPort} \
-              --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
-              --preload isso.run
-          '';
-          environment = {
-            ISSO_SETTINGS = "/etc/isso.cfg";
-            SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-          };
-          serviceConfig = {
-            SupplementaryGroups = [ "keys" ];
-            DynamicUser = true;
-            StateDirectory = "isso";
-            Restart = "always";
-            ExecStartPre = "+${pkgs.coreutils}/bin/chown -R isso:isso /var/db/isso";
-            ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/isso";
-            ReadWritePaths = "/var/db/isso";
-          };
-        };
+  luffy.containers.isso = {
+    paths = [ "/var/db/isso" ];
+    keys."isso.cfg" = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
+    config.systemd.services.isso = {
+      description = "Isso commenting server";
+      wantedBy = [ "multi-user.target" ];
+      script = ''
+        ${issoEnv}/bin/gunicorn \
+          --name isso \
+          --bind ${issoIP}:${toString issoPort} \
+          --worker-class gevent --workers 2 --worker-tmp-dir /dev/shm \
+          --preload isso.run
+      '';
+      environment = {
+        ISSO_SETTINGS = "/etc/isso.cfg";
+        SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+      };
+      serviceConfig = {
+        SupplementaryGroups = [ "keys" ];
+        DynamicUser = true;
+        StateDirectory = "isso";
+        Restart = "always";
+        ExecStartPre = "+${pkgs.coreutils}/bin/chown -R isso:isso /var/db/isso";
+        ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/isso";
+        ReadWritePaths = "/var/db/isso";
       };
     };
   };
-  deployment.keys."isso.cfg" = {
-    group = "keys";
-    permissions = "0640";
-    destDir = "/var/keys";
-    keyCommand = [ "${pkgs.runtimeShell}" "${issoMkConfig}" ];
-  };
-  systemd.services."container@isso" = {
-    requires = [ "isso.cfg-key.service" ];
-    after = [ "isso.cfg-key.service" ];
-    restartTriggers = [ issoMkConfig ];
-  };
+  systemd.services."container@isso".restartTriggers = [ issoMkConfig ];
 
   # Nginx vhost
   services.nginx.virtualHosts."comments.luffy.cx" = {

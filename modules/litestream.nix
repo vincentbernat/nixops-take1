@@ -2,9 +2,6 @@
 let
   cfg = config.luffy.litestream;
   databaseDirs = lib.unique (map builtins.dirOf (builtins.attrValues cfg.databases));
-  databaseMounts = lib.listToAttrs (map
-    (dir: lib.nameValuePair dir { hostPath = dir; isReadOnly = false; })
-    databaseDirs);
 in
 {
   options.luffy.litestream = {
@@ -20,46 +17,19 @@ in
   };
 
   config = lib.mkIf (cfg.databases != { }) {
-    deployment.keys."litestream.env" = {
-      group = "keys";
-      permissions = "0640";
-      destDir = "/var/keys";
-      keyCommand = [
+    luffy.containers.litestream = {
+      paths = databaseDirs;
+      keys."litestream.env" = [
         "${pkgs.runtimeShell}"
         "-c"
         "pass show personal/nixops/secrets | grep '^SQLITE_BACKUP_'"
       ];
-    };
-    systemd.services."container@litestream" = {
-      requires = [ "litestream.env-key.service" ];
-      after = [ "litestream.env-key.service" ];
-    };
-
-    # Systemd container
-    containers.litestream = {
-      ephemeral = true;
-      autoStart = true;
-      extraFlags = [ "--resolv-conf=replace-host" ];
-      privateNetwork = false;
-      bindMounts = databaseMounts // {
-        "/etc/litestream.env" = {
-          hostPath = "/var/keys/litestream.env";
-          isReadOnly = true;
-        };
-      };
       config = {
-        networking.firewall.enable = false;
-        system.stateVersion = config.system.stateVersion;
-        systemd.services = {
-          console-getty.enable = false;
-          systemd-logind.enable = false;
-          systemd-oomd.enable = false;
-          # The databases belong to dynamically allocated users, whose UID is
-          # not known here, so Litestream runs as root.
-          litestream.serviceConfig = {
-            User = lib.mkForce "root";
-            Group = lib.mkForce "root";
-          };
+        # The databases belong to dynamically allocated users, whose UID is
+        # not known here, so Litestream runs as root.
+        systemd.services.litestream.serviceConfig = {
+          User = lib.mkForce "root";
+          Group = lib.mkForce "root";
         };
         services.litestream = {
           enable = true;

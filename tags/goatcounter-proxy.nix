@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 let
   goatcounterIP = "127.0.0.3";
   goatcounterPort = 8087;
@@ -11,47 +11,21 @@ let
   ];
 in
 {
-  deployment.keys."goatcounter-proxy.env" = {
-    group = "keys";
-    permissions = "0640";
-    destDir = "/var/keys";
-    keyCommand = [
+  luffy.containers.goatcounter-proxy = {
+    keys."goatcounter-proxy.env" = [
       "${pkgs.runtimeShell}"
       "-c"
       "pass show personal/nixops/secrets | grep '^GOATCOUNTER_API_KEY='"
     ];
-  };
-  systemd.services."container@goatcounter-proxy" = {
-    requires = [ "goatcounter-proxy.env-key.service" ];
-    after = [ "goatcounter-proxy.env-key.service" ];
-  };
-  containers.goatcounter-proxy = {
-    ephemeral = true;
-    autoStart = true;
-    extraFlags = [ "--resolv-conf=replace-host" ];
-    privateNetwork = false;
-    bindMounts."/etc/goatcounter-proxy.env" = {
-      hostPath = "/var/keys/goatcounter-proxy.env";
-      isReadOnly = true;
-    };
-    config = {
-      networking.firewall.enable = false;
-      system.stateVersion = config.system.stateVersion;
-      systemd.services = {
-        console-getty.enable = false;
-        systemd-logind.enable = false;
-        systemd-oomd.enable = false;
-        goatcounter = {
-          description = "Proxy to GoatCounter.";
-          wantedBy = [ "multi-user.target" ];
-          serviceConfig = {
-            EnvironmentFile = "/etc/goatcounter-proxy.env";
-            SupplementaryGroups = [ "keys" ];
-            DynamicUser = true;
-            Restart = "always";
-            ExecStart = goatcounterCommand;
-          };
-        };
+    config.systemd.services.goatcounter = {
+      description = "Proxy to GoatCounter.";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        EnvironmentFile = "/etc/goatcounter-proxy.env";
+        SupplementaryGroups = [ "keys" ];
+        DynamicUser = true;
+        Restart = "always";
+        ExecStart = goatcounterCommand;
       };
     };
   };

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 let
   goatcounterIP = "127.0.0.4";
   goatcounterPort = 8088;
@@ -14,52 +14,26 @@ in
 {
   luffy.litestream.databases.goatcounter = "/var/db/goatcounter/db.sqlite";
 
-  deployment.keys."goatcounter.env" = {
-    group = "keys";
-    permissions = "0640";
-    destDir = "/var/keys";
-    keyCommand = [
+  luffy.containers.goatcounter = {
+    paths = [ "/var/db/goatcounter" ];
+    keys."goatcounter.env" = [
       "${pkgs.runtimeShell}"
       "-c"
       "pass show personal/nixops/secrets | grep '^GOATCOUNTER_GEODB='"
     ];
-  };
-  systemd.services."container@goatcounter" = { };
-  containers.goatcounter = {
-    ephemeral = true;
-    autoStart = true;
-    extraFlags = [ "--resolv-conf=replace-host" ];
-    privateNetwork = false;
-    bindMounts."/var/db/goatcounter" = {
-      hostPath = "/var/db/goatcounter";
-      isReadOnly = false;
-    };
-    bindMounts."/etc/goatcounter.env" = {
-      hostPath = "/var/keys/goatcounter.env";
-      isReadOnly = true;
-    };
-    config = {
-      networking.firewall.enable = false;
-      system.stateVersion = config.system.stateVersion;
-      systemd.services = {
-        console-getty.enable = false;
-        systemd-logind.enable = false;
-        systemd-oomd.enable = false;
-        goatcounter = {
-          description = "GoatCounter.";
-          wantedBy = [ "multi-user.target" ];
-          serviceConfig = {
-            EnvironmentFile = "/etc/goatcounter.env";
-            SupplementaryGroups = [ "keys" ];
-            DynamicUser = true;
-            Restart = "always";
-            StateDirectory = "goatcounter";
-            ExecStart = goatcounterCommand;
-            ExecStartPre = "+${pkgs.coreutils}/bin/chown -R goatcounter:goatcounter /var/db/goatcounter";
-            ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/goatcounter";
-            ReadWritePaths = "/var/db/goatcounter";
-          };
-        };
+    config.systemd.services.goatcounter = {
+      description = "GoatCounter.";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        EnvironmentFile = "/etc/goatcounter.env";
+        SupplementaryGroups = [ "keys" ];
+        DynamicUser = true;
+        Restart = "always";
+        StateDirectory = "goatcounter";
+        ExecStart = goatcounterCommand;
+        ExecStartPre = "+${pkgs.coreutils}/bin/chown -R goatcounter:goatcounter /var/db/goatcounter";
+        ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/goatcounter";
+        ReadWritePaths = "/var/db/goatcounter";
       };
     };
   };
