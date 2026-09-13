@@ -22,7 +22,13 @@
             ];
           };
         }) // {
-      overlays.default = import ./packages;
+      # Packages we build ourselves, available as `pkgs.luffy.*'.
+      overlays.default = final: prev: {
+        luffy = final.lib.packagesFromDirectoryRecursive {
+          inherit (final) callPackage;
+          directory = ./packages;
+        };
+      };
       colmena = import ./network.nix {
         inherit inputs;
       };
