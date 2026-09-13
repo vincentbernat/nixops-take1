@@ -397,5 +397,12 @@ in
       done
     '';
 
-  imports = vhosts ++ [ ./goatcounter-proxy.nix ];
+  luffy.goatcounter.proxy = {
+    enable = true;
+    site = "goatcounter.luffy.cx";
+    listenAddress = "127.0.0.3";
+    port = 8087;
+  };
+
+  imports = vhosts;
 }

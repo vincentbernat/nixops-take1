@@ -1,42 +1,14 @@
-{ pkgs, lib, ... }:
+{ config, ... }:
 let
-  goatcounterIP = "127.0.0.4";
-  goatcounterPort = 8088;
-  goatcounterCommand = lib.escapeShellArgs [
-    (lib.getExe pkgs.luffy.goatcounter)
-    "serve"
-    "-listen=${goatcounterIP}:${toString goatcounterPort}"
-    "-tls=none"
-    "-db=sqlite+/var/db/goatcounter/db.sqlite"
-    "-automigrate"
-  ];
+  cfg = config.luffy.goatcounter.serve;
 in
 {
-  luffy.litestream.databases.goatcounter = "/var/db/goatcounter/db.sqlite";
-
-  luffy.containers.goatcounter = {
-    paths = [ "/var/db/goatcounter" ];
-    keys."goatcounter.env" = [
-      "${pkgs.runtimeShell}"
-      "-c"
-      "pass show personal/nixops/secrets | grep '^GOATCOUNTER_GEODB='"
-    ];
-    config.systemd.services.goatcounter = {
-      description = "GoatCounter.";
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        EnvironmentFile = "/etc/goatcounter.env";
-        SupplementaryGroups = [ "keys" ];
-        DynamicUser = true;
-        Restart = "always";
-        StateDirectory = "goatcounter";
-        ExecStart = goatcounterCommand;
-        ExecStartPre = "+${pkgs.coreutils}/bin/chown -R goatcounter:goatcounter /var/db/goatcounter";
-        ExecStopPost = "+${pkgs.coreutils}/bin/chown -R nobody:nogroup /var/db/goatcounter";
-        ReadWritePaths = "/var/db/goatcounter";
-      };
-    };
+  luffy.goatcounter.serve = {
+    enable = true;
+    listenAddress = "127.0.0.4";
+    port = 8088;
   };
+  luffy.litestream.databases.goatcounter = cfg.databaseFile;
 
   # Nginx vhost
   services.nginx.virtualHosts."goatcounter.luffy.cx" = {
@@ -48,7 +20,7 @@ in
     '';
     locations = {
       "/" = {
-        proxyPass = "http://${goatcounterIP}:${toString goatcounterPort}";
+        proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
       };
       "= /count".extraConfig = ''
         return 404;
