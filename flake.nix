@@ -1,20 +1,26 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-    flake-utils.url = "github:numtide/flake-utils";
   };
-  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
-    flake-utils.lib.eachDefaultSystem
-      (system:
+  outputs = { self, nixpkgs, ... }@inputs:
+    let
+      systems = nixpkgs.lib.systems.flakeExposed;
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+      perSystem = forAllSystems (system: {
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ self.overlays.default ];
+        };
+      });
+    in
+    {
+      packages = forAllSystems (system: perSystem.${system}.pkgs.luffy);
+      devShells = forAllSystems (system:
         let
-          pkgs = import inputs.nixpkgs {
-            inherit system;
-            overlays = [ self.overlays.default ];
-          };
+          inherit (perSystem.${system}) pkgs;
         in
         {
-          packages = pkgs.luffy;
-          devShells.default = pkgs.mkShell {
+          default = pkgs.mkShell {
             name = "nixops-take1";
             buildInputs = [
               pkgs.curl
@@ -25,7 +31,7 @@
               pkgs.nix
             ];
           };
-        }) // {
+        });
       # Packages we build ourselves, available as `pkgs.luffy.*'.
       overlays.default = final: prev: {
         luffy = final.lib.packagesFromDirectoryRecursive {
