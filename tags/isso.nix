@@ -52,12 +52,8 @@ in
 
   # Nginx vhost
   services.nginx.virtualHosts."comments.luffy.cx" = {
-    root = "/data/webserver/comments.luffy.cx";
-    enableACME = true;
     forceSSL = true;
-    extraConfig = ''
-      access_log /var/log/nginx/comments.luffy.cx.log anonymous;
-    '';
+    luffy.acmeDNS = false;
     locations."/" = {
       proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
       extraConfig = ''
@@ -68,5 +64,4 @@ in
       '';
     };
   };
-  security.acme.certs."comments.luffy.cx" = { };
 }

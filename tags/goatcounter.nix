@@ -12,12 +12,8 @@ in
 
   # Nginx vhost
   services.nginx.virtualHosts."goatcounter.luffy.cx" = {
-    root = "/data/webserver/goatcounter.luffy.cx";
-    enableACME = true;
     forceSSL = true;
-    extraConfig = ''
-      access_log /var/log/nginx/goatcounter.luffy.cx.log anonymous;
-    '';
+    luffy.acmeDNS = false;
     locations = {
       "/" = {
         proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
@@ -27,5 +23,4 @@ in
       '';
     };
   };
-  security.acme.certs."goatcounter.luffy.cx" = { };
 }
