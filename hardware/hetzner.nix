@@ -1,4 +1,4 @@
-{ modulesPath, ipv6Address, ... }:
+{ config, modulesPath, ... }:
 {
   fileSystems."/" = {
     device = "/dev/sda1";
@@ -12,7 +12,7 @@
   networking = {
     usePredictableInterfaceNames = false;
     interfaces.eth0.ipv6.addresses = [{
-      address = ipv6Address;
+      address = config.luffy.host.ipv6Address;
       prefixLength = 64;
     }];
     defaultGateway6 = {

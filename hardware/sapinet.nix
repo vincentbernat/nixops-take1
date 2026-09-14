@@ -1,7 +1,8 @@
-{ modulesPath, lib, ipv4Address, ipv6Address, tags, ... }:
+{ config, modulesPath, lib, ... }:
 let
+  host = config.luffy.host;
   taggedValue = prefix:
-    lib.strings.removePrefix "${prefix}:" (builtins.head (builtins.filter (t: lib.strings.hasPrefix "${prefix}:" t) tags));
+    lib.strings.removePrefix "${prefix}:" (builtins.head (builtins.filter (t: lib.strings.hasPrefix "${prefix}:" t) host.tags));
 in
 {
   fileSystems."/" = {
@@ -17,7 +18,7 @@ in
     usePredictableInterfaceNames = false;
     useDHCP = false;
     interfaces.eth0.ipv4.addresses = [{
-      address = ipv4Address;
+      address = host.ipv4Address;
       prefixLength = 32;
     }];
     defaultGateway = {
@@ -25,7 +26,7 @@ in
       interface = "eth0";
     };
     interfaces.eth0.ipv6.addresses = [{
-      address = ipv6Address;
+      address = host.ipv6Address;
       prefixLength = 128;
     }];
     defaultGateway6 = {

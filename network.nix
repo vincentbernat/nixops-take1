@@ -8,7 +8,10 @@ let
     imports = [
       {
         _module.args = {
-          inherit inputs ipv4Address ipv6Address tags;
+          inherit inputs;
+        };
+        luffy.host = {
+          inherit ipv4Address ipv6Address tags;
         };
       }
       {
