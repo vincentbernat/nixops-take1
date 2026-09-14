@@ -3,6 +3,11 @@ let
   lib = inputs.nixpkgs.lib;
   shortName = name: builtins.elemAt (lib.splitString "." name) 0;
   domainName = name: lib.concatStringsSep "." (builtins.tail (lib.splitString "." name));
+  taggedValue = tags: prefix:
+    let
+      values = map (lib.removePrefix "${prefix}:") (builtins.filter (lib.hasPrefix "${prefix}:") tags);
+    in
+    if values == [ ] then null else builtins.head values;
   server = { name, ipv4Address, ipv6Address, tags, modules }: {
     deployment.targetHost = name;
     imports = [
@@ -11,7 +16,10 @@ let
           inherit inputs;
         };
         luffy.host = {
-          inherit ipv4Address ipv6Address tags;
+          inherit ipv4Address ipv6Address;
+          gateway4 = taggedValue tags "gateway4";
+          gateway6 = taggedValue tags "gateway6";
+          tags = builtins.filter (t: !lib.hasPrefix "gateway4:" t && !lib.hasPrefix "gateway6:" t) tags;
         };
       }
       {
