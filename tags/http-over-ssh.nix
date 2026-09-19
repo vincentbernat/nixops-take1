@@ -4,8 +4,56 @@ let
     source <(pass show personal/nixops/secrets)
     printf 'secure_link_md5 "$secure_link_expires $port %s";\n' "$HTTPSSH_SECRET"
   '';
+  httpOverSSHToken = builtins.toFile "compile-http-over-ssh.token" ''
+    source <(pass show personal/nixops/secrets)
+    printf '%s\n' "$HTTPSSH_SECRET"
+  '';
+  httpOverSSH = pkgs.writeShellApplication {
+    name = "http-over-ssh";
+    runtimeInputs = with pkgs; [ coreutils gawk iproute2 openssl ];
+    # Unfortunately, we need sudo as sshd-session dropped privileges and is not
+    # observable by us.
+    text = ''
+      days=''${1:-1}
+
+      # Find ancestor sshd-session
+      pid=$$
+      while [ "$pid" -gt 1 ] && [ "$(cat /proc/"$pid"/comm)" != sshd-session ]; do
+        pid=$(awk '/^PPid:/ { print $2 }' /proc/"$pid"/status)
+      done
+      if [ "$pid" -le 1 ]; then
+        echo "not an ssh session" >&2
+        exit 1
+      fi
+
+      secret=$(cat /var/keys/http-over-ssh.token)
+
+      while :; do
+        # Find ports allocated to sshd-session
+        ports=$(sudo -n ss --listening --numeric --tcp --processes --no-header |
+                  grep -F "pid=$pid," |
+                  awk '{ n = split($4, a, ":"); print a[n] }' | sort -un)
+        if [ -z "$ports" ]; then
+          echo "no forwarded port, use ssh -R 0:localhost:PORT" >&2
+          exit 1
+        fi
+
+        # For each port, print the URL with token and expiry
+        expires=$(( $(date +%s) + days * 86400 ))
+        while read -r port; do
+          token=$(printf '%s %s %s' "$expires" "$port" "$secret" |
+                    openssl md5 -binary | openssl base64 | tr +/ -_ | tr -d =)
+          echo "https://p$port.ssh.luffy.cx/?t=$token,$expires"
+        done <<< "$ports"
+
+        sleep 300
+      done
+    '';
+  };
 in
 {
+  environment.systemPackages = [ httpOverSSH ];
+
   services.nginx.virtualHosts = {
     "ssh.luffy.cx" = {
       forceSSL = true;
@@ -38,10 +86,18 @@ in
     };
   };
 
-  deployment.keys."http-over-ssh.secret" = {
-    group = "nginx";
-    permissions = "0640";
-    destDir = "/var/keys";
-    keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHSecret}" ];
+  deployment.keys = {
+    "http-over-ssh.secret" = {
+      group = "nginx";
+      permissions = "0640";
+      destDir = "/var/keys";
+      keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHSecret}" ];
+    };
+    "http-over-ssh.token" = {
+      group = "wheel";
+      permissions = "0640";
+      destDir = "/var/keys";
+      keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHToken}" ];
+    };
   };
 }
