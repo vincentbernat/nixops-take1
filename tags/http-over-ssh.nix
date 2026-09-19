@@ -15,6 +15,7 @@ let
     # observable by us.
     text = ''
       days=''${1:-1}
+      lifetime=$(( days * 86400 ))
 
       # Find ancestor sshd-session
       pid=$$
@@ -39,14 +40,14 @@ let
         fi
 
         # For each port, print the URL with token and expiry
-        expires=$(( $(date +%s) + days * 86400 ))
+        expires=$(( $(date +%s) + lifetime ))
         while read -r port; do
           token=$(printf '%s %s %s' "$expires" "$port" "$secret" |
                     openssl md5 -binary | openssl base64 | tr +/ -_ | tr -d =)
           echo "https://p$port.ssh.luffy.cx/?t=$token,$expires"
         done <<< "$ports"
 
-        sleep 300
+        sleep $(( lifetime / 2 ))
       done
     '';
   };
