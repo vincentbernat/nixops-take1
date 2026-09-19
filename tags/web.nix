@@ -11,7 +11,7 @@ let
   httpOverSSHSecret = builtins.toFile "compile-http-over-ssh.secret" ''
     source <(pass show personal/nixops/secrets)
 
-    printf 'secure_link_md5 "$port %s";\n' "$HTTPSSH_SECRET"
+    printf 'secure_link_md5 "$secure_link_expires $port %s";\n' "$HTTPSSH_SECRET"
   '';
   redirectVhost = to: {
     addSSL = true;
@@ -230,12 +230,15 @@ in
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
           extraConfig = ''
-            if ($request_uri ~ "^([^?]*)\?t=[-_A-Za-z0-9]+$") {
+            if ($request_uri ~ "^([^?]*)\?t=[-_A-Za-z0-9]+,[0-9]+$") {
               add_header Set-Cookie "httpssh=$arg_t; Path=/; Secure; HttpOnly; SameSite=Lax";
               return 302 $1;
             }
-            if ($secure_link != "1") {
+            if ($secure_link = "") {
               return 404;
+            }
+            if ($secure_link = "0") {
+              return 410;
             }
           '';
         };
