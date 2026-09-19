@@ -237,8 +237,6 @@ in
             if ($secure_link != "1") {
               return 404;
             }
-            proxy_set_header X-Forwarded-For $remote_addr;
-            proxy_set_header Host $host;
           '';
         };
       };
