@@ -54,6 +54,7 @@ in
 {
   environment.systemPackages = [ httpOverSSH ];
 
+  luffy.nginx.enable = true;
   services.nginx.virtualHosts = {
     "ssh.luffy.cx" = {
       forceSSL = true;
