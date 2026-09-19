@@ -1,3 +1,10 @@
+# HTTP over SSH. Example of use:
+#
+#     Host http-over-ssh
+#       Hostname web02.luffy.cx
+#       RemoteCommand http-over-ssh
+#       ControlPath none
+
 { pkgs, ... }:
 let
   httpOverSSHSecret = builtins.toFile "compile-http-over-ssh.secret" ''
@@ -44,7 +51,7 @@ let
         while read -r port; do
           token=$(printf '%s %s %s' "$expires" "$port" "$secret" |
                     openssl md5 -binary | openssl base64 | tr +/ -_ | tr -d =)
-          echo "https://p$port.ssh.luffy.cx/?t=$token,$expires"
+          echo "https://p$port.ssh.luffy.cx/t=$token,$expires/"
         done <<< "$ports"
 
         sleep $(( lifetime / 2 ))
@@ -72,9 +79,9 @@ in
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
           extraConfig = ''
-            if ($request_uri ~ "^([^?]*)\?t=[-_A-Za-z0-9]+,[0-9]+$") {
-              add_header Set-Cookie "httpssh=$arg_t; Path=/; Secure; HttpOnly; SameSite=Lax";
-              return 302 $1;
+            if ($request_uri ~ "^/t=([-_A-Za-z0-9]{22},[0-9]+)(/.*)$") {
+              add_header Set-Cookie "httpssh=$1; Path=/; Secure; HttpOnly; SameSite=Lax";
+              return 302 $2;
             }
             if ($secure_link = "") {
               return 404;

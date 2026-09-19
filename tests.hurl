@@ -188,3 +188,22 @@ HTTP 403
 # Skip except on web02.luffy.cx
 GET https://goatcounter.luffy.cx/api/v0/me
 HTTP 401
+
+# Skip except on web02.luffy.cx
+GET https://p4667.ssh.luffy.cx/en/blog
+HTTP 404
+
+# Skip except on web02.luffy.cx
+GET https://p37551.ssh.luffy.cx/t=PD9CAhknUWK4LE6JYGTBpg,1789928654/en/blog
+HTTP 302
+[Asserts]
+header "Location" == "https://p37551.ssh.luffy.cx/en/blog"
+cookie "httpssh" == "PD9CAhknUWK4LE6JYGTBpg,1789928654"
+
+# Skip except on web02.luffy.cx
+GET https://p37551.ssh.luffy.cx/en/blog
+[Cookies]
+httpssh: PD9CAhknUWK4LE6JYGTBpg,1789928654
+HTTP 410
+[Asserts]
+header "Location" == "https://p37551.ssh.luffy.cx/en/blog"
