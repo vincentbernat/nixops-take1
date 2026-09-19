@@ -1,3 +1,4 @@
+{ config, lib, ... }:
 let
   cors = ''
     add_header Access-Control-Allow-Origin *;
@@ -6,6 +7,7 @@ let
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";'';
   stsWithPreload = ''
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";'';
+  httpOverSSH = builtins.elem "http-over-ssh" config.luffy.host.tags;
   redirectVhost = to: {
     addSSL = true;
     globalRedirect = to;
@@ -206,5 +208,24 @@ in
     };
     "media.bernat.ch" = mediaVhost // { useACMEHost = "vincent.bernat.ch"; };
     "media.luffy.cx" = mediaVhost // { useACMEHost = "luffy.cx"; };
+  } // lib.optionalAttrs httpOverSSH {
+    # *.ssh.luffy.cx
+    "ssh.luffy.cx" = {
+      forceSSL = true;
+    };
+    "*.ssh.luffy.cx" = {
+      forceSSL = true;
+      serverName = "~^p(?<port>\\d{4,5})\\.ssh\\.luffy\\.cx$";
+      useACMEHost = "ssh.luffy.cx";
+      locations = {
+        "/" = {
+          proxyPass = "http://127.0.0.1:$port";
+          extraConfig = ''
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $host;
+          '';
+        };
+      };
+    };
   };
 }
