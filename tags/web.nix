@@ -105,7 +105,7 @@ in
     };
     "*.pages.luffy.cx" = {
       forceSSL = true;
-      serverName = "~^(.*)\.pages\.luffy\.cx$";
+      serverName = "~^(.*)\\.pages\\.luffy\\.cx$";
       root = "/data/webserver/pages.luffy.cx/$1";
       useACMEHost = "pages.luffy.cx";
     };
