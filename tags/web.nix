@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   cors = ''
     add_header Access-Control-Allow-Origin *;
@@ -8,6 +8,11 @@ let
   stsWithPreload = ''
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";'';
   httpOverSSH = builtins.elem "http-over-ssh" config.luffy.host.tags;
+  httpOverSSHSecret = builtins.toFile "compile-http-over-ssh.secret" ''
+    source <(pass show personal/nixops/secrets)
+
+    printf 'secure_link_md5 "$port %s";\n' "$HTTPSSH_SECRET"
+  '';
   redirectVhost = to: {
     addSSL = true;
     globalRedirect = to;
@@ -215,17 +220,37 @@ in
     };
     "*.ssh.luffy.cx" = {
       forceSSL = true;
-      serverName = "~^p(?<port>\\d{4,5})\\.ssh\\.luffy\\.cx$";
+      serverName = "~^p(?<port>\\d\\d\\d\\d\\d?)\\.ssh\\.luffy\\.cx$";
       useACMEHost = "ssh.luffy.cx";
+      extraConfig = ''
+        secure_link $cookie_httpssh;
+        include /var/keys/http-over-ssh.secret;
+      '';
       locations = {
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
           extraConfig = ''
+            if ($request_uri ~ "^([^?]*)\?t=[-_A-Za-z0-9]+$") {
+              add_header Set-Cookie "httpssh=$arg_t; Path=/; Secure; HttpOnly; SameSite=Lax";
+              return 302 $1;
+            }
+            if ($secure_link != "1") {
+              return 404;
+            }
             proxy_set_header X-Forwarded-For $remote_addr;
             proxy_set_header Host $host;
           '';
         };
       };
+    };
+  };
+
+  deployment.keys = lib.optionalAttrs httpOverSSH {
+    "http-over-ssh.secret" = {
+      group = "nginx";
+      permissions = "0640";
+      destDir = "/var/keys";
+      keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHSecret}" ];
     };
   };
 }
