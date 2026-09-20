@@ -13,7 +13,7 @@ in
           default = { };
           description = "Secrets, as a command to run locally. They are mounted in /etc.";
         };
-        paths = lib.mkOption {
+        mounts = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [ ];
           description = "Host directories mounted read-write at the same place.";
@@ -35,7 +35,7 @@ in
         privateNetwork = false;
         extraFlags = [ "--resolv-conf=replace-host" ];
         bindMounts =
-          lib.genAttrs container.paths (path: { hostPath = path; isReadOnly = false; })
+          lib.genAttrs container.mounts (path: { hostPath = path; isReadOnly = false; })
           // lib.mapAttrs'
             (key: _: lib.nameValuePair "/etc/${key}" {
               hostPath = "/var/keys/${key}";

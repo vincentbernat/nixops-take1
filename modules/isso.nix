@@ -35,7 +35,7 @@ in
 
   config = lib.mkIf cfg.enable {
     luffy.containers.isso = {
-      paths = [ databaseDirectory ];
+      mounts = [ databaseDirectory ];
       keys."isso.cfg" = [ "${pkgs.runtimeShell}" "${cfg.configScript}" ];
       config.systemd.services.isso = {
         description = "Isso Comment Server";

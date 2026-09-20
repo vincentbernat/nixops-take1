@@ -18,7 +18,7 @@ in
 
   config = lib.mkIf (cfg.databases != { }) {
     luffy.containers.litestream = {
-      paths = databaseDirs;
+      mounts = databaseDirs;
       keys."litestream.env" = [
         "${pkgs.runtimeShell}"
         "-c"

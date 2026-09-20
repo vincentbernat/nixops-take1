@@ -48,7 +48,7 @@ in
   config = lib.mkMerge [
     (lib.mkIf cfg.serve.enable {
       luffy.containers.goatcounter = {
-        paths = [ databaseDirectory ];
+        mounts = [ databaseDirectory ];
         keys."goatcounter.env" = keyCommand "GOATCOUNTER_GEODB";
         config.systemd.services.goatcounter = {
           description = "GoatCounter Web Analytics";
