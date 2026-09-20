@@ -38,7 +38,7 @@ in
       paths = [ databaseDirectory ];
       keys."isso.cfg" = [ "${pkgs.runtimeShell}" "${cfg.configScript}" ];
       config.systemd.services.isso = {
-        description = "Isso commenting server";
+        description = "Isso Comment Server";
         wantedBy = [ "multi-user.target" ];
         script = ''
           ${issoEnv}/bin/gunicorn \

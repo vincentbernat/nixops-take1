@@ -51,7 +51,7 @@ in
         paths = [ databaseDirectory ];
         keys."goatcounter.env" = keyCommand "GOATCOUNTER_GEODB";
         config.systemd.services.goatcounter = {
-          description = "GoatCounter.";
+          description = "GoatCounter Web Analytics";
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
             EnvironmentFile = "/etc/goatcounter.env";
@@ -79,7 +79,7 @@ in
       luffy.containers.goatcounter-proxy = {
         keys."goatcounter-proxy.env" = keyCommand "GOATCOUNTER_API_KEY";
         config.systemd.services.goatcounter = {
-          description = "Proxy to GoatCounter.";
+          description = "GoatCounter Proxy";
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
             EnvironmentFile = "/etc/goatcounter-proxy.env";
