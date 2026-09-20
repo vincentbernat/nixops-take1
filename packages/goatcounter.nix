@@ -1,6 +1,6 @@
 { lib, goatcounter, fetchFromGitHub }:
 
-goatcounter.overrideAttrs (old: {
+goatcounter.overrideAttrs (_: {
   src = fetchFromGitHub {
     owner = "vincentbernat";
     repo = "goatcounter";

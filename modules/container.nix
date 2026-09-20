@@ -29,21 +29,21 @@ in
 
   config = {
     containers = lib.mapAttrs
-      (name: c: {
+      (name: container: {
         ephemeral = true;
         autoStart = true;
         privateNetwork = false;
         extraFlags = [ "--resolv-conf=replace-host" ];
         bindMounts =
-          lib.genAttrs c.paths (path: { hostPath = path; isReadOnly = false; })
+          lib.genAttrs container.paths (path: { hostPath = path; isReadOnly = false; })
           // lib.mapAttrs'
             (key: _: lib.nameValuePair "/etc/${key}" {
               hostPath = "/var/keys/${key}";
               isReadOnly = true;
             })
-            c.keys;
+            container.keys;
         config = {
-          imports = [ c.config ];
+          imports = [ container.config ];
           networking.firewall.enable = false;
           system.stateVersion = config.system.stateVersion;
           systemd.services = {
@@ -56,20 +56,20 @@ in
       cfg;
 
     deployment.keys = lib.concatMapAttrs
-      (_: c: lib.mapAttrs
+      (_: container: lib.mapAttrs
         (_: keyCommand: {
           inherit keyCommand;
           group = "keys";
           permissions = "0640";
           destDir = "/var/keys";
         })
-        c.keys)
+        container.keys)
       cfg;
 
     systemd.services = lib.mapAttrs'
-      (name: c:
+      (name: container:
         let
-          units = map (key: "${key}-key.service") (lib.attrNames c.keys);
+          units = map (key: "${key}-key.service") (lib.attrNames container.keys);
         in
         lib.nameValuePair "container@${name}" {
           requires = units;
