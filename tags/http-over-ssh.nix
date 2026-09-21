@@ -17,19 +17,18 @@ let
   '';
   httpOverSSH = pkgs.writeShellApplication {
     name = "http-over-ssh";
-    runtimeInputs = with pkgs; [ coreutils gawk iproute2 openssl ];
+    runtimeInputs = with pkgs; [ coreutils gawk iproute2 openssl procps ];
     # Unfortunately, we need sudo as sshd-session dropped privileges and is not
     # observable by us.
     text = ''
       days=''${1:-1}
       lifetime=$(( days * 86400 ))
 
-      # Find ancestor sshd-session
-      pid=$$
-      while [ "$pid" -gt 1 ] && [ "$(cat /proc/"$pid"/comm)" != sshd-session ]; do
-        pid=$(awk '/^PPid:/ { print $2 }' /proc/"$pid"/status)
-      done
-      if [ "$pid" -le 1 ]; then
+      # Find the sshd-session processes sharing our session cgroup
+      cgroup=$(awk -F: '$1 == "0" { print $3 }' /proc/self/cgroup)
+      pids=$(ps -o pid= -o comm= -p "$(paste -sd, /sys/fs/cgroup"$cgroup"/cgroup.procs)" |
+               awk '$2 == "sshd-session" { printf "pid=%s,\n", $1 }')
+      if [ -z "$pids" ]; then
         echo "not an ssh session" >&2
         exit 1
       fi
@@ -39,8 +38,9 @@ let
       while :; do
         # Find ports allocated to sshd-session
         ports=$(sudo -n ss --listening --numeric --tcp --processes --no-header |
-                  grep -F "pid=$pid," |
-                  awk '{ n = split($4, a, ":"); print a[n] }' | sort -un)
+                  grep -F "$pids" |
+                  awk '{ print $4 }' | awk -F: '{ print $NF }' |
+                  sort -un)
         if [ -z "$ports" ]; then
           echo "no forwarded port, use ssh -R 0:localhost:PORT" >&2
           exit 1
