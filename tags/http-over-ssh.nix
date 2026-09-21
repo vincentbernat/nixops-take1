@@ -26,8 +26,8 @@ let
 
       # Find the sshd-session processes sharing our session cgroup
       cgroup=$(awk -F: '$1 == "0" { print $3 }' /proc/self/cgroup)
-      pids=$(ps -o pid= -o comm= -p "$(paste -sd, /sys/fs/cgroup"$cgroup"/cgroup.procs)" |
-               awk '$2 == "sshd-session" { printf "pid=%s,\n", $1 }')
+      pids=$(ps -o pid= -o comm= -p "$(paste -sd, /sys/fs/cgroup"$cgroup"/cgroup.procs)" \
+               | awk '$2 == "sshd-session" { printf "pid=%s,\n", $1 }')
       if [ -z "$pids" ]; then
         echo "not an ssh session" >&2
         exit 1
@@ -37,10 +37,10 @@ let
 
       while :; do
         # Find ports allocated to sshd-session
-        ports=$(sudo -n ss --listening --numeric --tcp --processes --no-header |
-                  grep -F "$pids" |
-                  awk '{ print $4 }' | awk -F: '{ print $NF }' |
-                  sort -un)
+        ports=$(sudo -n ss --listening --numeric --tcp --processes --no-header \
+                  | grep -F "$pids" \
+                  | awk '{ print $4 }' | awk -F: '{ print $NF }' \
+                  | sort -un)
         if [ -z "$ports" ]; then
           echo "no forwarded port, use ssh -R 0:localhost:PORT" >&2
           exit 1
@@ -49,8 +49,10 @@ let
         # For each port, print the URL with token and expiry
         expires=$(( $(date +%s) + lifetime ))
         while read -r port; do
-          token=$(printf '%s %s %s' "$expires" "$port" "$secret" |
-                    openssl md5 -binary | openssl base64 | tr +/ -_ | tr -d =)
+          token=$(printf '%s %s %s' "$expires" "$port" "$secret" \
+                    | openssl md5 -binary \
+                    | openssl base64 \
+                    | tr +/ -_ | tr -d =)
           echo "https://p$port.ssh.luffy.cx/t=$token,$expires/"
         done <<< "$ports"
 
