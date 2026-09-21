@@ -24,10 +24,15 @@ let
       days=''${1:-1}
       lifetime=$(( days * 86400 ))
 
-      # Find the sshd-session processes sharing our session cgroup
-      cgroup=$(awk -F: '$1 == "0" { print $3 }' /proc/self/cgroup)
-      pids=$(ps -o pid= -o comm= -p "$(paste -sd, /sys/fs/cgroup"$cgroup"/cgroup.procs)" \
-               | awk '$2 == "sshd-session" { printf "pid=%s,\n", $1 }')
+      # Find ancestor sshd-session processes (OpenSSH 9.8+)
+      pids=$(
+        pid=$$
+        while [ "$pid" -gt 1 ]; do
+          line=$(ps -o comm=,pid=,ppid= -p "$pid")
+          echo "$line"
+          pid=''${line##* }
+        done | awk '$1 == "sshd-session" { printf "pid=%s,\n", $2 }'
+      )
       if [ -z "$pids" ]; then
         echo "not an ssh session" >&2
         exit 1
