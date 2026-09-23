@@ -191,19 +191,14 @@ HTTP 401
 
 # Skip except on web02.luffy.cx
 GET https://p4667.ssh.luffy.cx/en/blog
-HTTP 404
-
-# Skip except on web02.luffy.cx
-GET https://p37551.ssh.luffy.cx/t=PD9CAhknUWK4LE6JYGTBpg,1789928654/en/blog
-HTTP 302
+HTTP 401
 [Asserts]
-header "Location" == "https://p37551.ssh.luffy.cx/en/blog"
-cookie "httpssh" == "PD9CAhknUWK4LE6JYGTBpg,1789928654"
+header "WWW-Authenticate" == "Basic realm=\"tunnel\""
 
 # Skip except on web02.luffy.cx
-GET https://p37551.ssh.luffy.cx/en/blog
-[Cookies]
-httpssh: PD9CAhknUWK4LE6JYGTBpg,1789928654
+GET https://AAAAAAAAAAAAAAAAAAAAAA,1789928654@p37551.ssh.luffy.cx/en/blog
+HTTP 401
+
+# Skip except on web02.luffy.cx
+GET https://CJwiid6N6gr4eXFWv1XszA,1790272341@p39001.ssh.luffy.cx/en/blog
 HTTP 410
-[Asserts]
-header "Location" == "https://p37551.ssh.luffy.cx/en/blog"

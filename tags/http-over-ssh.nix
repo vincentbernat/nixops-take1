@@ -58,7 +58,7 @@ let
                     | openssl md5 -binary \
                     | openssl base64 \
                     | tr +/ -_ | tr -d =)
-          echo "https://p$port.ssh.luffy.cx/t=$token,$expires/"
+          echo "https://$token,$expires@p$port.ssh.luffy.cx/"
         done
 
         sleep $(( lifetime / 2 ))
@@ -82,18 +82,16 @@ in
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
           extraConfig = ''
-            secure_link $cookie_httpssh;
+            secure_link $remote_user;
             include /var/keys/http-over-ssh.secret;
-            if ($request_uri ~ "^/t=([-_A-Za-z0-9]{22},[0-9]+)(/.*)$") {
-              add_header Set-Cookie "httpssh=$1; Path=/; Secure; HttpOnly; SameSite=Lax";
-              return 302 $2;
-            }
             if ($secure_link = "") {
-              return 404;
+              add_header WWW-Authenticate 'Basic realm="tunnel"' always;
+              return 401;
             }
             if ($secure_link = "0") {
               return 410;
             }
+            proxy_set_header Authorization "";
           '';
         };
       };
