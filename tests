@@ -14,6 +14,14 @@ trap 'rm -rf "$tmpdir"' EXIT
 # HOST" comment is skipped on the other hosts.
 for host in "$@"; do
     for version in ipv4 ipv6; do
+        case $version in
+            ipv4)
+                ip -4 route show 0.0.0.0/0 | grep -q . || continue
+                ;;
+            ipv6)
+                ip -6 route show ::/0 | grep -q . || continue
+                ;;
+        esac
         awk -v host="$host" -v version="$version" '
             # HOST also matches when the caller only gave the first label
             function wanted(target) {
