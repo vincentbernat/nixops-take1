@@ -53,13 +53,13 @@ let
 
         # For each port, print the URL with token and expiry
         expires=$(( $(date +%s) + lifetime ))
-        while read -r port; do
+        for port in $ports; do
           token=$(printf '%s %s %s' "$expires" "$port" "$secret" \
                     | openssl md5 -binary \
                     | openssl base64 \
                     | tr +/ -_ | tr -d =)
           echo "https://p$port.ssh.luffy.cx/t=$token,$expires/"
-        done <<< "$ports"
+        done
 
         sleep $(( lifetime / 2 ))
       done
