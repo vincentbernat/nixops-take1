@@ -78,14 +78,12 @@ in
       forceSSL = true;
       serverName = "~^p(?<port>\\d\\d\\d\\d\\d?)\\.ssh\\.luffy\\.cx$";
       useACMEHost = "ssh.luffy.cx";
-      extraConfig = ''
-        secure_link $cookie_httpssh;
-        include /var/keys/http-over-ssh.secret;
-      '';
       locations = {
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
           extraConfig = ''
+            secure_link $cookie_httpssh;
+            include /var/keys/http-over-ssh.secret;
             if ($request_uri ~ "^/t=([-_A-Za-z0-9]{22},[0-9]+)(/.*)$") {
               add_header Set-Cookie "httpssh=$1; Path=/; Secure; HttpOnly; SameSite=Lax";
               return 302 $2;
