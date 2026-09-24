@@ -76,7 +76,7 @@ in
     };
     "*.ssh.luffy.cx" = {
       forceSSL = true;
-      serverName = "~^p(?<port>\\d\\d\\d\\d\\d?)\\.ssh\\.luffy\\.cx$";
+      serverName = "~^p(?<port>\\d\\d\\d\\d\\d)\\.ssh\\.luffy\\.cx$";
       useACMEHost = "ssh.luffy.cx";
       locations = {
         "/" = {
