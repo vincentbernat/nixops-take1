@@ -56,8 +56,7 @@ in
             }
             proxy_set_header Authorization "";
             proxy_buffering off;
-            proxy_read_timeout 10m;
-            proxy_send_timeout 10m;
+            proxy_read_timeout 30m;
           '';
         };
       };
