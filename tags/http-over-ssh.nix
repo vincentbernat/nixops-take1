@@ -58,7 +58,7 @@ let
                     | openssl md5 -binary \
                     | openssl base64 \
                     | tr +/ -_ | tr -d =)
-          echo "https://$token,$expires@p$port.ssh.luffy.cx/"
+          echo "https://$token,$expires:@p$port.ssh.luffy.cx/"
         done
 
         sleep $(( lifetime / 2 ))
