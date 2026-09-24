@@ -27,6 +27,11 @@ in
   environment.systemPackages = [ httpOverSSH ];
 
   luffy.nginx.enable = true;
+  services.nginx.appendHttpConfig = ''
+    map $remote_user $httpssh_link {
+      "~^([-_A-Za-z0-9]{22})--([0-9]+)$" "$1,$2";
+    }
+  '';
   services.nginx.virtualHosts = {
     "ssh.luffy.cx" = {
       forceSSL = true;
@@ -40,9 +45,7 @@ in
           proxyPass = "http://127.0.0.1:$port";
           proxyWebsockets = true;
           extraConfig = ''
-            if ($remote_user ~ "^(?<httpssh_hash>[-_A-Za-z0-9]{22})--(?<httpssh_expires>[0-9]+)$") {
-            }
-            secure_link "$httpssh_hash,$httpssh_expires";
+            secure_link $httpssh_link;
             include /var/keys/http-over-ssh.secret;
             if ($secure_link = "") {
               add_header WWW-Authenticate 'Basic realm="tunnel"' always;
