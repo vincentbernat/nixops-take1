@@ -81,6 +81,7 @@ in
       locations = {
         "/" = {
           proxyPass = "http://127.0.0.1:$port";
+          proxyWebsockets = true;
           extraConfig = ''
             secure_link $remote_user;
             include /var/keys/http-over-ssh.secret;
@@ -92,6 +93,9 @@ in
               return 410;
             }
             proxy_set_header Authorization "";
+            proxy_buffering off;
+            proxy_read_timeout 10m;
+            proxy_send_timeout 10m;
           '';
         };
       };
