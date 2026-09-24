@@ -190,15 +190,15 @@ GET https://goatcounter.luffy.cx/api/v0/me
 HTTP 401
 
 # Skip except on web02.luffy.cx
-GET https://p4667.ssh.luffy.cx/en/blog
+GET https://p37551.ssh.luffy.cx/en/blog
 HTTP 401
 [Asserts]
 header "WWW-Authenticate" == "Basic realm=\"tunnel\""
 
 # Skip except on web02.luffy.cx
-GET https://AAAAAAAAAAAAAAAAAAAAAA,1789928654@p37551.ssh.luffy.cx/en/blog
+GET https://AAAAAAAAAAAAAAAAAAAAAA--1789928654@p37551.ssh.luffy.cx/en/blog
 HTTP 401
 
 # Skip except on web02.luffy.cx
-GET https://CJwiid6N6gr4eXFWv1XszA,1790272341@p39001.ssh.luffy.cx/en/blog
+GET https://CJwiid6N6gr4eXFWv1XszA--1790272341@p39001.ssh.luffy.cx/en/blog
 HTTP 410

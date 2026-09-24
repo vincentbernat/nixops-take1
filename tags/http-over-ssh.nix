@@ -40,7 +40,9 @@ in
           proxyPass = "http://127.0.0.1:$port";
           proxyWebsockets = true;
           extraConfig = ''
-            secure_link $remote_user;
+            if ($remote_user ~ "^(?<httpssh_hash>[-_A-Za-z0-9]{22})--(?<httpssh_expires>[0-9]+)$") {
+            }
+            secure_link "$httpssh_hash,$httpssh_expires";
             include /var/keys/http-over-ssh.secret;
             if ($secure_link = "") {
               add_header WWW-Authenticate 'Basic realm="tunnel"' always;
