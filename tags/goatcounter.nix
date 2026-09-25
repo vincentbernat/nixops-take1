@@ -17,7 +17,6 @@ in
     locations = {
       "/" = {
         proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
-        proxyWebsockets = true;
       };
       "= /count".extraConfig = ''
         return 404;
