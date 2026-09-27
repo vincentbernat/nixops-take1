@@ -74,14 +74,6 @@ in
         enable = true;
         package = pkgs.luffy.nginx;
 
-        # Use the MIME types from mailcap, with a few adjustments.
-        defaultMimeTypes = pkgs.runCommand "nginx-mime.types" { } ''
-          sed -e "/^text\/vnd.trolltech.linguist[ \t]/d" \
-              -e "1a video/mp2t      ts;" \
-              ${pkgs.mailcap}/etc/nginx/mime.types > $out
-        '';
-        typesHashMaxSize = 2688;
-
         recommendedGzipSettings = true;
         recommendedBrotliSettings = true;
         recommendedOptimisation = true;
