@@ -10,6 +10,7 @@ let
     host =
       https://vincent.bernat.ch
       http://localhost:8080
+      http://127.0.0.1:8080
     notify = smtp
     reply-notifications = true
     max-age = 1s
