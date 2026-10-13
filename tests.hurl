@@ -109,10 +109,10 @@ HTTP 301
 [Asserts]
 header "Location" == "https://media.luffy.cx/images/favicon.png"
 
-GET https://media.luffy.cx/images/favicon.png
+GET https://media.luffy.cx/pagefind/pagefind-entry.json
 HTTP 200
 
-GET https://media.bernat.ch/images/favicon.png
+GET https://media.bernat.ch/pagefind/pagefind-entry.json
 HTTP 200
 
 HEAD https://media.bernat.ch/videos/2018-self-hosted-videos/240p_4_001.mp4
