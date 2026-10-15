@@ -5,7 +5,7 @@ goatcounter.overrideAttrs (_: {
     owner = "vincentbernat";
     repo = "goatcounter";
     rev = "vbe/main";
-    hash = "sha256-kSch4N356btN1nb6GrxzPXe5+nlpTkmoCKBI7VJTOv0=";
+    hash = "sha256-yzllD1bq3bl/UOKWdJReeaUoQ/Vg/wDwZuWqAkc8NGw=";
   };
   vendorHash = "sha256-c9Q5OrbZR+q6pD3SgPPWe8JUzcZco1AVUKGaV61k5DE=";
 })

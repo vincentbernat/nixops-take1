@@ -91,6 +91,7 @@ in
               "proxy"
               "-site=${cfg.proxy.site}"
               "-listen=${cfg.proxy.listenAddress}:${toString cfg.proxy.port}"
+              "-campaign=${config.networking.hostName}"
               "-ratelimit=10/1"
             ];
           };
