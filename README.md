@@ -21,6 +21,8 @@ To deploy:
     nix flake update nixpkgs
     colmena apply
 
+Add `--verbose` to not cut the logs to 20 lines.
+
 To avoid parallelism and reboot after deploying:
 
     colmena apply --parallel 1 --reboot
