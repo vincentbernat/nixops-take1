@@ -12,6 +12,13 @@
         [
           "object",
           {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -33,6 +40,13 @@
         [
           "object",
           {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -50,6 +64,13 @@
         [
           "object",
           {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -67,6 +88,13 @@
         [
           "object",
           {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -84,6 +112,13 @@
         [
           "object",
           {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
             "hardware": "string",
             "ipv4Address": "string",
             "ipv6Address": "string",
@@ -102,6 +137,10 @@
     ],
     "value": [
       {
+        "geo": {
+          "latitude": 48.85,
+          "longitude": 2.35
+        },
         "hardware": "sapinet",
         "ipv4Address": "45.90.160.60",
         "ipv6Address": "2a0c:8881:5:100::1",
@@ -117,6 +156,10 @@
         ]
       },
       {
+        "geo": {
+          "latitude": 60.17,
+          "longitude": 24.94
+        },
         "hardware": "hetzner",
         "ipv4Address": "95.216.162.158",
         "ipv6Address": "2a01:4f9:c010:1a9c::1",
@@ -128,6 +171,10 @@
         ]
       },
       {
+        "geo": {
+          "latitude": 49.45,
+          "longitude": 11.08
+        },
         "hardware": "hetzner",
         "ipv4Address": "116.203.18.48",
         "ipv6Address": "2a01:4f8:1c0c:5eb5::1",
@@ -139,6 +186,10 @@
         ]
       },
       {
+        "geo": {
+          "latitude": 39.04,
+          "longitude": -77.49
+        },
         "hardware": "hetzner",
         "ipv4Address": "5.161.44.145",
         "ipv6Address": "2a01:4ff:f0:b91::1",
@@ -150,6 +201,10 @@
         ]
       },
       {
+        "geo": {
+          "latitude": 41.88,
+          "longitude": -87.63
+        },
         "hardware": "vultr",
         "ipv4Address": "149.28.124.245",
         "ipv6Address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
