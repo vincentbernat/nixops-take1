@@ -4,8 +4,8 @@ goatcounter.overrideAttrs (_: {
   src = fetchFromGitHub {
     owner = "vincentbernat";
     repo = "goatcounter";
-    rev = "feature/proxy";
-    hash = "sha256-dJRlQlFu3tjcEgabT1LEbyFrasJlhmYu4L/T7EkoNcY=";
+    rev = "vbe/main";
+    hash = "sha256-kSch4N356btN1nb6GrxzPXe5+nlpTkmoCKBI7VJTOv0=";
   };
   vendorHash = "sha256-c9Q5OrbZR+q6pD3SgPPWe8JUzcZco1AVUKGaV61k5DE=";
 })
