@@ -2,21 +2,14 @@
 let
   cfg = config.luffy.nginx;
   vhosts = config.services.nginx.virtualHosts;
-  acmeCredentials = name:
-    let
-      zoneid = (lib.importJSON ../cdktf.json).acme-zone.value;
-    in
-    builtins.toFile "compile-acme-credentials.${name}" ''
-      source <(pass show personal/nixops/secrets)
-
-      cat <<EOF
-      AWS_REGION=us-east-1
-      AWS_ACCESS_KEY_ID=$ACME_AWS_ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY=$ACME_AWS_SECRET_ACCESS_KEY
-      AWS_HOSTED_ZONE_ID=${zoneid}
-      LEGO_EXPERIMENTAL_CNAME_SUPPORT=true
-      EOF
-    '';
+  acmeCredentials = builtins.toFile "compile-acme-credentials" ''
+    cat <<EOF
+    DNSUPDATE_NAMESERVER=nsupdate.luffy.cx:53
+    DNSUPDATE_TSIG_ALGORITHM=hmac-sha256.
+    DNSUPDATE_TSIG_KEY=update.acme.luffy.cx.
+    DNSUPDATE_TSIG_SECRET=$(pass show personal/nixops/dns/acme.luffy.cx/tsig/update.acme.luffy.cx)
+    EOF
+  '';
 in
 {
   options.luffy.nginx.enable = lib.mkEnableOption "nginx";
@@ -26,7 +19,7 @@ in
       options.luffy.acmeDNS = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = "Whether to get the certificate with a DNS challenge through Route 53.";
+        description = "Whether to get the certificate with a DNS challenge through acme.luffy.cx.";
       };
       config = {
         root = lib.mkDefault "/data/webserver/${name}";
@@ -38,12 +31,12 @@ in
   };
 
   config = lib.mkMerge [
-    # Let's Encrypt certificates through Route 53
+    # Let's Encrypt certificates through acme.luffy.cx
     {
       security.acme.certs = lib.mapAttrs
         (name: vhost: lib.mkIf (vhost.enableACME && vhost.luffy.acmeDNS) {
           webroot = lib.mkForce null;
-          dnsProvider = "route53";
+          dnsProvider = "dnsupdate";
           environmentFile = "/run/keys/acme-credentials.${name}.secret";
           extraDomainNames = lib.attrNames (lib.filterAttrs (_: v: v.useACMEHost == name) vhosts);
         })
@@ -54,7 +47,7 @@ in
           group = "nginx";
           permissions = "0640";
           uploadAt = "post-activation";
-          keyCommand = [ "${pkgs.runtimeShell}" "${acmeCredentials name}" ];
+          keyCommand = [ "${pkgs.runtimeShell}" "${acmeCredentials}" ];
         }))
         vhosts;
       systemd.services = lib.mapAttrs'
