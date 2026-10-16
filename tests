@@ -83,7 +83,8 @@ signed() {
     delv @"$host" -$version -a "$tmpdir/anchor" +root="$zone" "$@" | grep -q "fully validated"
 }
 delegated() {
-    dig +short "$zone" DS | awk -v zone="$zone" '
+    parent=$(dig +short "${zone#*.}" NS | head -1)
+    dig @"$parent" +norec +short "$zone" DS | awk -v zone="$zone" '
         BEGIN { print "trust-anchors {" }
         { d = ""; for (i = 4; i <= NF; i++) d = d $i
           printf "  %s. static-ds %s %s %s \"%s\";\n", zone, $1, $2, $3, d }
@@ -106,8 +107,8 @@ for host in "$@"; do
             check signed "$zone" SOA
             label="$host IPv$version $zone NXDOMAIN is signed"
             check signed "nonexistent.$zone" A
-            # label="$host IPv$version $zone DS in parent zone matches"
-            # check delegated
+            label="$host IPv$version $zone DS in parent zone matches"
+            check delegated
             for type in SOA DNSKEY; do
                 label="$host IPv$version $zone $type signature valid for 30 days"
                 check fresh $type
