@@ -80,6 +80,7 @@
               [
                 "string",
                 "string",
+                "string",
                 "string"
               ]
             ]
@@ -181,6 +182,7 @@
         "name": "web04.luffy.cx",
         "tags": [
           "web",
+          "dns",
           "continent:EU",
           "continent:AF"
         ]
