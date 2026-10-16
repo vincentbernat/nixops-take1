@@ -18,6 +18,10 @@ let
     '';
     # openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 \
     #   | pass insert -m personal/nixops/dns/ZONE/dnssec
+    # DS record for the parent zone:
+    # echo "ZONE. 3600 IN DNSKEY 257 3 13 $(pass show personal/nixops/dns/ZONE/dnssec \
+    #   | openssl pkey -pubout -outform DER | tail -c 64 | base64 -w0)" \
+    #   | dnssec-dsfromkey -a SHA-256 -f - ZONE
     dnssecKey = pass "personal/nixops/dns/${name}/dnssec";
     # openssl rand -base64 32 | pass insert -m personal/nixops/dns/ZONE/tsig/KEY
     tsigKeys = lib.genAttrs tsigKeys (key: [
