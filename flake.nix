@@ -24,7 +24,9 @@
             name = "nixops-take1";
             buildInputs = with pkgs; [
               curl
+              dnsutils
               hurl
+              jq
               colordiff
               wdiff
               colmena

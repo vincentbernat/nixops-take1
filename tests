@@ -61,7 +61,63 @@ for host in "$@"; do
     done
 done
 
+status=0
+check() {
+    if "$@" > /dev/null 2>&1; then
+        echo "PASS $label"
+    else
+        echo "FAIL $label"
+        status=1
+    fi
+}
+
+# For hosts tagged "dns", check that each zone validates with the DNSKEY it
+# publishes and that signatures do not expire in the next 30 days.
+margin=$(date -u -d '+30 days' +%Y%m%d%H%M%S)
+signed() {
+    dig @"$host" -$version +norec +short "$zone" DNSKEY | awk -v zone="$zone" '
+        BEGIN { print "trust-anchors {" }
+        { k = ""; for (i = 4; i <= NF; i++) k = k $i
+          printf "  %s. static-key %s %s %s \"%s\";\n", zone, $1, $2, $3, k }
+        END { print "};" }' > "$tmpdir/anchor"
+    delv @"$host" -$version -a "$tmpdir/anchor" +root="$zone" "$@" | grep -q "fully validated"
+}
+delegated() {
+    dig +short "$zone" DS | awk -v zone="$zone" '
+        BEGIN { print "trust-anchors {" }
+        { d = ""; for (i = 4; i <= NF; i++) d = d $i
+          printf "  %s. static-ds %s %s %s \"%s\";\n", zone, $1, $2, $3, d }
+        END { print "};" }' > "$tmpdir/anchor"
+    delv @"$host" -$version -a "$tmpdir/anchor" +root="$zone" "$zone" SOA | grep -q "fully validated"
+}
+fresh() {
+    dig @"$host" -$version +norec +dnssec +noall +answer "$zone" "$1" | awk -v margin="$margin" '
+        $4 == "RRSIG" { n++; if ($9 <= margin) old++ }
+        END { exit !(n > 0 && old == 0) }'
+}
+for host in "$@"; do
+    jq -e --arg host "$host" '.servers.value[]
+        | select(.name == $host or (.name | startswith($host + ".")))
+        | select(.tags | index("dns"))' cdktf.json > /dev/null || continue
+    for version in 4 6; do
+        ip -$version route show default | grep -q . || continue
+        for zone in y.luffy.cx acme.luffy.cx; do
+            label="$host IPv$version $zone SOA is signed"
+            check signed "$zone" SOA
+            label="$host IPv$version $zone NXDOMAIN is signed"
+            check signed "nonexistent.$zone" A
+            # label="$host IPv$version $zone DS in parent zone matches"
+            # check delegated
+            for type in SOA DNSKEY; do
+                label="$host IPv$version $zone $type signature valid for 30 days"
+                check fresh $type
+            done
+        done
+    done
+done
+
 hurl --test \
      --connect-timeout 2 \
      --max-time 2 \
-     "$tmpdir"/*.hurl
+     "$tmpdir"/*.hurl || status=1
+exit $status
