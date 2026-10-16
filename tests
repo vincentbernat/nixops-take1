@@ -11,7 +11,8 @@ trap 'rm -rf "$tmpdir"' EXIT
 # For each host and IP version, materialize a copy of the suite with the
 # connect-to and IP version baked into every request, so a single `hurl --test`
 # can run them all in parallel. A request preceded by a "# Skip except on
-# HOST" comment is skipped on the other hosts.
+# HOST" comment is skipped on the other hosts. The first HTTPS request for each
+# name also checks that the certificate is valid for 15 more days.
 for host in "$@"; do
     for version in ipv4 ipv6; do
         case $version in
@@ -39,6 +40,11 @@ for host in "$@"; do
                 if (excluded) print "skip: true"
                 excluded = 0
             }
+            function expiry() {
+                if (!certificate) return
+                certificate = 0
+                print "certificate \"Expire-Date\" daysAfterNow > 20"
+            }
             /^#[ \t]*Skip except on / {
                 only = $0
                 sub(/^#[ \t]*Skip except on[ \t]*/, "", only)
@@ -51,12 +57,23 @@ for host in "$@"; do
                 pending = 1
                 excluded = (only != "" && !wanted(only))
                 only = ""
+                name = $2
+                sub(/^https:\/\/([^\/@]*@)?/, "", name)
+                sub(/[\/:].*/, "", name)
+                certificate = ($2 ~ /^https:/ && !excluded && !(name in checked))
+                if (certificate) checked[name] = 1
                 next
             }
             /^\[Options\]$/ { options(); next }   # merge any existing options into ours
             !/^[A-Za-z0-9_-]+[ \t]*:/ { options() }
+            /^\[Asserts\]$/ { print; expiry(); next }
+            /^[ \t]*$/ && certificate { print "[Asserts]"; expiry() }
             { print }
-            END { options() }
+            END {
+                options()
+                if (certificate) print "[Asserts]"
+                expiry()
+            }
         ' tests.hurl > "$tmpdir/$host-$version.hurl"
     done
 done
