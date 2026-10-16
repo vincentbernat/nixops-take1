@@ -74,6 +74,9 @@ in
         lib.nameValuePair "container@${name}" {
           requires = units;
           after = units;
+          preStart = lib.mkBefore (lib.optionalString (container.mounts != [ ]) ''
+            mkdir -p ${lib.escapeShellArgs container.mounts}
+          '');
         })
       cfg;
   };
