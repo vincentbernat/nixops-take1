@@ -62,6 +62,12 @@ in
       # Firewall
       networking.firewall.allowedTCPPorts = [ 80 443 ];
 
+      # No QUIC or HTTP/3. The main reason is that it adds a lot of code, both
+      # in nginx and OpenSSL, and from a security point of view, it does not
+      # look like a good trade-off. The second reason is that headers are a pain
+      # to propagate in nginx. Even with the new `add_header_inherit` that don't
+      # allow on header to override the next one, making it a bit dangerous.
+
       # nginx generic configuration
       services.nginx = {
         enable = true;
