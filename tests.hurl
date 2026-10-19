@@ -120,6 +120,68 @@ HTTP 200
 [Asserts]
 header "Content-Type" == "video/mp4"
 
+GET https://vincent.bernat.ch/en/blog/2020-old-pc-cards
+HTTP 200
+[Captures]
+image_path: regex "(/images/pc-cards/3dfx@2x\\.[0-9a-f]+\\.jpg)"
+
+GET https://media.bernat.ch{{image_path}}
+Accept: image/jpeg
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/jpeg"
+header "Vary" contains "Accept"
+
+GET https://media.bernat.ch{{image_path}}
+Accept: image/avif,image/webp,*/*
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/avif"
+header "Vary" contains "Accept"
+
+GET https://media-bernat-ch.b-cdn.net{{image_path}}
+Accept: image/jpeg
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/jpeg"
+
+GET https://media-bernat-ch.b-cdn.net{{image_path}}
+Accept: image/avif,image/webp,*/*
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/avif"
+
+GET https://vincent.bernat.ch/fr/blog/2026-goatcounter
+HTTP 200
+[Captures]
+image_path: regex "(/images/goatcounter@2x\\.[0-9a-f]+\\.png)"
+
+GET https://media.bernat.ch{{image_path}}
+Accept: image/png
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/png"
+header "Vary" contains "Accept"
+
+GET https://media.bernat.ch{{image_path}}
+Accept: image/webp,*/*
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/webp"
+header "Vary" contains "Accept"
+
+GET https://media-bernat-ch.b-cdn.net{{image_path}}
+Accept: image/png
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/png"
+
+GET https://media-bernat-ch.b-cdn.net{{image_path}}
+Accept: image/webp,*/*
+HTTP 200
+[Asserts]
+header "Content-Type" == "image/webp"
+
 GET https://bernat.ch/.well-known/webfinger
 HTTP 404
 

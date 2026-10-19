@@ -34,8 +34,10 @@ for host in "$@"; do
                 if (!pending) return
                 pending = 0
                 print "[Options]"
-                print "connect-to: :443:" host ":443"
-                print "connect-to: :80:" host ":80"
+                if (!cdn) {
+                    print "connect-to: :443:" host ":443"
+                    print "connect-to: :80:" host ":80"
+                }
                 print version ": true"
                 if (excluded) print "skip: true"
                 excluded = 0
@@ -59,8 +61,9 @@ for host in "$@"; do
                 only = ""
                 name = $2
                 sub(/^https:\/\/([^\/@]*@)?/, "", name)
-                sub(/[\/:].*/, "", name)
-                certificate = ($2 ~ /^https:/ && !excluded && !(name in checked))
+                sub(/[\/:{].*/, "", name)
+                cdn = (name ~ /\.b-cdn\.net$/)
+                certificate = ($2 ~ /^https:/ && !excluded && !cdn && !(name in checked))
                 if (certificate) checked[name] = 1
                 next
             }
