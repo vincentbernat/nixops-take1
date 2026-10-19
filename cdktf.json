@@ -1,9 +1,4 @@
 {
-  "acme-zone": {
-    "sensitive": false,
-    "type": "string",
-    "value": "Z06451241YB3NS45AH4J8"
-  },
   "servers": {
     "sensitive": false,
     "type": [
@@ -30,7 +25,28 @@
                 "string",
                 "string",
                 "string",
-                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
                 "string",
                 "string"
               ]
@@ -55,7 +71,6 @@
               "tuple",
               [
                 "string",
-                "string",
                 "string"
               ]
             ]
@@ -78,9 +93,6 @@
             "tags": [
               "tuple",
               [
-                "string",
-                "string",
-                "string",
                 "string"
               ]
             ]
@@ -103,32 +115,6 @@
             "tags": [
               "tuple",
               [
-                "string",
-                "string",
-                "string"
-              ]
-            ]
-          }
-        ],
-        [
-          "object",
-          {
-            "geo": [
-              "object",
-              {
-                "latitude": "number",
-                "longitude": "number"
-              }
-            ],
-            "hardware": "string",
-            "ipv4Address": "string",
-            "ipv6Address": "string",
-            "name": "string",
-            "tags": [
-              "tuple",
-              [
-                "string",
-                "string",
                 "string"
               ]
             ]
@@ -139,8 +125,8 @@
     "value": [
       {
         "geo": {
-          "latitude": 48.85,
-          "longitude": 2.35
+          "latitude": 48.88,
+          "longitude": 2.22
         },
         "hardware": "sapinet",
         "ipv4Address": "45.90.160.60",
@@ -150,16 +136,14 @@
           "web",
           "goatcounter",
           "http-over-ssh",
-          "continent:EU",
-          "continent:AF",
           "gateway4:100.100.100.1",
           "gateway6:fe80::1"
         ]
       },
       {
         "geo": {
-          "latitude": 60.17,
-          "longitude": 24.94
+          "latitude": 60.34,
+          "longitude": 25.03
         },
         "hardware": "hetzner",
         "ipv4Address": "95.216.162.158",
@@ -167,14 +151,13 @@
         "name": "web03.luffy.cx",
         "tags": [
           "web",
-          "isso",
-          "continent:EU"
+          "isso"
         ]
       },
       {
         "geo": {
           "latitude": 49.45,
-          "longitude": 11.08
+          "longitude": 11.01
         },
         "hardware": "hetzner",
         "ipv4Address": "116.203.18.48",
@@ -182,24 +165,20 @@
         "name": "web04.luffy.cx",
         "tags": [
           "web",
-          "dns",
-          "continent:EU",
-          "continent:AF"
+          "dns"
         ]
       },
       {
         "geo": {
-          "latitude": 39.04,
-          "longitude": -77.49
+          "latitude": 39.02,
+          "longitude": -77.47
         },
         "hardware": "hetzner",
         "ipv4Address": "5.161.44.145",
         "ipv6Address": "2a01:4ff:f0:b91::1",
         "name": "web05.luffy.cx",
         "tags": [
-          "web",
-          "continent:NA",
-          "continent:SA"
+          "web"
         ]
       },
       {
@@ -212,9 +191,7 @@
         "ipv6Address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
         "name": "web06.luffy.cx",
         "tags": [
-          "web",
-          "continent:NA",
-          "continent:SA"
+          "web"
         ]
       }
     ]
