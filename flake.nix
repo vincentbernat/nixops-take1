@@ -74,6 +74,108 @@
               '';
             });
           };
+          certificates = {
+            type = "app";
+            meta.description = "Request TLS certificates and store them in pass";
+            program = nixpkgs.lib.getExe (pkgs.writeShellApplication {
+              name = "certificates";
+              runtimeInputs = with pkgs; [ colmena coreutils diffutils findutils gnused jq lego openssl ];
+              text = ''
+                umask 077
+
+                # With --staging, request all certificates from the staging
+                # environment and do not store them.
+                staging=0
+                case "''${1:-}" in
+                  --staging) staging=1 ;;
+                  "") ;;
+                  *)
+                    echo "Usage: $0 [--staging]" >&2
+                    exit 1
+                    ;;
+                esac
+
+                email=${nixpkgs.lib.concatStringsSep "@" [ "letsencrypt" "vincent.bernat.ch" ]}
+                pass=personal/nixops/tls
+                server=acme-v02.api.letsencrypt.org
+                if [ "$staging" -eq 1 ]; then
+                  server=acme-staging-v02.api.letsencrypt.org
+                fi
+
+                tmp=$(mktemp -d)
+                trap 'rm -rf "$tmp"' EXIT
+
+                # Hosts find the certificate with its first name, so it should be
+                # the same on all of them.
+                expr='{ nodes, lib, ... }: lib.zipAttrsWith
+                  (cert: lists:
+                    let names = lib.sort
+                      (a: b: lib.stringLength a < lib.stringLength b || (lib.stringLength a == lib.stringLength b && a < b))
+                      (lib.unique (lib.concatLists lists));
+                    in if lib.all (l: builtins.head l == builtins.head names) lists then names
+                    else throw (cert + ": first name is not the same on all hosts"))
+                  (lib.mapAttrsToList (_: n: n.config.luffy.caddy.certificates) nodes)'
+                colmena eval -E "$expr" \
+                  | jq -r 'to_entries[] | [.key, (.value | join(" "))] | @tsv' \
+                  > "$tmp/certificates.tsv"
+
+                RFC2136_TSIG_SECRET=$(pass show personal/nixops/dns/acme.luffy.cx/tsig/update.acme.luffy.cx)
+                export RFC2136_TSIG_SECRET
+                export RFC2136_NAMESERVER=nsupdate.luffy.cx:53
+                export RFC2136_TSIG_KEY=update.acme.luffy.cx.
+                export RFC2136_TSIG_ALGORITHM=hmac-sha256.
+
+                # Lego state (account and certificates) is stored in pass as a
+                # JSON object mapping each file path to its content.
+                state="$tmp/lego"
+                mkdir "$state"
+                if [ "$staging" -eq 0 ] && pass show "$pass/lego" > "$tmp/lego.json" 2> /dev/null; then
+                  jq -r 'keys[]' "$tmp/lego.json" | while read -r path; do
+                    mkdir -p "$(dirname "$state/$path")"
+                    jq -j --arg path "$path" '.[$path]' "$tmp/lego.json" > "$state/$path"
+                  done
+                fi
+
+                status=0
+                while IFS=$'\t' read -r cert names; do
+                  read -ra list <<< "$names"
+                  args=()
+                  for name in "''${list[@]}"; do
+                    args+=(--domains "$name")
+                  done
+                  file="$state"/certificates/''${list[0]//\*/_}
+
+                  # With an account and a previous certificate with the same names,
+                  # lego renews it when ARI says so or when less than 30 days are
+                  # left. Otherwise, request a new one.
+                  action=(run)
+                  if [ -d "$state/accounts" ] && [ -f "$file.crt" ] \
+                      && [ "$(openssl x509 -in "$file.crt" -noout -ext subjectAltName \
+                              | sed -e 1d -e 's/ //g' | tr , '\n' | sed 's/^DNS://' \
+                              | sort | paste -sd ' ')" \
+                           = "$(tr ' ' '\n' <<< "$names" | sort | paste -sd ' ')" ]; then
+                    action=(renew --no-random-sleep)
+                  fi
+
+                  echo "### $cert: $names"
+                  if ! lego --accept-tos --server "https://$server/directory" --email "$email" \
+                      --path "$state" --key-type ec256 --dns rfc2136 \
+                      "''${args[@]}" "''${action[@]}"; then
+                    status=1
+                    continue
+                  fi
+                  [ "$staging" -eq 0 ] || continue
+                  (cd "$state" && find . -type f -printf '%P\0' | xargs -0 -n1 jq -Rs '{(input_filename): .}') \
+                    | jq -sS add > "$tmp/new.json"
+                  if ! cmp -s "$tmp/new.json" "$tmp/lego.json"; then
+                    pass add -m -f "$pass/lego" < "$tmp/new.json" > /dev/null
+                    mv "$tmp/new.json" "$tmp/lego.json"
+                  fi
+                done < "$tmp/certificates.tsv"
+                exit "$status"
+              '';
+            });
+          };
         });
       # Packages we build ourselves, available as `pkgs.luffy.*'.
       overlays.default = final: prev: {

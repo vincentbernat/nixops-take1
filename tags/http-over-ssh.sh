@@ -15,8 +15,6 @@ if [ -z "$pids" ]; then
   exit 1
 fi
 
-secret=$(cat /var/keys/http-over-ssh.token)
-
 while :; do
   # Find ports allocated to sshd-session
   ports=$(sudo -n ss --listening --numeric --tcp --processes --no-header \
@@ -28,14 +26,10 @@ while :; do
     exit 1
   fi
 
-  # For each port, print the URL with token and expiry
-  expires=$(( $(date +%s) + lifetime ))
+  # For each port, print the signed URL
   for port in $ports; do
-    token=$(printf '%s %s %s' "$expires" "$port" "$secret" \
-              | openssl md5 -binary \
-              | openssl base64 \
-              | tr +/ -_ | tr -d =)
-    echo "https://$token--$expires@p$port.ssh.luffy.cx/"
+    label=$(http-over-ssh-auth -secret /var/keys/http-over-ssh.token sign "$port" "$lifetime")
+    echo "https://$label.ssh.luffy.cx/"
   done
 
   sleep $(( lifetime / 2 ))

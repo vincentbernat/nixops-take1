@@ -45,18 +45,6 @@ in
   # Lock modules
   security.lockKernelModules = true;
 
-  # Let's Encrypt
-  security.acme = {
-    acceptTerms = true;
-    defaults = {
-      dnsPropagationCheck = false;
-      email = lib.concatStringsSep "@" [
-        "letsencrypt+${config.networking.hostName}.${config.networking.domain}"
-        "vincent.bernat.ch"
-      ];
-    };
-  };
-
   # Services
   services.resolved.enable = true;
   services.openssh = {

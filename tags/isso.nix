@@ -51,18 +51,14 @@ in
   };
   luffy.litestream.databases.isso = cfg.databaseFile;
 
-  # Nginx vhost
-  services.nginx.virtualHosts."comments.luffy.cx" = {
-    forceSSL = true;
-    luffy.acmeDNS = false;
-    locations."/" = {
-      proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
-      extraConfig = ''
-        proxy_hide_header Set-Cookie;
-        proxy_hide_header X-Set-Cookie;
-        proxy_ignore_headers Set-Cookie;
-        add_header Strict-Transport-Security "max-age=31536000" always;
-      '';
-    };
+  services.caddy.virtualHosts."comments.luffy.cx" = {
+    extraConfig = ''
+      header Strict-Transport-Security "max-age=31536000"
+      reverse_proxy ${cfg.listenAddress}:${toString cfg.port} {
+        header_up   -Set-Cookie
+        header_down -Set-Cookie
+        header_down -X-Set-Cookie
+      }
+    '';
   };
 }

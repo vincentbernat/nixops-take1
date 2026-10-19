@@ -5,71 +5,93 @@
 #       RemoteCommand http-over-ssh
 #       ControlPath none
 
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  httpOverSSHSecret = builtins.toFile "compile-http-over-ssh.secret" ''
-    source <(pass show personal/nixops/secrets)
-    printf 'secure_link_md5 "$secure_link_expires $port %s";\n' "$HTTPSSH_SECRET"
-  '';
   httpOverSSHToken = builtins.toFile "compile-http-over-ssh.token" ''
     source <(pass show personal/nixops/secrets)
     printf '%s\n' "$HTTPSSH_SECRET"
   '';
   httpOverSSH = pkgs.writeShellApplication {
     name = "http-over-ssh";
-    runtimeInputs = with pkgs; [ coreutils gawk iproute2 openssl procps ];
+    runtimeInputs = with pkgs; [ coreutils gawk iproute2 procps luffy.http-over-ssh-auth ];
     # Unfortunately, we need sudo as sshd-session dropped privileges and is not
     # observable by us.
     text = builtins.readFile ./http-over-ssh.sh;
   };
+  authSocket = "/run/http-over-ssh-auth.sock";
 in
 {
   environment.systemPackages = [ httpOverSSH ];
 
-  luffy.nginx.enable = true;
-  services.nginx.appendHttpConfig = ''
-    map $remote_user $httpssh_link {
-      "~^([-_A-Za-z0-9]{22})--([0-9]+)$" "$1,$2";
-    }
-  '';
-  services.nginx.virtualHosts = {
-    "ssh.luffy.cx" = {
-      forceSSL = true;
+  luffy.caddy.enable = true;
+  services.caddy.virtualHosts = {
+    "ssh.luffy.cx".luffy.static = true;
+    "*.ssh.luffy.cx".extraConfig = ''
+      @tunnel vars_regexp tunnel {host} `(?i)^h[0-9a-f]{24}-p(\d{1,5})\.ssh\.luffy\.cx$`
+      handle @tunnel {
+        forward_auth unix/${authSocket} {
+          uri /{labels.3}
+        }
+        reverse_proxy 127.0.0.1:{re.tunnel.1} {
+          flush_interval -1
+          transport http {
+            read_timeout 30m
+          }
+        }
+      }
+      respond 404
+    '';
+  };
+
+  # Check tokens for Caddy
+  systemd.sockets.http-over-ssh-auth = {
+    wantedBy = [ "sockets.target" ];
+    socketConfig = {
+      ListenStream = authSocket;
+      SocketGroup = config.services.caddy.group;
+      SocketMode = "0660";
     };
-    "*.ssh.luffy.cx" = {
-      forceSSL = true;
-      serverName = "~^p(?<port>\\d\\d\\d\\d\\d)\\.ssh\\.luffy\\.cx$";
-      useACMEHost = "ssh.luffy.cx";
-      locations = {
-        "/" = {
-          proxyPass = "http://127.0.0.1:$port";
-          proxyWebsockets = true;
-          extraConfig = ''
-            secure_link $httpssh_link;
-            include /var/keys/http-over-ssh.secret;
-            if ($secure_link = "") {
-              add_header WWW-Authenticate 'Basic realm="tunnel"' always;
-              return 401;
-            }
-            if ($secure_link = "0") {
-              return 410;
-            }
-            proxy_set_header Authorization "";
-            proxy_buffering off;
-            proxy_read_timeout 30m;
-          '';
-        };
-      };
+  };
+  systemd.services.http-over-ssh-auth = {
+    # Only the closure of ExecStart is visible
+    confinement = {
+      enable = true;
+      binSh = null;
+    };
+    serviceConfig = {
+      ExecStart = "${lib.getExe pkgs.luffy.http-over-ssh-auth} serve";
+      DynamicUser = true;
+      LoadCredential = "secret:/var/keys/http-over-ssh.token";
+      UMask = "0077";
+
+      # Only the socket from systemd is usable
+      PrivateNetwork = true;
+      RestrictAddressFamilies = "none";
+
+      CapabilityBoundingSet = "";
+      NoNewPrivileges = true;
+      RestrictSUIDSGID = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      ProtectProc = "invisible";
+      ProcSubset = "pid";
+      PrivateIPC = true;
+      ProtectHostname = true;
+      ProtectClock = true;
+      ProtectKernelLogs = true;
+      DevicePolicy = "closed";
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      LockPersonality = true;
+      MemoryDenyWriteExecute = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = [ "@system-service" "~@privileged @resources" ];
+      SystemCallErrorNumber = "EPERM";
+      LimitCORE = 0;
     };
   };
 
   deployment.keys = {
-    "http-over-ssh.secret" = {
-      group = "nginx";
-      permissions = "0640";
-      destDir = "/var/keys";
-      keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHSecret}" ];
-    };
     "http-over-ssh.token" = {
       group = "wheel";
       permissions = "0640";

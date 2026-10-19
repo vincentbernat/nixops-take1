@@ -27,6 +27,13 @@ To avoid parallelism and reboot after deploying:
 
     colmena apply --parallel 1 --reboot
 
+TLS certificates are requested from the workstation and stored in pass. To
+request missing certificates, renew the others when Let's Encrypt suggests it
+(ARI) or when they expire in less than 30 days, and upload them:
+
+    nix run .#certificates
+    colmena upload-keys
+
 To check if the hosts change between two revisions (`OLD` defaults to `HEAD~1`,
 `NEW` to `HEAD`), run the following command. No output means no change:
 

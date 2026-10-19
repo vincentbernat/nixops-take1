@@ -10,17 +10,11 @@ in
   };
   luffy.litestream.databases.goatcounter = cfg.databaseFile;
 
-  # Nginx vhost
-  services.nginx.virtualHosts."goatcounter.luffy.cx" = {
-    forceSSL = true;
-    luffy.acmeDNS = false;
-    locations = {
-      "/" = {
-        proxyPass = "http://${cfg.listenAddress}:${toString cfg.port}";
-      };
-      "= /count".extraConfig = ''
-        return 404;
-      '';
-    };
+  services.caddy.virtualHosts."goatcounter.luffy.cx" = {
+    extraConfig = ''
+      header Strict-Transport-Security "max-age=31536000"
+      respond /count 404
+      reverse_proxy ${cfg.listenAddress}:${toString cfg.port}
+    '';
   };
 }

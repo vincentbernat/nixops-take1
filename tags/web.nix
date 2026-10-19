@@ -1,71 +1,20 @@
 let
-  cors = ''
-    add_header Access-Control-Allow-Origin *;
-  '';
-  sts = ''
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";'';
-  stsWithPreload = ''
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";'';
+  sts = ''header Strict-Transport-Security "max-age=31536000; includeSubDomains"'';
+  stsWithPreload = ''header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"'';
   redirectVhost = to: {
-    addSSL = true;
-    globalRedirect = to;
-    useACMEHost = to;
-    extraConfig = sts;
-  };
-  redirectBlogVhost = (redirectVhost "vincent.bernat.ch") // {
-    extraConfig = sts;
+    luffy.http = true;
+    extraConfig = ''
+      ${sts}
+      redir https://${to}{uri} 301
+    '';
   };
   mediaVhost = {
-    forceSSL = true;
-    extraConfig = ''
-      expires 30d;
-      ${cors}
-      ${sts}
-    '';
-    # The following resources are expected to use cache busting.
-    locations."/js".extraConfig = ''
-      expires     max;
-      add_header  Cache-Control immutable;
-      ${cors}
-      ${sts}
-    '';
-    locations."/css".extraConfig = ''
-      expires     max;
-      add_header  Cache-Control immutable;
-      ${cors}
-      ${sts}
-    '';
-    locations."/fonts".extraConfig = ''
-      expires     max;
-      add_header  Cache-Control immutable;
-      ${cors}
-      ${sts}
-      types {
-        application/font-woff         woff;
-        font/woff2                    woff2;
-        application/x-font-truetype   ttf;
-      }
-    '';
-    locations."/files".extraConfig = "expires 1d;";
-    locations."/videos".extraConfig = ''
-      expires 1d;
-      ${cors}
-      ${sts}
-    '';
-    locations."/images".extraConfig = ''
-      ${cors}
-      ${sts}
-    '';
-    locations."~ ^/images/.*\\.(png|jpe?g|gif)$".extraConfig = ''
-      ${cors}
-      ${sts}
-      add_header Vary Accept;
-      try_files $uri$avif_suffix$webp_suffix $uri$avif_suffix $uri$webp_suffix $uri =404;
-    '';
+    luffy.static = true;
+    extraConfig = "import media";
   };
 in
 {
-  luffy.nginx.enable = true;
+  luffy.caddy.enable = true;
 
   luffy.goatcounter.proxy = {
     enable = true;
@@ -74,137 +23,138 @@ in
     port = 8087;
   };
 
-  services.nginx.virtualHosts = {
+  services.caddy.extraConfig = ''
+    (media) {
+      ${sts}
+      header {
+        Access-Control-Allow-Origin *
+        ?Cache-Control max-age=2592000
+      }
+      # The following resources are expected to use cache busting.
+      header /js/* Cache-Control "max-age=31536000, immutable"
+      header /css/* Cache-Control "max-age=31536000, immutable"
+      header /fonts/* Cache-Control "max-age=31536000, immutable"
+      header /files/* Cache-Control max-age=86400
+      header /videos/* Cache-Control max-age=86400
+
+      map {header.Accept} {avif} {
+        ~image/avif .avif
+      }
+      map {header.Accept} {webp} {
+        ~image/webp .webp
+      }
+      @alternative {
+        path_regexp ^/images/.*\.(png|jpe?g|gif)$
+        file {path}{avif}{webp} {path}{avif} {path}{webp}
+      }
+      header @alternative Vary Accept
+      rewrite @alternative {file_match.relative}
+    }
+  '';
+
+  services.caddy.virtualHosts = {
     # HAProxy
     "haproxy.debian.net" = {
+      luffy.certificate = "haproxy.debian.net";
       # Make dists and pool available without encryption
-      addSSL = true;
-      locations."~ ^/(dists|pool)".extraConfig = ''
-        autoindex on;
-      '';
-      locations."/".extraConfig = ''
-        if ($scheme = http) {
-          # Safe usage of if-in-location
-          return 301 https://$host$request_uri;
+      luffy.http = true;
+      luffy.static = true;
+      extraConfig = ''
+        @repository path /dists* /pool*
+        @insecure {
+          protocol http
+          not path /dists* /pool*
         }
+        redir @insecure https://{host}{uri} 301
+        file_server @repository browse
       '';
     };
 
     # Le val insolite
     "le-val-insolite.fr" = redirectVhost "www.le-val-insolite.fr";
     "www.le-val-insolite.fr" = {
-      forceSSL = true;
+      luffy.static = true;
       extraConfig = sts;
     };
 
     # *.pages.luffy.cx
-    "pages.luffy.cx" = {
-      forceSSL = true;
-    };
-    "*.pages.luffy.cx" = {
-      forceSSL = true;
-      serverName = "~^(.*)\\.pages\\.luffy\\.cx$";
-      root = "/data/webserver/pages.luffy.cx/$1";
-      useACMEHost = "pages.luffy.cx";
-    };
+    "pages.luffy.cx".luffy.static = true;
+    "*.pages.luffy.cx".extraConfig = ''
+      root * /data/webserver/pages.luffy.cx/{labels.3}
+      file_server
+    '';
 
     # Une Oasis Une École
     "une-oasis-une-ecole.fr" = redirectVhost "www.une-oasis-une-ecole.fr";
     "www.une-oasis-une-ecole.fr" = {
-      forceSSL = true;
+      luffy.static = true;
       extraConfig = ''
-        include /data/webserver/www.une-oasis-une-ecole.fr/nginx*.conf;
+        import /data/webserver/www.une-oasis-une-ecole.fr/Caddyfile*
         ${sts}
       '';
     };
-    "media.une-oasis-une-ecole.fr" = mediaVhost // { useACMEHost = "www.une-oasis-une-ecole.fr"; };
+    "media.une-oasis-une-ecole.fr" = mediaVhost;
 
     # ENXIO
     "enx.io" = redirectVhost "www.enxio.fr";
     "enxio.fr" = redirectVhost "www.enxio.fr";
     "www.enx.io" = redirectVhost "www.enxio.fr";
     "www.enxio.fr" = {
-      forceSSL = true;
+      luffy.static = true;
       extraConfig = ''
-        include /data/webserver/www.enxio.fr/nginx*.conf;
         ${sts}
+        handle_errors 403 404 {
+          rewrite * /
+          file_server {
+            status {err.status_code}
+          }
+        }
       '';
     };
-    "media.enxio.fr" = mediaVhost // { useACMEHost = "www.enxio.fr"; };
+    "media.enxio.fr" = mediaVhost;
 
     # Old website
-    "luffy.cx" = {
-      addSSL = true;
-      globalRedirect = "www.luffy.cx";
-      extraConfig = sts;
-    };
-    "www.luffy.cx" = {
-      forceSSL = true;
-      extraConfig = sts;
-      useACMEHost = "luffy.cx";
-      locations."/wiremaps".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/wiremaps permanent;
-      '';
-      locations."/udpproxy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/udpproxy permanent;
-      '';
-      locations."/snimpy".extraConfig = ''
-        rewrite ^ https://github.com/vincentbernat/snimpy permanent;
-      '';
-      locations."/lldpd".extraConfig = ''
-        rewrite ^ https://lldpd.github.io permanent;
-      '';
-      locations."/".extraConfig = ''
-        rewrite ^ https://vincent.bernat.ch$request_uri permanent;
-      '';
-    };
-
-    # vincentbernat.com
-    "vincentbernat.com" = {
-      addSSL = true;
-      globalRedirect = "vincent.bernat.ch";
-    };
-    "www.vincentbernat.com" = {
-      addSSL = true;
-      globalRedirect = "vincent.bernat.ch";
-      useACMEHost = "vincentbernat.com";
-    };
+    "luffy.cx" = redirectVhost "www.luffy.cx";
+    "www.luffy.cx".extraConfig = ''
+      ${sts}
+      redir /wiremaps* https://github.com/vincentbernat/wiremaps 301
+      redir /udpproxy* https://github.com/vincentbernat/udpproxy 301
+      redir /snimpy* https://github.com/vincentbernat/snimpy 301
+      redir /lldpd* https://lldpd.github.io 301
+      redir https://vincent.bernat.ch{uri} 301
+    '';
 
     # Blog
+    "vincentbernat.com" = redirectVhost "vincent.bernat.ch";
+    "www.vincentbernat.com" = redirectVhost "vincent.bernat.ch";
+    "vincent.bernat.im" = redirectVhost "vincent.bernat.ch";
+    "bernat.im" = redirectVhost "vincent.bernat.ch";
     "vincent.bernat.ch" = {
-      forceSSL = true;
+      luffy.static = true;
       extraConfig = ''
-        include /data/webserver/vincent.bernat.ch/nginx*.conf;
-      '';
-      # Bluesky
-      locations."= /.well-known/atproto-did".extraConfig = ''
-        default_type text/plain;
-        return 200 'did:plc:kb6tyjomr47ndk2rq4daooln';
-      '';
-    };
-    "vincent.bernat.im" = redirectBlogVhost;
-    "bernat.im" = redirectBlogVhost;
-    "bernat.ch" = {
-      forceSSL = true;
-      useACMEHost = "vincent.bernat.ch";
-      extraConfig = stsWithPreload;
-      # Mastodon
-      locations."= /.well-known/webfinger".extraConfig = ''
-        if ($arg_resource = acct:vincent@bernat.ch) {
-          return 302 https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io;
+        import /data/webserver/vincent.bernat.ch/Caddyfile*
+
+        # Bluesky
+        route /.well-known/atproto-did {
+          header Content-Type text/plain
+          respond did:plc:kb6tyjomr47ndk2rq4daooln
         }
-        return 404;
-      '';
-      locations."= /@vincent".extraConfig = ''
-        return 302 https://hachyderm.io/@vbernat;
-      '';
-      # Use that instead of globalRedirect as it will only takes effect for
-      # HTTPS. This is needed for HSTS.
-      locations."/".extraConfig = ''
-        return 301 https://vincent.bernat.ch$request_uri;
       '';
     };
-    "media.bernat.ch" = mediaVhost // { useACMEHost = "vincent.bernat.ch"; };
-    "media.luffy.cx" = mediaVhost // { useACMEHost = "luffy.cx"; };
+    "bernat.ch".extraConfig = ''
+      ${stsWithPreload}
+
+      # Mastodon
+      @mastodon query resource=acct:vincent@bernat.ch
+      handle /.well-known/webfinger {
+        redir @mastodon https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io 302
+        respond 404
+      }
+      handle {
+        redir /@vincent https://hachyderm.io/@vbernat 302
+        redir https://vincent.bernat.ch{uri} 301
+      }
+    '';
+    "media.bernat.ch" = mediaVhost;
   };
 }
