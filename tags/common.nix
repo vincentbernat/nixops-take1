@@ -67,6 +67,7 @@ in
       ethtool
       fzf
       htop
+      jq
       liboping
       mg
       msr-tools
