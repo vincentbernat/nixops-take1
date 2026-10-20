@@ -55,6 +55,13 @@ header "Location" == "https://vincent.bernat.ch/keepalive"
 
 GET https://vincent.bernat.ch/keepalive
 HTTP 200
+[Asserts]
+header "Alt-Svc" contains "h3=\":443\""
+
+GET https://vincent.bernat.ch/keepalive
+[Options]
+http3: true
+HTTP/3 200
 
 GET https://vincent.bernat.ch/
 HTTP 302

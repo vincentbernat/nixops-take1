@@ -94,7 +94,10 @@ in
           vhosts));
     }
     (lib.mkIf cfg.enable {
-      networking.firewall.allowedTCPPorts = [ 80 443 ];
+      networking.firewall = {
+        allowedTCPPorts = [ 80 443 ];
+        allowedUDPPorts = [ 443 ];
+      };
 
       services.caddy = {
         enable = true;
@@ -104,13 +107,6 @@ in
           ''
             admin unix//run/caddy/admin.sock|0600
             persist_config off
-          ''
-          # No HTTP/3. From a security point of view, the additional code does
-          # not look like a good trade-off.
-          + ''
-            servers {
-              protocols h1 h2
-            }
           ''
           # Certificates are not requested by Caddy.
           + ''
