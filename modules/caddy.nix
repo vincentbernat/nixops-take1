@@ -17,6 +17,8 @@ let
       format filter {
         request>remote_ip ip_mask 16 32
         request>client_ip ip_mask 16 32
+        request>headers>Cookie delete
+        resp_headers delete
       }
     }
   '';
