@@ -6,22 +6,7 @@ let
   certificateDir = "/var/keys";
   certificateFile = cert: ext: "${certificateDir}/tls-${cert}.${ext}";
   tlsDirective = cert: "tls ${certificateFile cert "crt"} ${certificateFile cert "key"}";
-  loggerName = name: lib.replaceStrings [ "*" "." ] [ "_" "_" ] name;
-  logDirective = name: ''
-    log ${loggerName name} {
-      output file ${caddy.logDir}/${lib.replaceStrings [ "*" ] [ "_" ] name}.log {
-        mode 0644
-        roll_at 00:00
-        roll_keep_for 30d
-      }
-      format filter {
-        request>remote_ip ip_mask 16 32
-        request>client_ip ip_mask 16 32
-        request>headers>Cookie delete
-        resp_headers delete
-      }
-    }
-  '';
+  logDirective = name: "import logging ${lib.replaceStrings [ "*" ] [ "_" ] name}\n";
   fromLegoStateFile = builtins.toFile "from-lego-state-file" ''
     set -o pipefail
     pass show personal/nixops/tls/lego \
@@ -136,6 +121,22 @@ in
             (common) {
               encode zstd gzip
             }
+
+            (logging) {
+              log {
+                output file ${caddy.logDir}/{args[0]}.log {
+                  mode 0644
+                  roll_at 00:00
+                  roll_keep_for 30d
+                }
+                format filter {
+                  request>remote_ip ip_mask 16 32
+                  request>client_ip ip_mask 16 32
+                  request>headers>Cookie delete
+                  resp_headers delete
+                }
+              }
+            }
           ''
           # Caddy does not accept a tls directive in a site block with an HTTP
           # address. Use a separate site block for HTTP, without it.
@@ -143,15 +144,9 @@ in
             (name: vhost: ''
               http://${name} {
                 ${lib.replaceStrings
-                  [
-                    (logDirective name)
-                    "${tlsDirective vhost.luffy.certificate}\n"
-                  ] [
-                    "log ${loggerName name}\n"
-                    ""
-                  ]
-                  vhost.extraConfig
-                }
+                  [ "${tlsDirective vhost.luffy.certificate}\n" ]
+                  [ "" ]
+                  vhost.extraConfig}
               }
             '')
             (lib.filterAttrs (_: vhost: vhost.luffy.http) vhosts))))
