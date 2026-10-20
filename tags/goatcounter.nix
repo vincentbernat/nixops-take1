@@ -11,8 +11,8 @@ in
   luffy.litestream.databases.goatcounter = cfg.databaseFile;
 
   services.caddy.virtualHosts."goatcounter.luffy.cx" = {
+    luffy.strictTransportSecurity = true;
     extraConfig = ''
-      header Strict-Transport-Security "max-age=31536000"
       respond /count 404
       reverse_proxy ${cfg.listenAddress}:${toString cfg.port}
     '';

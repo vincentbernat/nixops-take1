@@ -52,8 +52,8 @@ in
   luffy.litestream.databases.isso = cfg.databaseFile;
 
   services.caddy.virtualHosts."comments.luffy.cx" = {
+    luffy.strictTransportSecurity = true;
     extraConfig = ''
-      header Strict-Transport-Security "max-age=31536000"
       reverse_proxy ${cfg.listenAddress}:${toString cfg.port} {
         header_up   -Set-Cookie
         header_down -Set-Cookie

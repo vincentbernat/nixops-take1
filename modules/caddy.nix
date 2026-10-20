@@ -64,6 +64,16 @@ in
         };
         http = lib.mkEnableOption "plain HTTP instead of a redirect to HTTPS";
         static = lib.mkEnableOption "serving files from /data/webserver/<name>";
+        siteConfig = lib.mkEnableOption "importing /data/webserver/<name>/Caddyfile when it exists";
+        strictTransportSecurity = lib.mkOption {
+          type = lib.types.either lib.types.bool (lib.types.enum [ "preload" ]);
+          default = false;
+          description = ''
+            Whether to send the Strict-Transport-Security header, including
+            subdomains. With "preload", also ask for inclusion in the preload
+            list.
+          '';
+        };
       };
       config = {
         logFormat = null;
@@ -75,6 +85,12 @@ in
           (lib.mkIf config.luffy.static ''
             root * /data/webserver/${name}
             file_server
+          '')
+          (lib.mkIf config.luffy.siteConfig ''
+            import /data/webserver/${name}/Caddyfile*
+          '')
+          (lib.mkIf (config.luffy.strictTransportSecurity != false) ''
+            header Strict-Transport-Security "max-age=31536000; includeSubDomains${lib.optionalString (config.luffy.strictTransportSecurity == "preload") "; preload"}"
           '')
         ];
       };

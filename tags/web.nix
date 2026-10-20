@@ -1,15 +1,12 @@
 let
-  sts = ''header Strict-Transport-Security "max-age=31536000; includeSubDomains"'';
-  stsWithPreload = ''header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"'';
   redirectVhost = to: {
     luffy.http = true;
-    extraConfig = ''
-      ${sts}
-      redir https://${to}{uri} 301
-    '';
+    luffy.strictTransportSecurity = true;
+    extraConfig = "redir https://${to}{uri} 301";
   };
   mediaVhost = {
     luffy.static = true;
+    luffy.strictTransportSecurity = true;
     extraConfig = "import media";
   };
 in
@@ -25,7 +22,6 @@ in
 
   services.caddy.extraConfig = ''
     (media) {
-      ${sts}
       header {
         Access-Control-Allow-Origin *
         ?Cache-Control max-age=2592000
@@ -74,7 +70,7 @@ in
     "le-val-insolite.fr" = redirectVhost "www.le-val-insolite.fr";
     "www.le-val-insolite.fr" = {
       luffy.static = true;
-      extraConfig = sts;
+      luffy.strictTransportSecurity = true;
     };
 
     # *.pages.luffy.cx
@@ -88,10 +84,8 @@ in
     "une-oasis-une-ecole.fr" = redirectVhost "www.une-oasis-une-ecole.fr";
     "www.une-oasis-une-ecole.fr" = {
       luffy.static = true;
-      extraConfig = ''
-        import /data/webserver/www.une-oasis-une-ecole.fr/Caddyfile*
-        ${sts}
-      '';
+      luffy.siteConfig = true;
+      luffy.strictTransportSecurity = true;
     };
     "media.une-oasis-une-ecole.fr" = mediaVhost;
 
@@ -101,8 +95,8 @@ in
     "www.enx.io" = redirectVhost "www.enxio.fr";
     "www.enxio.fr" = {
       luffy.static = true;
+      luffy.strictTransportSecurity = true;
       extraConfig = ''
-        ${sts}
         handle_errors 403 404 {
           rewrite * /
           file_server {
@@ -115,14 +109,16 @@ in
 
     # Old website
     "luffy.cx" = redirectVhost "www.luffy.cx";
-    "www.luffy.cx".extraConfig = ''
-      ${sts}
-      redir /wiremaps* https://github.com/vincentbernat/wiremaps 301
-      redir /udpproxy* https://github.com/vincentbernat/udpproxy 301
-      redir /snimpy* https://github.com/vincentbernat/snimpy 301
-      redir /lldpd* https://lldpd.github.io 301
-      redir https://vincent.bernat.ch{uri} 301
-    '';
+    "www.luffy.cx" = {
+      luffy.strictTransportSecurity = true;
+      extraConfig = ''
+        redir /wiremaps* https://github.com/vincentbernat/wiremaps 301
+        redir /udpproxy* https://github.com/vincentbernat/udpproxy 301
+        redir /snimpy* https://github.com/vincentbernat/snimpy 301
+        redir /lldpd* https://lldpd.github.io 301
+        redir https://vincent.bernat.ch{uri} 301
+      '';
+    };
 
     # Blog
     "vincentbernat.com" = redirectVhost "vincent.bernat.ch";
@@ -131,9 +127,8 @@ in
     "bernat.im" = redirectVhost "vincent.bernat.ch";
     "vincent.bernat.ch" = {
       luffy.static = true;
+      luffy.siteConfig = true;
       extraConfig = ''
-        import /data/webserver/vincent.bernat.ch/Caddyfile*
-
         # Bluesky
         route /.well-known/atproto-did {
           header Content-Type text/plain
@@ -141,9 +136,8 @@ in
         }
       '';
     };
+    "bernat.ch".luffy.strictTransportSecurity = "preload";
     "bernat.ch".extraConfig = ''
-      ${stsWithPreload}
-
       # Mastodon
       @mastodon query resource=acct:vincent@bernat.ch
       handle /.well-known/webfinger {
