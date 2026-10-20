@@ -124,6 +124,7 @@
                 export RFC2136_NAMESERVER=nsupdate.luffy.cx:53
                 export RFC2136_TSIG_KEY=update.acme.luffy.cx.
                 export RFC2136_TSIG_ALGORITHM=hmac-sha256.
+                export RFC2136_SEQUENCE_INTERVAL=5
 
                 # Lego state (account and certificates) is stored in pass as a
                 # JSON object mapping each file path to its content.
