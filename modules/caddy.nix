@@ -175,6 +175,8 @@ in
       };
       systemd.services.caddy-certificates = {
         serviceConfig.Type = "oneshot";
+        # Wait for all the keys to be uploaded.
+        serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
         serviceConfig.ExecStart = "${config.systemd.package}/bin/systemctl try-reload-or-restart caddy.service";
       };
 
