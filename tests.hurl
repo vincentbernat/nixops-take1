@@ -273,3 +273,10 @@ HTTP 404
 # Skip except on web02.luffy.cx
 GET https://h000000000000000000000000-p37551.ssh.luffy.cx/en/blog
 HTTP 403
+
+# ISRG Root X1 is present on everything (Firefox 50+, Debian 8+, Android 7.1.1+, Ubuntu 12.04+)
+
+GET https://bernat.ch/
+[Options]
+cacert: /usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt
+HTTP *
