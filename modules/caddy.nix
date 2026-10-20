@@ -115,6 +115,10 @@ in
           # Certificates are not requested by Caddy.
           + ''
             auto_https disable_certs
+          ''
+          # On reload, do not wait more than 1 minute for open connections.
+          + ''
+            grace_period 1m
           '';
         extraConfig = lib.mkMerge [
           ''
