@@ -1,3 +1,5 @@
+# Tag: web-standard
+
 GET https://bernat.ch/keepalive
 HTTP 301
 [Asserts]
@@ -131,6 +133,53 @@ HTTP 301
 [Asserts]
 header "Location" == "https://www.luffy.cx/keepalive"
 
+GET https://bernat.ch/.well-known/webfinger
+HTTP 404
+
+GET https://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch
+HTTP 302
+[Asserts]
+header "Location" == "https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io"
+
+GET https://vincent.bernat.ch/.well-known/atproto-did
+HTTP 200
+[Asserts]
+header "Content-Type" startsWith "text/plain"
+body == "did:plc:kb6tyjomr47ndk2rq4daooln"
+
+GET http://une-oasis-une-ecole.fr/projet
+HTTP 301
+[Asserts]
+header "Location" == "https://www.une-oasis-une-ecole.fr/projet"
+
+GET https://une-oasis-une-ecole.fr/projet
+HTTP 301
+[Asserts]
+header "Location" == "https://www.une-oasis-une-ecole.fr/projet"
+
+GET https://www.une-oasis-une-ecole.fr/projet
+HTTP 200
+
+GET http://xxxxx.pages.luffy.cx
+HTTP 308
+[Asserts]
+header "Location" == "https://xxxxx.pages.luffy.cx/"
+
+GET https://xxxxx.pages.luffy.cx
+HTTP 404
+
+GET https://pages.luffy.cx
+HTTP 404
+
+# ISRG Root X1 is present on everything (Firefox 50+, Debian 8+, Android 7.1.1+, Ubuntu 12.04+)
+
+GET https://bernat.ch/
+[Options]
+cacert: /usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt
+HTTP *
+
+# Tag: web-volume
+
 GET https://media.bernat.ch/pagefind/pagefind-entry.json
 HTTP 200
 
@@ -201,41 +250,6 @@ HTTP 200
 [Asserts]
 header "Content-Type" == "image/webp"
 
-GET https://bernat.ch/.well-known/webfinger
-HTTP 404
-
-GET https://bernat.ch/.well-known/webfinger?resource=acct:vincent@bernat.ch
-HTTP 302
-[Asserts]
-header "Location" == "https://hachyderm.io/.well-known/webfinger?resource=acct:vbernat@hachyderm.io"
-
-GET https://vincent.bernat.ch/.well-known/atproto-did
-HTTP 200
-[Asserts]
-header "Content-Type" startsWith "text/plain"
-body == "did:plc:kb6tyjomr47ndk2rq4daooln"
-
-# Skip except on web03.luffy.cx
-GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5
-HTTP 200
-
-# Skip except on web03.luffy.cx
-GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5
-HTTP 200
-
-GET http://une-oasis-une-ecole.fr/projet
-HTTP 301
-[Asserts]
-header "Location" == "https://www.une-oasis-une-ecole.fr/projet"
-
-GET https://une-oasis-une-ecole.fr/projet
-HTTP 301
-[Asserts]
-header "Location" == "https://www.une-oasis-une-ecole.fr/projet"
-
-GET https://www.une-oasis-une-ecole.fr/projet
-HTTP 200
-
 GET http://media.une-oasis-une-ecole.fr/images/l/favicon.png
 HTTP 308
 [Asserts]
@@ -258,32 +272,23 @@ HTTP 200
 GET https://haproxy.debian.net/dists/stretch-backports-1.9/Release
 HTTP 200
 
-GET http://xxxxx.pages.luffy.cx
-HTTP 308
-[Asserts]
-header "Location" == "https://xxxxx.pages.luffy.cx/"
+# Tag: isso
 
-GET https://xxxxx.pages.luffy.cx
-HTTP 404
+GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-routage-l3-hyperviseur&nested_limit=5
+HTTP 200
 
-GET https://pages.luffy.cx
-HTTP 404
+GET https://comments.luffy.cx/?uri=%2Ffr%2Fblog%2F2018-nothing&nested_limit=5
+HTTP 200
 
-# Skip except on web02.luffy.cx
+# Tag: goatcounter
+
 GET https://goatcounter.luffy.cx/api/v0/me
 HTTP 401
 
-# Skip except on web02.luffy.cx
+# Tag: http-over-ssh
+
 GET https://p37551.ssh.luffy.cx/en/blog
 HTTP 404
 
-# Skip except on web02.luffy.cx
 GET https://h000000000000000000000000-p37551.ssh.luffy.cx/en/blog
 HTTP 403
-
-# ISRG Root X1 is present on everything (Firefox 50+, Debian 8+, Android 7.1.1+, Ubuntu 12.04+)
-
-GET https://bernat.ch/
-[Options]
-cacert: /usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt
-HTTP *

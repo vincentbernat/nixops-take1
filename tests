@@ -10,10 +10,13 @@ trap 'rm -rf "$tmpdir"' EXIT
 
 # For each host and IP version, materialize a copy of the suite with the
 # connect-to and IP version baked into every request, so a single `hurl --test`
-# can run them all in parallel. A request preceded by a "# Skip except on
-# HOST" comment is skipped on the other hosts. The first HTTPS request for each
-# name also checks that the certificate is valid for 15 more days.
+# can run them all in parallel. After a "# Tag: TAG" comment, requests are
+# skipped on hosts without this tag in cdktf.json. The first HTTPS request for
+# each name also checks that the certificate is valid for 15 more days.
 for host in "$@"; do
+    tags=$(jq -r --arg host "$host" '.servers.value[]
+        | select(.name == $host or (.name | startswith($host + ".")))
+        | .tags | join(" ")' cdktf.json)
     for version in ipv4 ipv6; do
         case $version in
             ipv4)
@@ -23,10 +26,9 @@ for host in "$@"; do
                 ip -6 route show ::/0 | grep -q . || continue
                 ;;
         esac
-        awk -v host="$host" -v version="$version" '
-            # HOST also matches when the caller only gave the first label
-            function wanted(target) {
-                return target == host || index(target, host ".") == 1
+        awk -v host="$host" -v version="$version" -v tags="$tags" '
+            function tagged(t) {
+                return index(" " tags " ", " " t " ") > 0
             }
             # hurl wants [Options] after the request headers, so emit it once
             # the header block is over
@@ -47,18 +49,17 @@ for host in "$@"; do
                 certificate = 0
                 print "certificate \"Expire-Date\" daysAfterNow > 20"
             }
-            /^#[ \t]*Skip except on / {
-                only = $0
-                sub(/^#[ \t]*Skip except on[ \t]*/, "", only)
-                sub(/[ \t]*$/, "", only)
+            /^#[ \t]*Tag: / {
+                tag = $0
+                sub(/^#[ \t]*Tag:[ \t]*/, "", tag)
+                sub(/[ \t]*$/, "", tag)
                 print
                 next
             }
             /^[A-Z]+[ \t]+https?:\/\// {
                 print
                 pending = 1
-                excluded = (only != "" && !wanted(only))
-                only = ""
+                excluded = (tag != "" && !tagged(tag))
                 name = $2
                 sub(/^https:\/\/([^\/@]*@)?/, "", name)
                 sub(/[\/:{].*/, "", name)
