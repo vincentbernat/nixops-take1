@@ -8,7 +8,7 @@ let
       values = map (lib.removePrefix "${prefix}:") (builtins.filter (lib.hasPrefix "${prefix}:") tags);
     in
     if values == [ ] then null else builtins.head values;
-  server = { name, ipv4Address, ipv6Address, tags, modules }: {
+  server = { name, ipv4Address, ipv6Address, storage, tags, modules }: {
     deployment.targetHost = name;
     imports = [
       {
@@ -16,7 +16,7 @@ let
           inherit inputs;
         };
         luffy.host = {
-          inherit ipv4Address ipv6Address;
+          inherit ipv4Address ipv6Address storage;
           gateway4 = taggedValue tags "gateway4";
           gateway6 = taggedValue tags "gateway6";
           tags = builtins.filter (t: !lib.hasPrefix "gateway4:" t && !lib.hasPrefix "gateway6:" t) tags;
@@ -42,7 +42,9 @@ let
         name = shortName s.name;
         value = server {
           inherit (s) name ipv4Address ipv6Address tags;
+          storage = s.storage or null;
           modules = [
+            ./hardware/common.nix
             (./hardware/. + "/${s.hardware}.nix")
           ] ++ tag-imports;
         };

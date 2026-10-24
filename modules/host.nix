@@ -21,6 +21,22 @@
       readOnly = true;
       description = "IPv6 gateway of the host, from the gateway6 tag in cdktf.json.";
     };
+    storage = lib.mkOption {
+      type = lib.types.nullOr (lib.types.submodule {
+        options = {
+          device = lib.mkOption {
+            type = lib.types.str;
+            description = "Block device of the additional storage.";
+          };
+          size = lib.mkOption {
+            type = lib.types.number;
+            description = "Size of the additional storage in GB.";
+          };
+        };
+      });
+      readOnly = true;
+      description = "Additional storage of the host, from cdktf.json.";
+    };
     tags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       readOnly = true;

@@ -140,6 +140,13 @@
             "ipv4Address": "string",
             "ipv6Address": "string",
             "name": "string",
+            "storage": [
+              "object",
+              {
+                "device": "string",
+                "size": "number"
+              }
+            ],
             "tags": [
               "tuple",
               [
@@ -238,6 +245,10 @@
         "ipv4Address": "149.28.219.155",
         "ipv6Address": "2001:19f0:ac01:1e8c:5400:6ff:feee:e2bf",
         "name": "web07.luffy.cx",
+        "storage": {
+          "device": "/dev/disk/by-id/virtio-sjc-c21459759bc049",
+          "size": 40
+        },
         "tags": [
           "web-standard",
           "web-volume"
