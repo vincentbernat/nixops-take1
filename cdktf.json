@@ -124,6 +124,30 @@
               ]
             ]
           }
+        ],
+        [
+          "object",
+          {
+            "disabled": "bool",
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
+                "string"
+              ]
+            ]
+          }
         ]
       ]
     ],
@@ -199,6 +223,21 @@
         "ipv4Address": "149.28.124.245",
         "ipv6Address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
         "name": "web06.luffy.cx",
+        "tags": [
+          "web-standard",
+          "web-volume"
+        ]
+      },
+      {
+        "disabled": true,
+        "geo": {
+          "latitude": 37.34,
+          "longitude": -121.89
+        },
+        "hardware": "vultr",
+        "ipv4Address": "149.28.219.155",
+        "ipv6Address": "2001:19f0:ac01:1e8c:5400:6ff:feee:e2bf",
+        "name": "web07.luffy.cx",
         "tags": [
           "web-standard",
           "web-volume"

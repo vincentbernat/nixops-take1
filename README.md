@@ -2,15 +2,61 @@ This is my tentative to get more familiar with NixOS and Colmena. This looks
 better than a couple years back. Previously, I was using NixOps (see commit
 7e583aca7906).
 
+# Installing NixOS
+
+## Hetzner
+
+To deploy NixOS on Hetzner, see
+https://blog.oro.nu/posts/hetzner-cloud-with-nixos/.
+
+## Vultr
+
+On Vultr, this can be done directly from a custom ISO.
+
+```
+sfdisk /dev/vda <<EOF
+label: dos
+size=1GiB, type=82
+type=83, bootable
+EOF
+mkswap -L swap /dev/vda1
+mkfs.ext4 -L nixos /dev/vda2
+
+swapon /dev/vda1
+mount /dev/disk/by-label/nixos /mnt
+mkdir -p /mnt/nix /nix
+mount --bind /mnt/nix /nix
+
+curl -sSfL https://install.determinate.systems/nix | sh -s -- install linux --init none --no-confirm
+```
+
+Then build the configuration and deploy it:
+
+```
+colmena build --on web07
+nix copy --no-check-sigs \
+  --to 'ssh-ng://root@web07.luffy.cx?remote-program=/nix/var/nix/profiles/default/bin/nix-daemon' \
+  /nix/store/rbgyan1paa9j9jgq3n9az62qhbz0ba65-nixos-system-web07-26.05pre-git
+```
+
+Then, back to the system:
+
+```
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+nix shell nixpkgs#nixos-install-tools
+nixos-install --root /mnt \
+  --system /nix/store/rbgyan1paa9j9jgq3n9az62qhbz0ba65-nixos-system-web07-26.05pre-git \
+  --no-root-passwd
+reboot
+```
+
+# Deploy
+
 I am using this setup in conjuction with CDKTF. See [cdktf-take1
 repository](https://github.com/vincentbernat/cdktf-take1). Notably,
 `cdktf.json` is the output of
 
     terraform output --json > cdktf.json
-
-To deploy NixOS on Hetzner, see
-https://blog.oro.nu/posts/hetzner-cloud-with-nixos/. On Vultr, this
-can be done directly from a custom ISO.
 
 First, enable the appropriate shell:
 
