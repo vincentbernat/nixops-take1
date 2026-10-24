@@ -1,9 +1,6 @@
 #!/bin/sh
 
-[ $# -gt 0 ] || {
-    echo "Usage: $0 HOST..."
-    exit 1
-}
+[ $# -gt 0 ] || set -- $(jq -r '.servers.value[].name' cdktf.json)
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
