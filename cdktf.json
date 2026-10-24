@@ -26,6 +26,7 @@
                 "string",
                 "string",
                 "string",
+                "string",
                 "string"
               ]
             ]
@@ -48,7 +49,6 @@
             "tags": [
               "tuple",
               [
-                "string",
                 "string",
                 "string"
               ]
@@ -193,6 +193,7 @@
           "web-volume",
           "goatcounter",
           "http-over-ssh",
+          "isso",
           "gateway4:100.100.100.1",
           "gateway6:fe80::1"
         ]
@@ -208,8 +209,7 @@
         "name": "web03.luffy.cx",
         "tags": [
           "web-standard",
-          "web-volume",
-          "isso"
+          "web-volume"
         ]
       },
       {
@@ -598,7 +598,7 @@
         "web08.luffy.cx"
       ],
       "comments.luffy.cx": [
-        "web03.luffy.cx"
+        "web02.luffy.cx"
       ],
       "enx.io": [
         "web02.luffy.cx",
