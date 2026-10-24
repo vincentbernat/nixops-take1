@@ -182,9 +182,12 @@ in
           (cert: [ (certificateFile cert "crt") (certificateFile cert "key") ])
           (lib.attrNames cfg.certificates);
       };
-      systemd.services.caddy.serviceConfig = {
-        RuntimeDirectory = "caddy";
-        RuntimeDirectoryMode = "0700";
+      systemd.services.caddy = {
+        unitConfig.RequiresMountsFor = "/data/webserver";
+        serviceConfig = {
+          RuntimeDirectory = "caddy";
+          RuntimeDirectoryMode = "0700";
+        };
       };
       systemd.services.caddy-certificates = {
         serviceConfig.Type = "oneshot";

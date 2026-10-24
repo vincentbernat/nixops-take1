@@ -4,5 +4,6 @@
     device = config.luffy.host.storage.device;
     fsType = "ext4";
     autoFormat = true;
+    options = [ "nofail" ];
   };
 }
