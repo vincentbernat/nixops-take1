@@ -177,6 +177,78 @@
               '';
             });
           };
+          sync-webserver = {
+            type = "app";
+            meta.description = "Copy /data/webserver from one host to another";
+            program = nixpkgs.lib.getExe (pkgs.writeShellApplication {
+              name = "sync-webserver";
+              runtimeInputs = with pkgs; [ coreutils rsync socat ];
+              text =
+                let
+                  inherit (self.colmena.meta.nixpkgs) rsync socat;
+                in
+                ''
+                  if [ $# -lt 2 ]; then
+                    cat <<EOF >&2
+                  Usage: $0 SOURCE DESTINATION [RSYNC OPTIONS...]
+
+                  For dry-run, use --dry-run --itemize-changes. If the first character
+                  is ".", it means the file content won't be updated. Check rsync manual
+                  for more information.
+                  EOF
+                    exit 1
+                  fi
+                  src=$1
+                  dst=$2
+                  shift 2
+                  dir=/data/webserver/.
+                  args=(-a --delete "$@")
+
+                  relay=
+                  tmp=$(mktemp -d)
+                  trap 'kill "$relay" 2> /dev/null || true; rm -rf "$tmp"' EXIT
+
+                  # Rsync cannot copy between two remote hosts. The rsync
+                  # client runs on the source and talks to the rsync server on
+                  # the destination through a socket forwarded with SSH.
+                  # See https://vincent.bernat.ch/en/blog/2021-rsync-ssh-two-remotes
+                  for host in "$src" "$dst"; do
+                    nix-copy-closure --use-substitutes --to "root@$host" ${rsync} ${socat}
+                  done
+
+                  # Get the command line of the rsync server.
+                  mkdir "$tmp/empty"
+                  rsync -e "sh -c 'echo \"\$@\" > $tmp/server' echo" \
+                    "''${args[@]}" "$tmp/empty/." "remote:$dir" 2> /dev/null || true
+                  read -ra server < "$tmp/server"
+                  server=("''${server[@]:1}")
+                  if [ "''${server[0]:-}" != rsync ]; then
+                    echo "Cannot get the command line of the rsync server" >&2
+                    exit 1
+                  fi
+                  server[0]=${rsync}/bin/rsync
+
+                  cat > "$tmp/relay" <<EOF
+                  #!/bin/sh
+                  exec ssh $(printf '%q' "root@$dst") $(printf '%q ' "''${server[@]}")
+                  EOF
+                  chmod +x "$tmp/relay"
+                  socat "UNIX-LISTEN:$tmp/rsync.sock" "EXEC:$tmp/relay" &
+                  relay=$!
+                  while [ ! -S "$tmp/rsync.sock" ]; do
+                    kill -0 "$relay"
+                    sleep 0.1
+                  done
+
+                  sock=/tmp/sync-webserver-$RANDOM$RANDOM.sock
+                  ssh -o ExitOnForwardFailure=yes -o StreamLocalBindUnlink=yes \
+                    -R "$sock:$tmp/rsync.sock" "root@$src" \
+                    "$(printf '%q ' ${rsync}/bin/rsync -e "sh -c '${socat}/bin/socat stdio unix-connect:$sock'" \
+                         "''${args[@]}" "$dir" "remote:$dir"); status=\$?; rm -f $sock; exit \$status"
+                  wait "$relay"
+                '';
+            });
+          };
         });
       # Packages we build ourselves, available as `pkgs.luffy.*'.
       overlays.default = final: prev: {
