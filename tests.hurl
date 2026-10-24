@@ -103,7 +103,7 @@ HTTP 302
 header "Location" == "/en"
 header "Vary" == "Accept-Language"
 
-GET https://vincent.bernat.ch/hit
+GET https://vincent.bernat.ch/api/v0/hit
 HTTP 400
 [Asserts]
 header "Content-Type" == "image/gif"
