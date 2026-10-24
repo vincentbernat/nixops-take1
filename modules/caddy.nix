@@ -120,6 +120,7 @@ in
           ''
             (common) {
               encode zstd gzip
+              header X-Served-By ${config.networking.hostName}
             }
 
             (logging) {
