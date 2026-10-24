@@ -160,6 +160,14 @@ header "Location" == "https://www.une-oasis-une-ecole.fr/projet"
 GET https://www.une-oasis-une-ecole.fr/projet
 HTTP 200
 
+GET http://media.une-oasis-une-ecole.fr/images/l/favicon.png
+HTTP 308
+[Asserts]
+header "Location" == "https://media.une-oasis-une-ecole.fr/images/l/favicon.png"
+
+GET https://media.une-oasis-une-ecole.fr/images/l/favicon.png
+HTTP 200
+
 GET http://xxxxx.pages.luffy.cx
 HTTP 308
 [Asserts]
@@ -170,15 +178,6 @@ HTTP 404
 
 GET https://pages.luffy.cx
 HTTP 404
-
-# ISRG Root X1 is present on everything (Firefox 50+, Debian 8+, Android 7.1.1+, Ubuntu 12.04+)
-
-GET https://bernat.ch/
-[Options]
-cacert: /usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt
-HTTP *
-
-# Tag: web-volume
 
 GET https://media.bernat.ch/pagefind/pagefind-entry.json
 HTTP 200
@@ -250,13 +249,14 @@ HTTP 200
 [Asserts]
 header "Content-Type" == "image/webp"
 
-GET http://media.une-oasis-une-ecole.fr/images/l/favicon.png
-HTTP 308
-[Asserts]
-header "Location" == "https://media.une-oasis-une-ecole.fr/images/l/favicon.png"
+# ISRG Root X1 is present on everything (Firefox 50+, Debian 8+, Android 7.1.1+, Ubuntu 12.04+)
 
-GET https://media.une-oasis-une-ecole.fr/images/l/favicon.png
-HTTP 200
+GET https://bernat.ch/
+[Options]
+cacert: /usr/share/ca-certificates/mozilla/ISRG_Root_X1.crt
+HTTP *
+
+# Tag: web-volume
 
 GET http://haproxy.debian.net/haproxy.css
 HTTP 301

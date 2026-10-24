@@ -212,11 +212,12 @@
 
                   # Some sites are only on hosts with the web-volume tag.
                   volumeHosts=(${lib.escapeShellArgs volumeHosts})
+                  volumeSites=(${lib.escapeShellArgs volumeSites})
                   for host in "$src" "$dst"; do
                     case " ''${volumeHosts[*]} " in
                       *" $host "*) ;;
                       *)
-                        for site in ${lib.escapeShellArgs volumeSites}; do
+                        for site in "''${volumeSites[@]}"; do
                           args+=(--exclude "/$site/")
                         done
                         break

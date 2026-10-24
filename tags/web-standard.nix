@@ -4,9 +4,42 @@ let
     luffy.strictTransportSecurity = true;
     extraConfig = "redir https://${to}{uri} 301";
   };
+  mediaVhost = {
+    luffy.static = true;
+    luffy.strictTransportSecurity = true;
+    extraConfig = "import media";
+  };
 in
 {
   luffy.caddy.enable = true;
+
+  services.caddy.extraConfig = ''
+    (media) {
+      header {
+        Access-Control-Allow-Origin *
+        ?Cache-Control max-age=2592000
+      }
+      # The following resources are expected to use cache busting.
+      header /js/* Cache-Control "max-age=31536000, immutable"
+      header /css/* Cache-Control "max-age=31536000, immutable"
+      header /fonts/* Cache-Control "max-age=31536000, immutable"
+      header /files/* Cache-Control max-age=86400
+      header /videos/* Cache-Control max-age=86400
+
+      map {header.Accept} {avif} {
+        ~image/avif .avif
+      }
+      map {header.Accept} {webp} {
+        ~image/webp .webp
+      }
+      @alternative {
+        path_regexp ^/images/.*\.(png|jpe?g|gif)$
+        file {path}{avif}{webp} {path}{avif} {path}{webp}
+      }
+      header @alternative Vary Accept
+      rewrite @alternative {file_match.relative}
+    }
+  '';
 
   luffy.goatcounter.proxy = {
     enable = true;
@@ -37,6 +70,7 @@ in
       luffy.siteConfig = true;
       luffy.strictTransportSecurity = true;
     };
+    "media.une-oasis-une-ecole.fr" = mediaVhost;
 
     # ENXIO
     "enx.io" = redirectVhost "www.enxio.fr";
@@ -54,6 +88,7 @@ in
         }
       '';
     };
+    "media.enxio.fr" = mediaVhost;
 
     # Old website
     "luffy.cx" = redirectVhost "www.luffy.cx";
@@ -84,6 +119,7 @@ in
         }
       '';
     };
+    "media.bernat.ch" = mediaVhost;
     "bernat.ch".luffy.strictTransportSecurity = "preload";
     "bernat.ch".extraConfig = ''
       # Mastodon
