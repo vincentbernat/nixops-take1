@@ -153,6 +153,28 @@
               ]
             ]
           }
+        ],
+        [
+          "object",
+          {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string"
+              ]
+            ]
+          }
         ]
       ]
     ],
@@ -249,6 +271,19 @@
           "web-standard",
           "web-volume"
         ]
+      },
+      {
+        "geo": {
+          "latitude": 35.68,
+          "longitude": 139.69
+        },
+        "hardware": "vultr",
+        "ipv4Address": "139.180.195.54",
+        "ipv6Address": "2401:c080:1000:3f0a:5400:6ff:feef:87ab",
+        "name": "web08.luffy.cx",
+        "tags": [
+          "web-standard"
+        ]
       }
     ]
   },
@@ -260,6 +295,7 @@
         "*.pages.luffy.cx": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -282,12 +318,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "bernat.im": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -310,12 +348,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "enxio.fr": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -348,12 +388,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "luffy.cx": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -410,12 +452,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "vincent.bernat.ch": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -432,12 +476,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "vincentbernat.com": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -454,12 +500,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "www.enxio.fr": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -476,12 +524,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "www.luffy.cx": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -498,12 +548,14 @@
             "string",
             "string",
             "string",
+            "string",
             "string"
           ]
         ],
         "www.vincentbernat.com": [
           "tuple",
           [
+            "string",
             "string",
             "string",
             "string",
@@ -521,7 +573,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "*.ssh.luffy.cx": [
         "web02.luffy.cx"
@@ -532,7 +585,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "bernat.im": [
         "web02.luffy.cx",
@@ -540,7 +594,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "comments.luffy.cx": [
         "web03.luffy.cx"
@@ -551,7 +606,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "enxio.fr": [
         "web02.luffy.cx",
@@ -559,7 +615,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "goatcounter.luffy.cx": [
         "web02.luffy.cx"
@@ -577,7 +634,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "luffy.cx": [
         "web02.luffy.cx",
@@ -585,7 +643,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "media.bernat.ch": [
         "web02.luffy.cx",
@@ -621,7 +680,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "vincent.bernat.ch": [
         "web02.luffy.cx",
@@ -629,7 +689,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "vincent.bernat.im": [
         "web02.luffy.cx",
@@ -637,7 +698,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "vincentbernat.com": [
         "web02.luffy.cx",
@@ -645,7 +707,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.enx.io": [
         "web02.luffy.cx",
@@ -653,7 +716,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.enxio.fr": [
         "web02.luffy.cx",
@@ -661,7 +725,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.le-val-insolite.fr": [
         "web02.luffy.cx",
@@ -669,7 +734,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.luffy.cx": [
         "web02.luffy.cx",
@@ -677,7 +743,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.une-oasis-une-ecole.fr": [
         "web02.luffy.cx",
@@ -685,7 +752,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ],
       "www.vincentbernat.com": [
         "web02.luffy.cx",
@@ -693,7 +761,8 @@
         "web04.luffy.cx",
         "web05.luffy.cx",
         "web06.luffy.cx",
-        "web07.luffy.cx"
+        "web07.luffy.cx",
+        "web08.luffy.cx"
       ]
     }
   }
