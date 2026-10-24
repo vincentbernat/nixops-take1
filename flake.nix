@@ -186,6 +186,12 @@
               text =
                 let
                   inherit (self.colmena.meta.nixpkgs) rsync socat;
+                  inherit (nixpkgs) lib;
+                  volumeHosts = lib.concatMap
+                    (s: lib.optionals (builtins.elem "web-volume" s.tags)
+                      [ s.name (builtins.head (lib.splitString "." s.name)) ])
+                    (lib.importJSON ./cdktf.json).servers.value;
+                  volumeSites = builtins.attrNames (import ./tags/web-volume.nix).services.caddy.virtualHosts;
                 in
                 ''
                   if [ $# -lt 2 ]; then
@@ -203,6 +209,20 @@
                   shift 2
                   dir=/data/webserver/.
                   args=(-a --delete "$@")
+
+                  # Some sites are only on hosts with the web-volume tag.
+                  volumeHosts=(${lib.escapeShellArgs volumeHosts})
+                  for host in "$src" "$dst"; do
+                    case " ''${volumeHosts[*]} " in
+                      *" $host "*) ;;
+                      *)
+                        for site in ${lib.escapeShellArgs volumeSites}; do
+                          args+=(--exclude "/$site/")
+                        done
+                        break
+                        ;;
+                    esac
+                  done
 
                   relay=
                   tmp=$(mktemp -d)

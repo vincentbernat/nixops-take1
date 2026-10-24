@@ -25,6 +25,7 @@
                 "string",
                 "string",
                 "string",
+                "string",
                 "string"
               ]
             ]
@@ -47,6 +48,31 @@
             "tags": [
               "tuple",
               [
+                "string",
+                "string",
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string",
                 "string",
                 "string"
               ]
@@ -93,28 +119,7 @@
             "tags": [
               "tuple",
               [
-                "string"
-              ]
-            ]
-          }
-        ],
-        [
-          "object",
-          {
-            "geo": [
-              "object",
-              {
-                "latitude": "number",
-                "longitude": "number"
-              }
-            ],
-            "hardware": "string",
-            "ipv4Address": "string",
-            "ipv6Address": "string",
-            "name": "string",
-            "tags": [
-              "tuple",
-              [
+                "string",
                 "string"
               ]
             ]
@@ -133,7 +138,8 @@
         "ipv6Address": "2a0c:8881:5:100::1",
         "name": "web02.luffy.cx",
         "tags": [
-          "web",
+          "web-standard",
+          "web-volume",
           "goatcounter",
           "http-over-ssh",
           "gateway4:100.100.100.1",
@@ -150,7 +156,8 @@
         "ipv6Address": "2a01:4f9:c010:1a9c::1",
         "name": "web03.luffy.cx",
         "tags": [
-          "web",
+          "web-standard",
+          "web-volume",
           "isso"
         ]
       },
@@ -164,7 +171,8 @@
         "ipv6Address": "2a01:4f8:1c0c:5eb5::1",
         "name": "web04.luffy.cx",
         "tags": [
-          "web",
+          "web-standard",
+          "web-volume",
           "dns"
         ]
       },
@@ -178,7 +186,8 @@
         "ipv6Address": "2a01:4ff:f0:b91::1",
         "name": "web05.luffy.cx",
         "tags": [
-          "web"
+          "web-standard",
+          "web-volume"
         ]
       },
       {
@@ -191,7 +200,8 @@
         "ipv6Address": "2001:19f0:5c01:1894:5400:3ff:febe:4284",
         "name": "web06.luffy.cx",
         "tags": [
-          "web"
+          "web-standard",
+          "web-volume"
         ]
       }
     ]
