@@ -105,7 +105,6 @@
         [
           "object",
           {
-            "disabled": "bool",
             "geo": [
               "object",
               {
@@ -221,7 +220,6 @@
         ]
       },
       {
-        "disabled": true,
         "geo": {
           "latitude": 1.35,
           "longitude": 103.82
@@ -385,16 +383,6 @@
           ]
         ],
         "media.enxio.fr": [
-          "tuple",
-          [
-            "string",
-            "string",
-            "string",
-            "string",
-            "string"
-          ]
-        ],
-        "media.luffy.cx": [
           "tuple",
           [
             "string",
@@ -614,13 +602,6 @@
         "web07.luffy.cx"
       ],
       "media.enxio.fr": [
-        "web02.luffy.cx",
-        "web03.luffy.cx",
-        "web04.luffy.cx",
-        "web05.luffy.cx",
-        "web07.luffy.cx"
-      ],
-      "media.luffy.cx": [
         "web02.luffy.cx",
         "web03.luffy.cx",
         "web04.luffy.cx",

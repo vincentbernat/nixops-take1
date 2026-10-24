@@ -4,14 +4,7 @@ better than a couple years back. Previously, I was using NixOps (see commit
 
 # Installing NixOS
 
-## Hetzner
-
-To deploy NixOS on Hetzner, see
-https://blog.oro.nu/posts/hetzner-cloud-with-nixos/.
-
-## Vultr
-
-On Vultr, this can be done directly from a custom ISO.
+NixOS can be installed from some rescue system.
 
 ```
 sfdisk /dev/vda <<EOF
