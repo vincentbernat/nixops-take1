@@ -62,9 +62,13 @@ To deploy:
 
 Add `--verbose` to not cut the logs to 20 lines.
 
-To avoid parallelism and reboot after deploying:
+To deploy hosts one by one (all of them by default), run the following command.
+It builds and copies everything first. Then, for each host, it reboots if the
+kernel, the initrd, the modules or the NixOS version changed, otherwise it
+switches. Tests are run after each host and the deployment stops on the first
+failure.
 
-    colmena apply --parallel 1 --reboot
+    nix run .#deploy [HOST...]
 
 TLS certificates are requested from the workstation and stored in pass. To
 request missing certificates, renew the others when Let's Encrypt suggests it

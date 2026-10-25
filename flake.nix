@@ -74,6 +74,54 @@
               '';
             });
           };
+          deploy = {
+            type = "app";
+            meta.description = "Deploy hosts one by one, reboot when needed and run tests";
+            program = nixpkgs.lib.getExe (pkgs.writeShellApplication {
+              name = "deploy";
+              runtimeInputs = with pkgs; [ colmena coreutils dnsutils gawk hurl iproute2 jq openssh ];
+              text = ''
+                # Arguments starting with "-" are options for "colmena apply".
+                # Others are hosts.
+                opts=()
+                for arg; do
+                  shift
+                  case $arg in
+                    -*) opts+=("$arg") ;;
+                    *) set -- "$@" "$arg" ;;
+                  esac
+                done
+                # shellcheck disable=SC2046
+                [ $# -gt 0 ] || set -- $(jq -r '.servers.value[].name | split(".")[0]' cdktf.json)
+
+                # Build and copy everything first, in parallel. Built systems
+                # are in .gcroots/node-NAME.
+                colmena apply push --keep-result "''${opts[@]}" --on "$(IFS=,; echo "$*")"
+
+                for node in "$@"; do
+                  target=$(jq -er --arg node "$node" '.servers.value[].name | select(split(".")[0] == $node)' cdktf.json)
+                  system=$(readlink .gcroots/node-"$node")
+                  echo "### $node"
+
+                  # Reboot when kernel, initrd, modules or NixOS version are
+                  # not the same as the booted system.
+                  same=$(ssh "root@$target" sh -s -- "$system" <<'EOF'
+                for f in initrd kernel kernel-modules; do
+                  [ "$(readlink /run/booted-system/$f)" = "$(readlink "$1/$f")" ] || { echo no; exit; }
+                done
+                [ "$(cat /run/booted-system/nixos-version)" = "$(cat "$1/nixos-version")" ] || { echo no; exit; }
+                echo yes
+                EOF
+                  )
+                  case $same in
+                    yes) colmena apply switch "''${opts[@]}" --on "$node" ;;
+                    *)   colmena apply boot --reboot "''${opts[@]}" --on "$node" ;;
+                  esac
+                  ./tests "$node".luffy.cx
+                done
+              '';
+            });
+          };
           certificates = {
             type = "app";
             meta.description = "Request TLS certificates and store them in pass";

@@ -107,21 +107,6 @@ in
       PATH=$PATH:${config.nix.package}/bin \
         ${pkgs.nvd}/bin/nvd diff /run/current-system "$systemConfig"
     '';
-    reboot-required = ''
-      rm -f /run/reboot-required /run/reboot-optional
-      [ ! -d /run/booted-system ] || {
-        ${pkgs.diffutils}/bin/cmp -s /run/booted-system/nixos-version /run/current-system/nixos-version || {
-          touch /run/reboot-required
-          >&2 echo '*** Reboot required (new NixOS)'
-        }
-        booted="$(readlink /run/booted-system/{initrd,kernel,kernel-modules})"
-        built="$(readlink "$systemConfig"/{initrd,kernel,kernel-modules})"
-        [ "$booted" = "$built" ] || {
-          touch /run/reboot-optional
-          >&2 echo '*** Reboot optional (kernel changed)'
-        }
-      }
-    '';
   };
 
 }
