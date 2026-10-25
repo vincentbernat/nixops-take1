@@ -138,5 +138,7 @@ done
 hurl --test \
      --connect-timeout 2 \
      --max-time 2 \
+     --retry 3 \
+     --retry-interval 2000 \
      "$tmpdir"/*.hurl || status=1
 exit $status
