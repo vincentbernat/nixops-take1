@@ -44,7 +44,6 @@ let
           inherit (s) name ipv4Address ipv6Address tags;
           storage = s.storage or null;
           modules = [
-            ./hardware/common.nix
             (./hardware/. + "/${s.hardware}.nix")
           ] ++ tag-imports;
         };

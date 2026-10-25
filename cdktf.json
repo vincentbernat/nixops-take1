@@ -35,6 +35,7 @@
         [
           "object",
           {
+            "disabled": "bool",
             "geo": [
               "object",
               {
@@ -93,58 +94,6 @@
             "ipv4Address": "string",
             "ipv6Address": "string",
             "name": "string",
-            "tags": [
-              "tuple",
-              [
-                "string",
-                "string"
-              ]
-            ]
-          }
-        ],
-        [
-          "object",
-          {
-            "geo": [
-              "object",
-              {
-                "latitude": "number",
-                "longitude": "number"
-              }
-            ],
-            "hardware": "string",
-            "ipv4Address": "string",
-            "ipv6Address": "string",
-            "name": "string",
-            "tags": [
-              "tuple",
-              [
-                "string"
-              ]
-            ]
-          }
-        ],
-        [
-          "object",
-          {
-            "geo": [
-              "object",
-              {
-                "latitude": "number",
-                "longitude": "number"
-              }
-            ],
-            "hardware": "string",
-            "ipv4Address": "string",
-            "ipv6Address": "string",
-            "name": "string",
-            "storage": [
-              "object",
-              {
-                "device": "string",
-                "size": "number"
-              }
-            ],
             "tags": [
               "tuple",
               [
@@ -203,6 +152,50 @@
           "object",
           {
             "disabled": "bool",
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
+            "geo": [
+              "object",
+              {
+                "latitude": "number",
+                "longitude": "number"
+              }
+            ],
+            "hardware": "string",
+            "ipv4Address": "string",
+            "ipv6Address": "string",
+            "name": "string",
+            "tags": [
+              "tuple",
+              [
+                "string"
+              ]
+            ]
+          }
+        ],
+        [
+          "object",
+          {
             "geo": [
               "object",
               {
@@ -245,6 +238,7 @@
         ]
       },
       {
+        "disabled": true,
         "geo": {
           "latitude": 60.34,
           "longitude": 25.03
@@ -301,6 +295,7 @@
         ]
       },
       {
+        "disabled": true,
         "geo": {
           "latitude": 37.34,
           "longitude": -121.89
@@ -309,16 +304,12 @@
         "ipv4Address": "149.28.219.155",
         "ipv6Address": "2001:19f0:ac01:1e8c:5400:6ff:feee:e2bf",
         "name": "web07.luffy.cx",
-        "storage": {
-          "device": "/dev/disk/by-id/virtio-sjc-c21459759bc049",
-          "size": 40
-        },
         "tags": [
-          "web-standard",
-          "web-volume"
+          "web-standard"
         ]
       },
       {
+        "disabled": true,
         "geo": {
           "latitude": 35.68,
           "longitude": 139.69
@@ -332,7 +323,6 @@
         ]
       },
       {
-        "disabled": true,
         "geo": {
           "latitude": -23.55,
           "longitude": -46.63
@@ -346,7 +336,6 @@
         ]
       },
       {
-        "disabled": true,
         "geo": {
           "latitude": -33.87,
           "longitude": 151.21
@@ -460,7 +449,6 @@
             "string",
             "string",
             "string",
-            "string",
             "string"
           ]
         ],
@@ -499,12 +487,20 @@
             "string",
             "string",
             "string",
+            "string",
+            "string",
+            "string",
+            "string",
             "string"
           ]
         ],
         "media.enx.io": [
           "tuple",
           [
+            "string",
+            "string",
+            "string",
+            "string",
             "string",
             "string",
             "string",
@@ -519,12 +515,20 @@
             "string",
             "string",
             "string",
+            "string",
+            "string",
+            "string",
+            "string",
             "string"
           ]
         ],
         "media.une-oasis-une-ecole.fr": [
           "tuple",
           [
+            "string",
+            "string",
+            "string",
+            "string",
             "string",
             "string",
             "string",
@@ -743,8 +747,7 @@
         "web02.luffy.cx",
         "web03.luffy.cx",
         "web04.luffy.cx",
-        "web05.luffy.cx",
-        "web07.luffy.cx"
+        "web05.luffy.cx"
       ],
       "le-val-insolite.fr": [
         "web02.luffy.cx",
@@ -773,28 +776,44 @@
         "web03.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
-        "web07.luffy.cx"
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web08.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
       ],
       "media.enx.io": [
         "web02.luffy.cx",
         "web03.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
-        "web07.luffy.cx"
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web08.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
       ],
       "media.enxio.fr": [
         "web02.luffy.cx",
         "web03.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
-        "web07.luffy.cx"
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web08.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
       ],
       "media.une-oasis-une-ecole.fr": [
         "web02.luffy.cx",
         "web03.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
-        "web07.luffy.cx"
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web08.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
       ],
       "une-oasis-une-ecole.fr": [
         "web02.luffy.cx",
