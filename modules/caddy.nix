@@ -6,6 +6,15 @@ let
   certificateDir = "/var/keys";
   certificateFile = cert: ext: "${certificateDir}/tls-${cert}.${ext}";
   tlsDirective = cert: "tls ${certificateFile cert "crt"} ${certificateFile cert "key"}";
+  certificateFiles = lib.concatMap
+    (cert: [ (certificateFile cert "crt") (certificateFile cert "key") ])
+    (lib.attrNames cfg.certificates);
+  # Caddy is only reloaded when this sum changes.
+  certificateSum = pkgs.writeShellScript "caddy-certificate-sum" ''
+    ${pkgs.coreutils}/bin/cat ${lib.escapeShellArgs certificateFiles} 2> /dev/null \
+      | ${pkgs.coreutils}/bin/sha256sum
+  '';
+  certificateSumFile = "/run/caddy/certificates.sum";
   logDirective = name: "import logging ${lib.replaceStrings [ "*" ] [ "_" ] name}\n";
   fromLegoStateFile = builtins.toFile "from-lego-state-file" ''
     set -o pipefail
@@ -179,22 +188,28 @@ in
       # Reload Caddy when a certificate is uploaded.
       systemd.paths.caddy-certificates = {
         wantedBy = [ "multi-user.target" ];
-        pathConfig.PathChanged = lib.concatMap
-          (cert: [ (certificateFile cert "crt") (certificateFile cert "key") ])
-          (lib.attrNames cfg.certificates);
+        pathConfig.PathChanged = certificateFiles;
       };
       systemd.services.caddy = {
         unitConfig.RequiresMountsFor = "/data/webserver";
         serviceConfig = {
           RuntimeDirectory = "caddy";
           RuntimeDirectoryMode = "0700";
+          ExecStartPost = "+${pkgs.writeShellScript "caddy-certificates-sum" ''
+            ${certificateSum} > ${certificateSumFile}
+          ''}";
         };
       };
       systemd.services.caddy-certificates = {
         serviceConfig.Type = "oneshot";
         # Wait for all the keys to be uploaded.
         serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
-        serviceConfig.ExecStart = "${config.systemd.package}/bin/systemctl try-reload-or-restart caddy.service";
+        script = ''
+          sum=$(${certificateSum})
+          [ "$sum" != "$(cat ${certificateSumFile} 2> /dev/null)" ] || exit 0
+          ${config.systemd.package}/bin/systemctl try-reload-or-restart caddy.service
+          [ ! -d /run/caddy ] || echo "$sum" > ${certificateSumFile}
+        '';
       };
 
       system.checks = [
