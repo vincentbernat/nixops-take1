@@ -60,6 +60,8 @@ in
     };
     serviceConfig = {
       ExecStart = "${lib.getExe pkgs.luffy.http-over-ssh-auth} serve";
+
+      # Temporary user, only this user can read the secret
       DynamicUser = true;
       LoadCredential = "secret:/var/keys/http-over-ssh.token";
       UMask = "0077";
@@ -67,27 +69,34 @@ in
       # Only the socket from systemd is usable
       PrivateNetwork = true;
       RestrictAddressFamilies = "none";
+      IPAddressDeny = "any";
 
+      # No privileges, and no way to get them
       CapabilityBoundingSet = "";
       NoNewPrivileges = true;
       RestrictSUIDSGID = true;
+
+      # Read-only files, and no view of other processes or devices
       ProtectSystem = "strict";
       ProtectHome = true;
       ProtectProc = "invisible";
       ProcSubset = "pid";
       PrivateIPC = true;
+      DevicePolicy = "closed";
+
+      # No changes to the kernel or the system state
       ProtectHostname = true;
       ProtectClock = true;
       ProtectKernelLogs = true;
-      DevicePolicy = "closed";
       RestrictNamespaces = true;
       RestrictRealtime = true;
       LockPersonality = true;
       MemoryDenyWriteExecute = true;
+
+      # Syscall filtering
       SystemCallArchitectures = "native";
       SystemCallFilter = [ "@system-service" "~@privileged @resources" ];
       SystemCallErrorNumber = "EPERM";
-      LimitCORE = 0;
     };
   };
 
