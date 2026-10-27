@@ -95,7 +95,11 @@ in
 
       # Syscall filtering
       SystemCallArchitectures = "native";
-      SystemCallFilter = [ "@system-service" "~@privileged @resources" ];
+      SystemCallFilter = [
+        "@system-service"
+        "~@privileged @resources"
+        "~@aio @chown @keyring @memlock @setuid @sync @timer"
+      ];
       SystemCallErrorNumber = "EPERM";
     };
   };
