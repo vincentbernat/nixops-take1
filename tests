@@ -44,7 +44,7 @@ for host in "$@"; do
             function expiry() {
                 if (!certificate) return
                 certificate = 0
-                print "certificate \"Expire-Date\" daysAfterNow > 20"
+                print "certificate \"Expire-Date\" daysAfterNow > 29"
             }
             /^#[ \t]*Tag: / {
                 tag = $0
