@@ -115,7 +115,14 @@
                   )
                   case $same in
                     yes) colmena apply switch "''${opts[@]}" --on "$node" ;;
-                    *)   colmena apply boot --reboot "''${opts[@]}" --on "$node" ;;
+                    *)
+                      # Always upload keys when rebooting.
+                      bootopts=()
+                      for opt in "''${opts[@]}"; do
+                        [ "$opt" = --no-keys ] || bootopts+=("$opt")
+                      done
+                      colmena apply boot --reboot "''${bootopts[@]}" --on "$node"
+                      ;;
                   esac
                   ./tests "$node".luffy.cx
                 done
