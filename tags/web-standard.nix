@@ -92,6 +92,7 @@ in
 
     # Old website
     "luffy.cx" = redirectVhost "www.luffy.cx";
+    "media.luffy.cx" = redirectVhost "media.bernat.ch";
     "www.luffy.cx" = {
       luffy.strictTransportSecurity = true;
       extraConfig = ''

@@ -133,6 +133,16 @@ HTTP 301
 [Asserts]
 header "Location" == "https://www.luffy.cx/keepalive"
 
+GET http://media.luffy.cx/images/l/favicon.png
+HTTP 301
+[Asserts]
+header "Location" == "https://media.bernat.ch/images/l/favicon.png"
+
+GET https://media.luffy.cx/images/l/favicon.png
+HTTP 301
+[Asserts]
+header "Location" == "https://media.bernat.ch/images/l/favicon.png"
+
 GET https://bernat.ch/.well-known/webfinger
 HTTP 404
 

@@ -423,6 +423,18 @@
             "string"
           ]
         ],
+        "media.luffy.cx": [
+          "tuple",
+          [
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string"
+          ]
+        ],
         "media.une-oasis-une-ecole.fr": [
           "tuple",
           [
@@ -654,6 +666,15 @@
         "web10.luffy.cx"
       ],
       "media.enxio.fr": [
+        "web02.luffy.cx",
+        "web04.luffy.cx",
+        "web05.luffy.cx",
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
+      ],
+      "media.luffy.cx": [
         "web02.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
