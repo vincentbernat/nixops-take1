@@ -3,7 +3,7 @@ let
   cfg = config.luffy.goatcounter;
   databaseDirectory = builtins.dirOf cfg.serve.databaseFile;
   keyCommand = variable: [
-    "${pkgs.runtimeShell}"
+    "bash"
     "-c"
     "pass show personal/nixops/secrets | grep '^${variable}='"
   ];

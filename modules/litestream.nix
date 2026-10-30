@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 let
   cfg = config.luffy.litestream;
   databaseDirs = lib.unique (map builtins.dirOf (builtins.attrValues cfg.databases));
@@ -20,7 +20,7 @@ in
     luffy.containers.litestream = {
       mounts = databaseDirs;
       keys."litestream.env" = [
-        "${pkgs.runtimeShell}"
+        "bash"
         "-c"
         "pass show personal/nixops/secrets | grep '^SQLITE_BACKUP_'"
       ];

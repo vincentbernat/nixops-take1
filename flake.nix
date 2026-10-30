@@ -107,6 +107,7 @@
                   system=$(readlink .gcroots/node-"$node")
                   echo "### $node"
                   nix-copy-closure --use-substitutes --to "root@$target" ${dix}
+                  # shellcheck disable=SC2029
                   ssh "root@$target" ${dix}/bin/dix --color always /run/current-system "$system"
 
                   # Reboot when kernel, initrd, modules or NixOS version are

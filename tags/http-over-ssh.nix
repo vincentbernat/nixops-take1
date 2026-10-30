@@ -109,7 +109,7 @@ in
       group = "wheel";
       permissions = "0640";
       destDir = "/var/keys";
-      keyCommand = [ "${pkgs.runtimeShell}" "${httpOverSSHToken}" ];
+      keyCommand = [ "bash" "${httpOverSSHToken}" ];
     };
   };
 }

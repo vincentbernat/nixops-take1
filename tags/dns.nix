@@ -2,7 +2,7 @@
 let
   nameservers = lib.unique ([ config.networking.fqdn ] ++ map (s: s.name)
     (builtins.filter (s: builtins.elem "dns" s.tags) (lib.importJSON ../cdktf.json).servers.value));
-  pass = entry: [ "${pkgs.runtimeShell}" "-c" "pass show ${entry}" ];
+  pass = entry: [ "bash" "-c" "pass show ${entry}" ];
   zone = name: tsigKeys: {
     zoneFile = pkgs.writeText "${name}.zone" ''
       $ORIGIN ${name}.
@@ -25,7 +25,7 @@ let
     dnssecKey = pass "personal/nixops/dns/${name}/dnssec";
     # openssl rand -base64 32 | pass insert -m personal/nixops/dns/ZONE/tsig/KEY
     tsigKeys = lib.genAttrs tsigKeys (key: [
-      "${pkgs.runtimeShell}"
+      "bash"
       "-c"
       "pass show personal/nixops/dns/${name}/tsig/${key} | base64 -d"
     ]);

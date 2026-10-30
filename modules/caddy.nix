@@ -175,7 +175,7 @@ in
             group = caddy.group;
             destDir = certificateDir;
             keyCommand = [
-              "${pkgs.runtimeShell}"
+              "bash"
               "${fromLegoStateFile}"
               "certificates/${lib.replaceStrings [ "*" ] [ "_" ] (builtins.head cfg.certificates.${cert})}.${ext}"
             ];
