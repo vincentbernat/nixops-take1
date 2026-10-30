@@ -80,7 +80,11 @@
             program = nixpkgs.lib.getExe (pkgs.writeShellApplication {
               name = "deploy";
               runtimeInputs = with pkgs; [ colmena coreutils dnsutils gawk hurl iproute2 jq openssh ];
-              text = ''
+              text =
+                let
+                  inherit (self.colmena.meta.nixpkgs) dix;
+                in
+                ''
                 # Arguments starting with "-" are options for "colmena apply".
                 # Others are hosts.
                 opts=()
@@ -102,6 +106,8 @@
                   target=$(jq -er --arg node "$node" '.servers.value[].name | select(split(".")[0] == $node)' cdktf.json)
                   system=$(readlink .gcroots/node-"$node")
                   echo "### $node"
+                  nix-copy-closure --use-substitutes --to "root@$target" ${dix}
+                  ssh "root@$target" ${dix}/bin/dix --color always /run/current-system "$system"
 
                   # Reboot when kernel, initrd, modules or NixOS version are
                   # not the same as the booted system.

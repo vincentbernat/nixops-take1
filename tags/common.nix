@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, lib, ... }:
+{ inputs, pkgs, lib, ... }:
 let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOfsoHyVxxBYhzmukmFU0CrPfF4XywU+8rA1NAmZiCji bernat@chocobo"
@@ -102,11 +102,4 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   documentation.enable = false;
-  system.activationScripts = {
-    diff = ''
-      PATH=$PATH:${config.nix.package}/bin \
-        ${pkgs.nvd}/bin/nvd diff /run/current-system "$systemConfig"
-    '';
-  };
-
 }
