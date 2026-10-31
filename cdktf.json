@@ -375,6 +375,18 @@
             "string"
           ]
         ],
+        "lueurs-espoir.fr": [
+          "tuple",
+          [
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string"
+          ]
+        ],
         "luffy.cx": [
           "tuple",
           [
@@ -412,6 +424,18 @@
           ]
         ],
         "media.enxio.fr": [
+          "tuple",
+          [
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string"
+          ]
+        ],
+        "media.lueurs-espoir.fr": [
           "tuple",
           [
             "string",
@@ -531,6 +555,18 @@
             "string"
           ]
         ],
+        "www.lueurs-espoir.fr": [
+          "tuple",
+          [
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string",
+            "string"
+          ]
+        ],
         "www.luffy.cx": [
           "tuple",
           [
@@ -638,6 +674,15 @@
         "web09.luffy.cx",
         "web10.luffy.cx"
       ],
+      "lueurs-espoir.fr": [
+        "web02.luffy.cx",
+        "web04.luffy.cx",
+        "web05.luffy.cx",
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
+      ],
       "luffy.cx": [
         "web02.luffy.cx",
         "web04.luffy.cx",
@@ -666,6 +711,15 @@
         "web10.luffy.cx"
       ],
       "media.enxio.fr": [
+        "web02.luffy.cx",
+        "web04.luffy.cx",
+        "web05.luffy.cx",
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
+      ],
+      "media.lueurs-espoir.fr": [
         "web02.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",
@@ -747,6 +801,15 @@
         "web10.luffy.cx"
       ],
       "www.le-val-insolite.fr": [
+        "web02.luffy.cx",
+        "web04.luffy.cx",
+        "web05.luffy.cx",
+        "web06.luffy.cx",
+        "web07.luffy.cx",
+        "web09.luffy.cx",
+        "web10.luffy.cx"
+      ],
+      "www.lueurs-espoir.fr": [
         "web02.luffy.cx",
         "web04.luffy.cx",
         "web05.luffy.cx",

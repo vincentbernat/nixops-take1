@@ -178,6 +178,27 @@ header "Location" == "https://media.une-oasis-une-ecole.fr/images/l/favicon.png"
 GET https://media.une-oasis-une-ecole.fr/images/l/favicon.png
 HTTP 200
 
+GET http://lueurs-espoir.fr/
+HTTP 301
+[Asserts]
+header "Location" == "https://www.lueurs-espoir.fr/"
+
+GET https://lueurs-espoir.fr/
+HTTP 301
+[Asserts]
+header "Location" == "https://www.lueurs-espoir.fr/"
+
+GET https://www.lueurs-espoir.fr/
+HTTP 200
+
+GET http://media.lueurs-espoir.fr/images/l/favicon.png
+HTTP 308
+[Asserts]
+header "Location" == "https://media.lueurs-espoir.fr/images/l/favicon.png"
+
+GET https://media.lueurs-espoir.fr/images/l/favicon.png
+HTTP 200
+
 GET http://xxxxx.pages.luffy.cx
 HTTP 308
 [Asserts]

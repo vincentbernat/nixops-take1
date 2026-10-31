@@ -72,6 +72,15 @@ in
     };
     "media.une-oasis-une-ecole.fr" = mediaVhost;
 
+    # Lueurs d'espoir
+    "lueurs-espoir.fr" = redirectVhost "www.lueurs-espoir.fr";
+    "www.lueurs-espoir.fr" = {
+      luffy.static = true;
+      luffy.siteConfig = true;
+      luffy.strictTransportSecurity = true;
+    };
+    "media.lueurs-espoir.fr" = mediaVhost;
+
     # ENXIO
     "enx.io" = redirectVhost "www.enxio.fr";
     "enxio.fr" = redirectVhost "www.enxio.fr";
