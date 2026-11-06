@@ -142,6 +142,9 @@ in
                 format filter {
                   request>remote_ip ip_mask 16 32
                   request>client_ip ip_mask 16 32
+                  request>headers>X-Forwarded-For ip_mask 16 32
+                  request>headers>X-Real-Ip ip_mask 16 32
+                  request>headers>Forwarded delete
                   request>headers>Cookie delete
                   resp_headers delete
                 }
