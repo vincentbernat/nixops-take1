@@ -58,6 +58,14 @@ in
         };
         http = lib.mkEnableOption "plain HTTP instead of a redirect to HTTPS";
         static = lib.mkEnableOption "serving files from /data/webserver/<name>";
+        precompressed = lib.mkOption {
+          type = lib.types.listOf (lib.types.enum [ "br" "zstd" "gzip" ]);
+          default = [ ];
+          description = ''
+            Precompressed formats to serve for static files, in order of
+            preference.
+          '';
+        };
         siteConfig = lib.mkEnableOption "importing /data/webserver/<name>/Caddyfile when it exists";
         strictTransportSecurity = lib.mkOption {
           type = lib.types.either lib.types.bool (lib.types.enum [ "preload" ]);
@@ -78,7 +86,9 @@ in
           ''))
           (lib.mkIf config.luffy.static ''
             root * /data/webserver/${name}
-            file_server
+            file_server {
+              ${lib.optionalString (config.luffy.precompressed != [ ]) "precompressed ${toString config.luffy.precompressed}"}
+            }
           '')
           (lib.mkIf config.luffy.siteConfig ''
             import /data/webserver/${name}/Caddyfile*

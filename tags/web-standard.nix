@@ -6,6 +6,7 @@ let
   };
   mediaVhost = {
     luffy.static = true;
+    luffy.precompressed = [ "br" "zstd" ];
     luffy.strictTransportSecurity = true;
     extraConfig = "import media";
   };
