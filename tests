@@ -8,8 +8,9 @@ trap 'rm -rf "$tmpdir"' EXIT
 # For each host and IP version, materialize a copy of the suite with the
 # connect-to and IP version baked into every request, so a single `hurl --test`
 # can run them all in parallel. After a "# Tag: TAG" comment, requests are
-# skipped on hosts without this tag in cdktf.json. The first HTTPS request for
-# each name also checks that the certificate is valid for 15 more days.
+# skipped on hosts without this tag in cdktf.json. The last HTTPS request for
+# each name also checks that the certificate is valid for 30 more days. The
+# first pass over the suite finds these requests.
 for host in "$@"; do
     tags=$(jq -r --arg host "$host" '.servers.value[]
         | select(.name == $host or (.name | startswith($host + ".")))
@@ -46,25 +47,31 @@ for host in "$@"; do
                 certificate = 0
                 print "certificate \"Expire-Date\" daysAfterNow > 29"
             }
+            FNR == 1 { tag = "" }
             /^#[ \t]*Tag: / {
                 tag = $0
                 sub(/^#[ \t]*Tag:[ \t]*/, "", tag)
                 sub(/[ \t]*$/, "", tag)
-                print
+                if (NR > FNR) print
                 next
             }
             /^[A-Z]+[ \t]+https?:\/\// {
-                print
-                pending = 1
                 excluded = (tag != "" && !tagged(tag))
                 name = $2
                 sub(/^https:\/\/([^\/@]*@)?/, "", name)
                 sub(/[\/:{].*/, "", name)
                 cdn = (name ~ /\.b-cdn\.net$/)
-                certificate = ($2 ~ /^https:/ && !excluded && !cdn && !(name in checked))
-                if (certificate) checked[name] = 1
+                eligible = ($2 ~ /^https:/ && !excluded && !cdn)
+                if (NR == FNR) {
+                    if (eligible) last[name] = FNR
+                    next
+                }
+                print
+                pending = 1
+                certificate = (eligible && last[name] == FNR)
                 next
             }
+            NR == FNR { next }
             /^\[Options\]$/ { options(); next }   # merge any existing options into ours
             !/^[A-Za-z0-9_-]+[ \t]*:/ { options() }
             /^\[Asserts\]$/ { print; expiry(); next }
@@ -75,7 +82,7 @@ for host in "$@"; do
                 if (certificate) print "[Asserts]"
                 expiry()
             }
-        ' tests.hurl > "$tmpdir/$host-$version.hurl"
+        ' tests.hurl tests.hurl > "$tmpdir/$host-$version.hurl"
     done
 done
 
