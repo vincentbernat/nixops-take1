@@ -121,6 +121,7 @@ in
     "bernat.im" = redirectVhost "vincent.bernat.ch";
     "vincent.bernat.ch" = {
       luffy.static = true;
+      luffy.precompressed = [ "br" "zstd" ];
       luffy.siteConfig = true;
       extraConfig = ''
         # Bluesky

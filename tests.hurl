@@ -222,6 +222,30 @@ GET https://vincent.bernat.ch/en/blog/2020-old-pc-cards
 HTTP 200
 [Captures]
 image_path: regex "(/images/pc-cards/3dfx@2x\\.[0-9a-f]+\\.jpg)"
+css_path: regex "(/css/luffy\\.[0-9a-f]+\\.css)"
+
+# Check for precompressed brotli files
+GET https://vincent.bernat.ch/en/blog/2020-old-pc-cards
+Accept-Encoding: br
+HTTP 200
+[Asserts]
+header "Content-Encoding" == "br"
+header "Vary" contains "Accept-Encoding"
+
+GET https://vincent.bernat.ch/en/blog/atom.xml
+Accept-Encoding: br
+HTTP 200
+[Asserts]
+header "Content-Encoding" == "br"
+header "Vary" contains "Accept-Encoding"
+
+GET https://media.bernat.ch{{css_path}}
+Accept-Encoding: br
+HTTP 200
+[Asserts]
+header "Content-Type" contains "text/css"
+header "Content-Encoding" == "br"
+header "Vary" contains "Accept-Encoding"
 
 GET https://media.bernat.ch{{image_path}}
 Accept: image/jpeg
