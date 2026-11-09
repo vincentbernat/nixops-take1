@@ -33,6 +33,14 @@ in
   };
   networking.nat.externalInterface = "eth0";
 
+  # Get kernel security fixes faster
+  boot.kernelPackages =
+    let
+      system = pkgs.stdenv.hostPlatform.system;
+      small = inputs.nixpkgs-small.legacyPackages.${system};
+    in
+    small.linuxPackages;
+
   # Better performance
   boot.kernelModules = [ "tcp_bbr" ];
   boot.kernel.sysctl = {

@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs-small.url = "github:nixos/nixpkgs/nixos-26.05-small";
   };
   outputs = { self, nixpkgs, ... }@inputs:
     let
