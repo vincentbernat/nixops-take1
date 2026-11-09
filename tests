@@ -89,9 +89,9 @@ done
 status=0
 check() {
     if "$@" > /dev/null 2>&1; then
-        echo "PASS $label"
+        printf "\033[32;1mPASS\033[0m %s\n" "$label"
     else
-        echo "FAIL $label"
+        printf "\033[31;1mFAIL\033[0m %s\n" "$label"
         status=1
     fi
 }
