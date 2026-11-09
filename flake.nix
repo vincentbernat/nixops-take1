@@ -86,55 +86,48 @@
                   inherit (self.colmena.meta.nixpkgs) dix;
                 in
                 ''
-                # Arguments starting with "-" are options for "colmena apply".
-                # Others are hosts.
-                opts=()
-                for arg; do
-                  shift
-                  case $arg in
-                    -*) opts+=("$arg") ;;
-                    *) set -- "$@" "$arg" ;;
-                  esac
-                done
-                # shellcheck disable=SC2046
-                [ $# -gt 0 ] || set -- $(jq -r '.servers.value[].name | split(".")[0]' cdktf.json)
+                  # Arguments starting with "-" are options for "colmena apply".
+                  # Others are hosts.
+                  opts=()
+                  for arg; do
+                    shift
+                    case $arg in
+                      -*) opts+=("$arg") ;;
+                      *) set -- "$@" "$arg" ;;
+                    esac
+                  done
+                  # shellcheck disable=SC2046
+                  [ $# -gt 0 ] || set -- $(jq -r '.servers.value[].name | split(".")[0]' cdktf.json)
 
-                # Build and copy everything first, in parallel. Built systems
-                # are in .gcroots/node-NAME.
-                colmena apply push --keep-result "''${opts[@]}" --on "$(IFS=,; echo "$*")"
+                  # Build and copy everything first, in parallel. Built systems
+                  # are in .gcroots/node-NAME.
+                  colmena apply push --keep-result "''${opts[@]}" --on "$(IFS=,; echo "$*")"
 
-                for node in "$@"; do
-                  target=$(jq -er --arg node "$node" '.servers.value[].name | select(split(".")[0] == $node)' cdktf.json)
-                  system=$(readlink .gcroots/node-"$node")
-                  echo "### $node"
-                  nix-copy-closure --use-substitutes --to "root@$target" ${dix}
-                  # shellcheck disable=SC2029
-                  ssh "root@$target" ${dix}/bin/dix --color always /run/current-system "$system"
+                  for node in "$@"; do
+                    target=$(jq -er --arg node "$node" '.servers.value[].name | select(split(".")[0] == $node)' cdktf.json)
+                    system=$(readlink .gcroots/node-"$node")
+                    echo "### $node"
+                    nix-copy-closure --use-substitutes --to "root@$target" ${dix}
+                    # shellcheck disable=SC2029
+                    ssh "root@$target" ${dix}/bin/dix --color always /run/current-system "$system"
 
-                  # Reboot when kernel, initrd, modules or NixOS version are
-                  # not the same as the booted system.
-                  same=$(ssh "root@$target" sh -s -- "$system" <<'EOF'
-                for f in initrd kernel kernel-modules; do
-                  [ "$(readlink /run/booted-system/$f)" = "$(readlink "$1/$f")" ] || { echo no; exit; }
-                done
-                [ "$(cat /run/booted-system/nixos-version)" = "$(cat "$1/nixos-version")" ] || { echo no; exit; }
-                echo yes
-                EOF
-                  )
-                  case $same in
-                    yes) colmena apply switch "''${opts[@]}" --on "$node" ;;
-                    *)
-                      # Always upload keys when rebooting.
-                      bootopts=()
-                      for opt in "''${opts[@]}"; do
-                        [ "$opt" = --no-keys ] || bootopts+=("$opt")
-                      done
-                      colmena apply boot --reboot "''${bootopts[@]}" --on "$node"
-                      ;;
-                  esac
-                  ./tests "$node".luffy.cx
-                done
-              '';
+                    # Reboot when kernel, initrd, modules or NixOS version are
+                    # not the same as the booted system.
+                    same=$(ssh "root@$target" sh -s -- "$system" <<'EOF'
+                  for f in initrd kernel kernel-modules; do
+                    [ "$(readlink /run/booted-system/$f)" = "$(readlink "$1/$f")" ] || { echo no; exit; }
+                  done
+                  [ "$(cat /run/booted-system/nixos-version)" = "$(cat "$1/nixos-version")" ] || { echo no; exit; }
+                  echo yes
+                  EOF
+                    )
+                    case $same in
+                      yes) colmena apply switch "''${opts[@]}" --on "$node" ;;
+                      *) colmena apply boot --reboot "''${opts[@]}" --on "$node" ;;
+                    esac
+                    ./tests "$node".luffy.cx
+                  done
+                '';
             });
           };
           certificates = {
